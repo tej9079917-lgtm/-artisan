@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>artisan • DTDC delivery with Google Maps</title>
+    <title>artisan • city‑based DTDC delivery</title>
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
     <style>
+        /* ---------- BASE STYLES (unchanged) ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #fefaf5; color: #1e2a2f; line-height: 1.5; overflow-x: hidden; }
         html { scroll-behavior: smooth; }
@@ -97,12 +96,12 @@
         .remove-wishlist:hover { color: #a67463; }
         .empty-wishlist { text-align: center; padding: 2rem; color: #7e8c92; }
 
-        /* Delivery modal with DTDC */
+        /* Delivery modal with city input */
         .delivery-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
         .delivery-form input, .delivery-form textarea { width: 100%; padding: 0.8rem 1.2rem; border: 1.5px solid #e2cfc0; border-radius: 40px; background: #fffaf5; }
-        .pincode-row { display: flex; gap: 0.5rem; align-items: center; }
-        .pincode-row input { flex: 2; }
-        .pincode-row button { flex: 1; }
+        .city-row { display: flex; gap: 0.5rem; align-items: center; }
+        .city-row input { flex: 2; }
+        .city-row button { flex: 1; }
         .delivery-estimate { background: #f1e0d6; border-radius: 30px; padding: 0.8rem; margin: 0.5rem 0; font-size: 0.9rem; }
         .delivery-estimate i { margin-right: 0.3rem; color: #c38e7b; }
         .dtdc-service-badge { display: inline-block; background: #c38e7b; color: white; padding: 0.2rem 1rem; border-radius: 30px; font-size: 0.7rem; margin-left: 0.5rem; }
@@ -264,20 +263,20 @@
         </div>
     </div>
 
-    <!-- Delivery Modal with DTDC & Google Maps -->
+    <!-- Delivery Modal with City Input -->
     <div id="deliveryModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="closeDelivery">&times;</span>
             <h2>Delivery Details <span class="dtdc-service-badge">DTDC</span></h2>
             <div class="delivery-form">
                 <input type="text" id="deliveryName" placeholder="Full Name" required>
-                <input type="text" id="deliveryAddress" placeholder="📮 Delivery Address" required>
+                <input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required>
                 <input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required>
                 <textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea>
                 
-                <!-- Pincode row with Google Maps distance calculation -->
-                <div class="pincode-row">
-                    <input type="text" id="pincode" placeholder="Enter Delivery Pincode" maxlength="6">
+                <!-- City input -->
+                <div class="city-row">
+                    <input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati, Chandragiri)" required>
                     <button class="btn" id="estimateDelivery">Calculate DTDC Rate</button>
                 </div>
                 <div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;">
@@ -354,8 +353,27 @@
             let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '' };
             let currentDiscount = 0;
 
-            // Store origin pincode (Tirupati area)
-            const ORIGIN_PINCODE = '517501'; // Tirupati pincode
+            // City database with approximate distance from Tirupati (in km)
+            const cityDistances = {
+                'tirupati': 0,
+                'tirupathi': 0,
+                'chandragiri': 15,
+                'renigunta': 10,
+                'srikalahasti': 36,
+                'puttur': 40,
+                'chittoor': 65,
+                'nellore': 130,
+                'kadapa': 140,
+                'chennai': 160,
+                'bangalore': 250,
+                'hyderabad': 520,
+                'vijayawada': 360,
+                'vizag': 620,
+                'mumbai': 1000,
+                'delhi': 1800,
+                'kolkata': 1500
+            };
+            const defaultDistance = 500; // for unknown cities
 
             // Coupons
             const coupons = {
@@ -364,37 +382,44 @@
                 'FREESHIP': { type: 'fixed', value: 0 }
             };
 
-            // ---------- DTDC Rate Calculation based on distance [citation:2][citation:6] ----------
+            // ---------- DTDC Rate Calculation based on distance ----------
             function calculateDTDCRate(distanceKm, totalWeight = 1) {
-                // Weight categories - assume average 1kg per product for simplicity
-                // In production, you'd calculate total weight from cart items
-                
+                // Special handling for Tirupati and Chandragiri (distance <= 15 km)
+                if (distanceKm <= 15) {
+                    // Random between 100 and 150
+                    const charge = Math.floor(Math.random() * 51) + 100;
+                    return {
+                        charge: charge,
+                        service: 'DTDC Local Express',
+                        eta: 'Same day'
+                    };
+                }
+
+                // Standard distance-based pricing
                 let baseRate = 0;
                 let serviceType = '';
                 
-                // Distance-based pricing per 500g slab [citation:2]
                 if (distanceKm <= 50) { // Local
-                    baseRate = 60; // DTDC Plus local rate
+                    baseRate = 60;
                     serviceType = 'DTDC Plus (Local)';
                 } else if (distanceKm <= 200) { // Regional
-                    baseRate = 90; // Regional Plus rate
+                    baseRate = 90;
                     serviceType = 'DTDC Regional Plus';
                 } else if (distanceKm <= 500) { // Zonal
-                    baseRate = 120; // Zonal Plus
+                    baseRate = 120;
                     serviceType = 'DTDC Zonal Plus';
                 } else if (distanceKm <= 1500) { // National
-                    baseRate = 200; // National Plus
+                    baseRate = 200;
                     serviceType = 'DTDC National Plus';
                 } else { // Long distance
-                    baseRate = 300; // Premium
+                    baseRate = 300;
                     serviceType = 'DTDC Prime';
                 }
 
-                // Weight multiplier (per 500g) [citation:2]
                 const weightMultiplier = Math.ceil(totalWeight * 2); // Convert kg to 500g slabs
                 const finalCharge = baseRate * weightMultiplier;
 
-                // Estimate delivery time based on distance
+                // Estimate delivery time
                 let eta = '';
                 if (distanceKm <= 50) eta = 'Same day';
                 else if (distanceKm <= 200) eta = 'Next business day';
@@ -407,38 +432,6 @@
                     service: serviceType,
                     eta: eta
                 };
-            }
-
-            // ---------- Google Maps Distance Calculation ----------
-            async function calculateDistanceFromPincode(destPincode) {
-                return new Promise((resolve, reject) => {
-                    const origin = ORIGIN_PINCODE;
-                    const destination = destPincode;
-
-                    const service = new google.maps.DistanceMatrixService();
-                    service.getDistanceMatrix(
-                        {
-                            origins: [origin],
-                            destinations: [destination],
-                            travelMode: google.maps.TravelMode.DRIVING,
-                            unitSystem: google.maps.UnitSystem.METRIC,
-                        },
-                        (response, status) => {
-                            if (status === 'OK') {
-                                const result = response.rows[0].elements[0];
-                                if (result.status === 'OK') {
-                                    const distanceKm = result.distance.value / 1000; // Convert meters to km
-                                    const duration = result.duration.text;
-                                    resolve({ distance: distanceKm, duration });
-                                } else {
-                                    reject('Invalid destination pincode');
-                                }
-                            } else {
-                                reject('Distance calculation failed');
-                            }
-                        }
-                    );
-                });
             }
 
             // Format price
@@ -588,7 +581,7 @@
                     const product = products.find(p => p.id === item.id);
                     if (product) {
                         subtotal += product.basePrice * item.quantity;
-                        totalWeight += item.quantity * 0.5; // Assume 500g per item
+                        totalWeight += item.quantity * 0.5; // 500g per item
                     }
                 });
 
@@ -605,11 +598,11 @@
                 document.getElementById('deliveryOrderSummary').innerHTML = summaryHtml;
             }
 
-            // Event listener for pincode estimation with Google Maps
-            document.getElementById('estimateDelivery').addEventListener('click', async function() {
-                const pincode = document.getElementById('pincode').value.trim();
-                if (!pincode || pincode.length !== 6 || !/^\d+$/.test(pincode)) {
-                    alert('Please enter a valid 6-digit pincode');
+            // City-based estimation
+            document.getElementById('estimateDelivery').addEventListener('click', function() {
+                const city = document.getElementById('deliveryCity').value.trim().toLowerCase();
+                if (!city) {
+                    alert('Please enter a city');
                     return;
                 }
 
@@ -618,37 +611,30 @@
                 area.style.display = 'block';
                 document.getElementById('deliveryProvider').innerHTML = '<span class="loader"></span> Calculating DTDC rate...';
 
-                try {
-                    // Calculate distance using Google Maps
-                    const result = await calculateDistanceFromPincode(pincode);
-                    
-                    // Calculate total weight from cart
-                    const totalWeight = cart.reduce((sum, item) => {
-                        return sum + (item.quantity * 0.5); // Assume 500g per item
-                    }, 0);
+                // Find distance
+                const distance = cityDistances[city] || defaultDistance;
+                
+                // Calculate total weight
+                const totalWeight = cart.reduce((sum, item) => sum + (item.quantity * 0.5), 0);
 
-                    // Get DTDC rate based on distance
-                    const dtdcRate = calculateDTDCRate(result.distance, totalWeight);
-                    
-                    currentDelivery = {
-                        charge: dtdcRate.charge,
-                        provider: 'DTDC',
-                        eta: dtdcRate.eta,
-                        distance: Math.round(result.distance),
-                        service: dtdcRate.service
-                    };
+                // Get DTDC rate
+                const dtdcRate = calculateDTDCRate(distance, totalWeight);
+                
+                currentDelivery = {
+                    charge: dtdcRate.charge,
+                    provider: 'DTDC',
+                    eta: dtdcRate.eta,
+                    distance: distance,
+                    service: dtdcRate.service
+                };
 
-                    document.getElementById('deliveryProvider').innerHTML = `<i class="fas fa-truck"></i> DTDC Courier`;
-                    document.getElementById('deliveryCharge').innerText = currentDelivery.charge;
-                    document.getElementById('deliveryEta').innerText = currentDelivery.eta;
-                    document.getElementById('deliveryDistance').innerText = currentDelivery.distance;
-                    document.getElementById('deliveryService').innerText = currentDelivery.service;
+                document.getElementById('deliveryProvider').innerHTML = `<i class="fas fa-truck"></i> DTDC Courier`;
+                document.getElementById('deliveryCharge').innerText = currentDelivery.charge;
+                document.getElementById('deliveryEta').innerText = currentDelivery.eta;
+                document.getElementById('deliveryDistance').innerText = currentDelivery.distance;
+                document.getElementById('deliveryService').innerText = currentDelivery.service;
 
-                    updateDeliverySummary();
-                } catch (error) {
-                    document.getElementById('deliveryProvider').innerHTML = 'Error calculating delivery. Please check pincode.';
-                    console.error(error);
-                }
+                updateDeliverySummary();
             });
 
             // Coupon apply
@@ -684,10 +670,10 @@
                 const address = document.getElementById('deliveryAddress').value.trim();
                 const phone = document.getElementById('deliveryPhone').value.trim();
                 const notes = document.getElementById('deliveryNotes').value.trim();
-                const pincode = document.getElementById('pincode').value.trim();
+                const city = document.getElementById('deliveryCity').value.trim();
 
-                if (!name || !address || !phone || !pincode) {
-                    alert('Please fill all required fields (name, address, phone, pincode)');
+                if (!name || !address || !phone || !city) {
+                    alert('Please fill all required fields (name, address, phone, city)');
                     return;
                 }
 
@@ -713,7 +699,7 @@
                 message += `%0A👤 Name: ${name}%0A`;
                 message += `📮 Address: ${address}%0A`;
                 message += `📞 Phone: ${phone}%0A`;
-                message += `📍 Pincode: ${pincode}%0A`;
+                message += `📍 City: ${city}%0A`;
                 if (notes) message += `📝 Notes: ${notes}%0A`;
                 message += `📦 Total Weight: ${totalWeight.toFixed(1)} kg%0A`;
                 if (currentDelivery.charge > 0) {
@@ -742,7 +728,7 @@
                     return;
                 }
                 // Reset delivery fields
-                document.getElementById('pincode').value = '';
+                document.getElementById('deliveryCity').value = '';
                 document.getElementById('couponCode').value = '';
                 document.getElementById('deliveryEstimateArea').style.display = 'none';
                 document.getElementById('couponMessage').innerHTML = '';
