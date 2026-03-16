@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>artisan • complete collection</title>
+    <title>artisan • DTDC delivery with Google Maps</title>
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
     <style>
-        /* ---------- base styles (same as before) ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #fefaf5; color: #1e2a2f; line-height: 1.5; overflow-x: hidden; }
         html { scroll-behavior: smooth; }
@@ -26,12 +27,17 @@
         .nav-links a { text-decoration: none; color: #1e2a2f; position: relative; padding-bottom: 4px; }
         .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: #c38e7b; transition: width 0.25s ease; }
         .nav-links a:hover::after { width: 100%; }
+        .header-actions { display: flex; align-items: center; gap: 1rem; }
+        .cart-btn, .wishlist-btn { position: relative; background: none; border: none; font-size: 1.5rem; color: #c38e7b; cursor: pointer; }
+        .cart-count, .wishlist-count { position: absolute; top: -5px; right: -5px; background: #c38e7b; color: white; font-size: 0.7rem; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
         section[id], h2[id] { scroll-margin-top: 90px; }
         .btn { background: #1e2a2f; color: #fff9f2; padding: 0.7rem 1.8rem; border-radius: 40px; font-weight: 500; border: none; cursor: pointer; transition: 0.25s ease; box-shadow: 0 8px 20px -8px rgba(0,0,0,0.2); text-decoration: none; display: inline-block; }
         .btn:hover { background: #2d3f47; transform: scale(1.02) translateY(-2px); box-shadow: 0 16px 28px -8px rgba(0,0,0,0.2); }
         .btn-outline { background: transparent; border: 1.5px solid #1e2a2f; color: #1e2a2f; box-shadow: none; }
         .btn-outline:hover { background: #1e2a2f; color: #fff9f2; }
+        .btn-cart { background: #c38e7b; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .btn-cart:hover { background: #a67463; }
         .hero { display: flex; align-items: center; justify-content: space-between; gap: 3rem; padding: 2.5rem 0 4rem; flex-wrap: wrap; }
         .hero-content { flex: 1 1 350px; animation: fadeUp 1s ease-out; }
         .hero-content h1 { font-size: clamp(2.4rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1.2rem; }
@@ -46,7 +52,6 @@
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
 
-        /* ---------- new features styles ---------- */
         .control-bar { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; margin: 2rem 0; }
         .search-box { flex: 2; min-width: 200px; }
         .search-box input { width: 100%; padding: 0.7rem 1.5rem; border-radius: 40px; border: 1.5px solid #e2cfc0; background: #fffaf5; font-size: 1rem; }
@@ -74,70 +79,99 @@
         .out-of-stock { background: #f8d7da; color: #721c24; }
         .price-info { display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0; flex-wrap: wrap; }
         .base-price { font-weight: 500; color: #3f4c53; }
-        .total-price { font-weight: 700; background: #f1e0d6; padding: 0.2rem 0.8rem; border-radius: 40px; }
-        .delivery-note { font-size: 0.75rem; color: #7e8c92; margin: 0.2rem 0; }
-        .detail-field { width: 100%; padding: 0.5rem 1rem; margin: 0.3rem 0; border: 1.5px solid #e2cfc0; border-radius: 30px; background: #fffaf5; }
-        .order-row { display: flex; align-items: center; gap: 0.6rem; margin: 0.8rem 0; flex-wrap: wrap; }
-        .quantity-input { width: 70px; padding: 0.5rem; border: 1.5px solid #e2cfc0; border-radius: 30px; text-align: center; }
-        .btn-wa { background: #25D366; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.4rem; }
-        .btn-wa:hover { background: #20b859; }
 
-        /* modal */
+        /* Cart and order styles */
+        .cart-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid #eee; }
+        .cart-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
+        .cart-item-info { flex: 1; }
+        .cart-item-actions { display: flex; align-items: center; gap: 0.5rem; }
+        .cart-item-actions input { width: 60px; padding: 0.3rem; border-radius: 30px; border: 1.5px solid #e2cfc0; text-align: center; }
+        .cart-item-remove { color: #c38e7b; cursor: pointer; }
+        .cart-total { font-weight: bold; text-align: right; padding: 1rem; }
+
+        /* Wishlist styles */
+        .wishlist-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid #eee; }
+        .wishlist-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
+        .wishlist-item-info { flex: 1; }
+        .remove-wishlist { color: #c38e7b; cursor: pointer; font-size: 1.2rem; }
+        .remove-wishlist:hover { color: #a67463; }
+        .empty-wishlist { text-align: center; padding: 2rem; color: #7e8c92; }
+
+        /* Delivery modal with DTDC */
+        .delivery-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+        .delivery-form input, .delivery-form textarea { width: 100%; padding: 0.8rem 1.2rem; border: 1.5px solid #e2cfc0; border-radius: 40px; background: #fffaf5; }
+        .pincode-row { display: flex; gap: 0.5rem; align-items: center; }
+        .pincode-row input { flex: 2; }
+        .pincode-row button { flex: 1; }
+        .delivery-estimate { background: #f1e0d6; border-radius: 30px; padding: 0.8rem; margin: 0.5rem 0; font-size: 0.9rem; }
+        .delivery-estimate i { margin-right: 0.3rem; color: #c38e7b; }
+        .dtdc-service-badge { display: inline-block; background: #c38e7b; color: white; padding: 0.2rem 1rem; border-radius: 30px; font-size: 0.7rem; margin-left: 0.5rem; }
+        .coupon-row { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; }
+        .coupon-row input { flex: 2; }
+        .coupon-row button { flex: 1; }
+        .order-summary { background: #f9f0e9; border-radius: 20px; padding: 1rem; margin: 1rem 0; }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: white; border-radius: 40px; padding: 2rem; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-content { background: white; border-radius: 40px; padding: 2rem; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
         .close-modal { float: right; font-size: 1.5rem; cursor: pointer; }
-        .summary-item { margin: 1rem 0; padding: 0.5rem; background: #f9f0e9; border-radius: 20px; }
 
-        /* recently viewed */
-        .recent-sidebar { position: fixed; left: 1rem; bottom: 1rem; background: white; border-radius: 30px; padding: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 200px; display: none; }
-        .recent-sidebar.visible { display: block; }
-        .recent-item { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; font-size: 0.8rem; }
-
-        /* floating whatsapp */
-        .floating-wa { position: fixed; bottom: 2rem; right: 2rem; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 8px 20px rgba(0,0,0,0.2); cursor: pointer; z-index: 99; transition: 0.3s; }
-        .floating-wa:hover { transform: scale(1.1); }
-
-        /* currency toggle */
         .currency-toggle { display: flex; gap: 0.5rem; align-items: center; }
         .currency-toggle button { background: none; border: 1px solid #e2cfc0; padding: 0.3rem 0.8rem; border-radius: 30px; cursor: pointer; }
         .currency-toggle button.active { background: #c38e7b; color: white; border-color: #c38e7b; }
+
+        .newsletter-section { background: linear-gradient(145deg, #fff2e8, #ffe5d8); border-radius: 50px; padding: 3rem; margin: 3rem 0; text-align: center; }
+        .newsletter-form { display: flex; gap: 1rem; max-width: 500px; margin: 2rem auto 0; }
+        .newsletter-form input { flex: 1; padding: 1rem 1.5rem; border: 2px solid #e2cfc0; border-radius: 50px; font-size: 1rem; }
+        .newsletter-form button { background: #c38e7b; color: white; border: none; padding: 1rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer; }
 
         footer { background: #1e2a2f; color: #fff9f2; padding: 2.5rem 0; margin-top: 4rem; border-radius: 40px 40px 0 0; }
         .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
         .footer-col p { color: #c0cbd1; }
         .footer-col i { margin-right: 0.5rem; color: #c38e7b; }
-        .newsletter { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .newsletter input { padding: 0.5rem 1rem; border-radius: 40px; border: none; flex: 1; }
-        .newsletter button { background: #c38e7b; color: white; border: none; padding: 0.5rem 1.5rem; border-radius: 40px; cursor: pointer; }
+        .copyright { text-align: center; padding-top: 2.5rem; color: #95a5a8; }
+
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #c38e7b; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <div class="blob"></div>
     <div class="blob2"></div>
 
-    <!-- Sticky Header -->
     <header class="sticky-header" id="mainHeader">
         <div class="header-container">
             <div class="logo">
                 <i class="fas fa-feather-alt"></i>
                 <span>artisan</span>
             </div>
-            <div class="nav-links">
-                <a href="#">home</a>
-                <a href="#handmade">handmade</a>
-                <a href="#clothes">clothes</a>
-                <a href="#story">story</a>
-                <a href="#contact">contact</a>
-            </div>
-            <div class="currency-toggle">
-                <button id="currencyINR" class="active">₹</button>
-                <button id="currencyUSD">$</button>
+            <div style="display: flex; align-items: center; gap: 2rem;">
+                <div class="nav-links">
+                    <a href="#">home</a>
+                    <a href="#handmade">handmade</a>
+                    <a href="#clothes">clothes</a>
+                    <a href="#story">story</a>
+                    <a href="#contact">contact</a>
+                </div>
+                <div class="header-actions">
+                    <button class="cart-btn" id="cartBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                    <button class="wishlist-btn" id="wishlistBtn">
+                        <i class="fas fa-heart"></i>
+                        <span class="wishlist-count" id="wishlistCount">0</span>
+                    </button>
+                    <div class="currency-toggle">
+                        <button id="currencyINR" class="active">₹</button>
+                        <button id="currencyUSD">$</button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
     <div class="container">
-        <!-- Hero section (same as before) -->
+        <!-- Hero section -->
         <section class="hero">
             <div class="hero-content">
                 <h1>handmade with <span>heart & soul</span></h1>
@@ -172,7 +206,7 @@
             </div>
         </div>
 
-        <!-- Product sections will be dynamically injected here -->
+        <!-- Product sections -->
         <div id="productSections"></div>
 
         <!-- Story Section -->
@@ -196,17 +230,17 @@
             </div>
         </section>
 
-        <!-- Newsletter signup -->
-        <div class="newsletter" style="margin: 2rem 0; text-align: center;">
-            <h3>Subscribe for updates</h3>
-            <div style="display: flex; gap: 0.5rem; max-width: 400px; margin: 1rem auto;">
-                <input type="email" placeholder="Your email" id="newsletterEmail">
-                <button id="newsletterBtn" class="btn">Subscribe</button>
-            </div>
+        <!-- Newsletter -->
+        <div class="newsletter-section">
+            <h2>Join our artisan community</h2>
+            <p>Get updates on new collections and exclusive offers</p>
+            <form class="newsletter-form" id="newsletterForm">
+                <input type="email" id="newsletterEmail" placeholder="Your email address" required>
+                <button type="submit">Subscribe</button>
+            </form>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -219,40 +253,64 @@
         </div>
     </footer>
 
-    <!-- Floating WhatsApp Widget -->
-    <div class="floating-wa" id="floatingWA" title="Chat with us">
-        <i class="fab fa-whatsapp"></i>
-    </div>
-
-    <!-- Recently Viewed Sidebar -->
-    <div class="recent-sidebar" id="recentSidebar">
-        <h4>Recently viewed</h4>
-        <div id="recentList"></div>
-    </div>
-
-    <!-- Order Summary Modal -->
-    <div id="orderModal" class="modal">
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Order Summary</h2>
-            <div id="summaryDetails"></div>
-            <div>
-                <label>Pincode for delivery estimate:</label>
-                <input type="text" id="pincode" maxlength="6" placeholder="e.g., 110001">
-                <button id="estimateBtn" class="btn">Estimate</button>
-                <span id="deliveryCharge"></span>
-            </div>
-            <div>
-                <label>Coupon code:</label>
-                <input type="text" id="couponCode" placeholder="SAVE10">
-                <button id="applyCoupon" class="btn">Apply</button>
-                <span id="discountMsg"></span>
-            </div>
-            <button id="confirmOrder" class="btn-wa" style="width:100%; margin-top:1rem;">Confirm & Send via WhatsApp</button>
+            <span class="close-modal" id="closeCart">&times;</span>
+            <h2>Your Cart 🛒</h2>
+            <div id="cartItems"></div>
+            <div class="cart-total" id="cartTotal"></div>
+            <button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Delivery</button>
         </div>
     </div>
 
-    <!-- Lightbox Modal for Images -->
+    <!-- Delivery Modal with DTDC & Google Maps -->
+    <div id="deliveryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeDelivery">&times;</span>
+            <h2>Delivery Details <span class="dtdc-service-badge">DTDC</span></h2>
+            <div class="delivery-form">
+                <input type="text" id="deliveryName" placeholder="Full Name" required>
+                <input type="text" id="deliveryAddress" placeholder="📮 Delivery Address" required>
+                <input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required>
+                <textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea>
+                
+                <!-- Pincode row with Google Maps distance calculation -->
+                <div class="pincode-row">
+                    <input type="text" id="pincode" placeholder="Enter Delivery Pincode" maxlength="6">
+                    <button class="btn" id="estimateDelivery">Calculate DTDC Rate</button>
+                </div>
+                <div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;">
+                    <i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br>
+                    <strong>₹<span id="deliveryCharge"></span></strong> • <span id="deliveryEta"></span><br>
+                    <small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small>
+                </div>
+
+                <!-- Coupon code -->
+                <div class="coupon-row">
+                    <input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)">
+                    <button class="btn" id="applyCouponBtn">Apply</button>
+                </div>
+                <div id="couponMessage" style="font-size:0.9rem; color:#c38e7b;"></div>
+
+                <!-- Order summary -->
+                <div class="order-summary" id="deliveryOrderSummary"></div>
+
+                <button class="btn-wa" id="sendOrder" style="width:100%;">Send Order via WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div id="wishlistModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeWishlist">&times;</span>
+            <h2>Your Wishlist ❤️</h2>
+            <div id="wishlistItems"></div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
     <div id="lightbox" class="modal" style="background: rgba(0,0,0,0.8);">
         <span class="close-modal" style="color:white; position:absolute; top:20px; right:30px;">&times;</span>
         <img id="lightboxImg" style="max-width:90%; max-height:90%; margin:auto; display:block;">
@@ -260,9 +318,9 @@
 
     <script>
         (function() {
-            // ---------- PRODUCT DATA (JSON structure) ----------
+            // ---------- PRODUCT DATA ----------
             const products = [
-                { id: 1, name: "Ceramic Mug", category: "handmade", basePrice: 2200, images: ["mug1", "mug2"], stock: 5, description: "Hand-thrown stoneware mug.", variants: null },
+                { id: 1, name: "Ceramic Mug", category: "handmade", basePrice: 2200, images: ["mug1", "mug2"], stock: 5, variants: null },
                 { id: 2, name: "Handwoven Scarf", category: "handmade", basePrice: 850, images: ["scarf1", "scarf2"], stock: 10, variants: null },
                 { id: 3, name: "Wooden Earrings", category: "handmade", basePrice: 700, images: ["earrings1", "earrings2"], stock: 3, variants: null },
                 { id: 4, name: "Embroidered Dress", category: "clothes", basePrice: 2200, images: ["dress1", "dress2"], stock: 2, variants: { sizes: ["S", "M", "L"], colors: ["Red", "Blue"] } },
@@ -270,7 +328,6 @@
                 { id: 6, name: "Linen Tote Bag", category: "clothes", basePrice: 1000, images: ["totebag1", "totebag2"], stock: 8, variants: null }
             ];
 
-            // For demo, we use placeholder image SVGs (you can replace with real images)
             const imageMap = {
                 mug1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23dbb59b'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='20' text-anchor='middle'%3Emug%3C/text%3E%3C/svg%3E",
                 mug2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23c38e7b'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='20' text-anchor='middle'%3Emug2%3C/text%3E%3C/svg%3E",
@@ -286,15 +343,105 @@
                 totebag2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%239e8d7c'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Etote2%3C/text%3E%3C/svg%3E"
             };
 
-            // Global state
-            let currentCurrency = 'INR'; // INR or USD
-            const exchangeRate = 83; // 1 USD = 83 INR (example)
+            // ---------- GLOBAL STATE ----------
+            let currentCurrency = 'INR';
+            const exchangeRate = 83;
             let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
             let recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
-            let reviews = JSON.parse(localStorage.getItem('reviews')) || {}; // { productId: [ {name, rating, comment} ] }
-            let currentOrderData = null; // for modal
 
-            // ---------- Helper functions ----------
+            // Delivery & coupon state
+            let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '' };
+            let currentDiscount = 0;
+
+            // Store origin pincode (Tirupati area)
+            const ORIGIN_PINCODE = '517501'; // Tirupati pincode
+
+            // Coupons
+            const coupons = {
+                'DTDC10': { type: 'percent', value: 10 },
+                'WELCOME': { type: 'fixed', value: 100 },
+                'FREESHIP': { type: 'fixed', value: 0 }
+            };
+
+            // ---------- DTDC Rate Calculation based on distance [citation:2][citation:6] ----------
+            function calculateDTDCRate(distanceKm, totalWeight = 1) {
+                // Weight categories - assume average 1kg per product for simplicity
+                // In production, you'd calculate total weight from cart items
+                
+                let baseRate = 0;
+                let serviceType = '';
+                
+                // Distance-based pricing per 500g slab [citation:2]
+                if (distanceKm <= 50) { // Local
+                    baseRate = 60; // DTDC Plus local rate
+                    serviceType = 'DTDC Plus (Local)';
+                } else if (distanceKm <= 200) { // Regional
+                    baseRate = 90; // Regional Plus rate
+                    serviceType = 'DTDC Regional Plus';
+                } else if (distanceKm <= 500) { // Zonal
+                    baseRate = 120; // Zonal Plus
+                    serviceType = 'DTDC Zonal Plus';
+                } else if (distanceKm <= 1500) { // National
+                    baseRate = 200; // National Plus
+                    serviceType = 'DTDC National Plus';
+                } else { // Long distance
+                    baseRate = 300; // Premium
+                    serviceType = 'DTDC Prime';
+                }
+
+                // Weight multiplier (per 500g) [citation:2]
+                const weightMultiplier = Math.ceil(totalWeight * 2); // Convert kg to 500g slabs
+                const finalCharge = baseRate * weightMultiplier;
+
+                // Estimate delivery time based on distance
+                let eta = '';
+                if (distanceKm <= 50) eta = 'Same day';
+                else if (distanceKm <= 200) eta = 'Next business day';
+                else if (distanceKm <= 500) eta = '2 business days';
+                else if (distanceKm <= 1500) eta = '3-4 business days';
+                else eta = '5-7 business days';
+
+                return {
+                    charge: finalCharge,
+                    service: serviceType,
+                    eta: eta
+                };
+            }
+
+            // ---------- Google Maps Distance Calculation ----------
+            async function calculateDistanceFromPincode(destPincode) {
+                return new Promise((resolve, reject) => {
+                    const origin = ORIGIN_PINCODE;
+                    const destination = destPincode;
+
+                    const service = new google.maps.DistanceMatrixService();
+                    service.getDistanceMatrix(
+                        {
+                            origins: [origin],
+                            destinations: [destination],
+                            travelMode: google.maps.TravelMode.DRIVING,
+                            unitSystem: google.maps.UnitSystem.METRIC,
+                        },
+                        (response, status) => {
+                            if (status === 'OK') {
+                                const result = response.rows[0].elements[0];
+                                if (result.status === 'OK') {
+                                    const distanceKm = result.distance.value / 1000; // Convert meters to km
+                                    const duration = result.duration.text;
+                                    resolve({ distance: distanceKm, duration });
+                                } else {
+                                    reject('Invalid destination pincode');
+                                }
+                            } else {
+                                reject('Distance calculation failed');
+                            }
+                        }
+                    );
+                });
+            }
+
+            // Format price
             function formatPrice(priceInINR) {
                 if (currentCurrency === 'USD') {
                     return '$' + (priceInINR / exchangeRate).toFixed(2);
@@ -302,305 +449,332 @@
                 return '₹' + priceInINR;
             }
 
-            function getStockBadge(stock) {
-                if (stock <= 0) return '<span class="stock-badge out-of-stock">Out of stock</span>';
-                if (stock <= 3) return '<span class="stock-badge low-stock">Only ' + stock + ' left</span>';
-                return '<span class="stock-badge in-stock">In stock</span>';
+            // Cart functions
+            function updateCartCount() {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                document.getElementById('cartCount').textContent = totalItems;
             }
 
-            // Render all products based on filters, search, sort
-            function renderProducts() {
-                const handmadeChecked = document.getElementById('filterHandmade').checked;
-                const clothesChecked = document.getElementById('filterClothes').checked;
-                const under1000Checked = document.getElementById('filterUnder1000').checked;
-                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-                const sortBy = document.getElementById('sortSelect').value;
+            function saveCart() {
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+            }
 
-                let filtered = products.filter(p => {
-                    if (!handmadeChecked && p.category === 'handmade') return false;
-                    if (!clothesChecked && p.category === 'clothes') return false;
-                    if (under1000Checked && p.basePrice >= 1000) return false;
-                    if (searchTerm && !p.name.toLowerCase().includes(searchTerm)) return false;
-                    return true;
-                });
-
-                // Sort
-                if (sortBy === 'priceAsc') filtered.sort((a,b) => a.basePrice - b.basePrice);
-                else if (sortBy === 'priceDesc') filtered.sort((a,b) => b.basePrice - a.basePrice);
-
-                // Separate into sections
-                const handmade = filtered.filter(p => p.category === 'handmade');
-                const clothes = filtered.filter(p => p.category === 'clothes');
-
-                let html = '';
-                if (handmade.length) {
-                    html += '<h2 class="section-title" id="handmade"><span>🧶 handmade collection</span></h2><div class="product-grid">';
-                    handmade.forEach(p => html += renderProductCard(p));
-                    html += '</div>';
+            function addToCart(productId, quantity, size, color) {
+                const existing = cart.find(item => 
+                    item.id === productId && 
+                    item.size === size && 
+                    item.color === color
+                );
+                if (existing) {
+                    existing.quantity += quantity;
+                } else {
+                    cart.push({ id: productId, quantity, size, color });
                 }
-                if (clothes.length) {
-                    html += '<h2 class="section-title" id="clothes"><span>👗 clothes collection</span></h2><div class="product-grid">';
-                    clothes.forEach(p => html += renderProductCard(p));
-                    html += '</div>';
-                }
-                document.getElementById('productSections').innerHTML = html || '<p>No products match.</p>';
-
-                // Attach event listeners after render
-                attachProductEvents();
+                saveCart();
+                alert('Added to cart!');
             }
 
-            function renderProductCard(p) {
-                const isWished = wishlist.includes(p.id);
-                const stockBadge = getStockBadge(p.stock);
-                // Main image first
-                const mainImage = imageMap[p.images[0]] || 'https://via.placeholder.com/200';
-                const thumbnails = p.images.map(img => imageMap[img]).filter(Boolean);
-
-                // Variants HTML if any
-                let variantsHtml = '';
-                if (p.variants) {
-                    variantsHtml = '<div class="product-variants">';
-                    if (p.variants.sizes) {
-                        variantsHtml += `<div class="variant-row"><label>Size:</label> <select class="size-select">${p.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
-                    }
-                    if (p.variants.colors) {
-                        variantsHtml += `<div class="variant-row"><label>Color:</label> <select class="color-select">${p.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
-                    }
-                    variantsHtml += '</div>';
-                }
-
-                return `
-                <div class="product-card" data-id="${p.id}" data-base-price="${p.basePrice}" data-stock="${p.stock}">
-                    <div class="wishlist-heart ${isWished ? 'active' : ''}" data-id="${p.id}"><i class="${isWished ? 'fas' : 'far'} fa-heart"></i></div>
-                    <div class="product-images" data-images='${JSON.stringify(p.images)}'>
-                        <img src="${mainImage}" class="main-image" alt="${p.name}">
-                        <div class="thumbnail-strip">
-                            ${thumbnails.map((src, idx) => `<img src="${src}" class="thumbnail ${idx===0?'active':''}" data-index="${idx}">`).join('')}
-                        </div>
-                    </div>
-                    <h4>${p.name}</h4>
-                    ${stockBadge}
-                    ${variantsHtml}
-                    <div class="price-info">
-                        <span class="base-price">${formatPrice(p.basePrice)}</span>
-                        <span class="total-price">total: ${formatPrice(p.basePrice)}</span>
-                    </div>
-                    <div class="delivery-note">+ delivery extra</div>
-                    <input type="text" class="detail-field" placeholder="full name">
-                    <input type="text" class="detail-field" placeholder="📮 delivery address">
-                    <input type="tel" class="detail-field" placeholder="📞 phone number">
-                    <textarea class="detail-field" placeholder="notes (optional)" rows="1"></textarea>
-                    <div class="order-row">
-                        <input type="number" min="1" value="1" class="quantity-input">
-                        <button class="btn-wa order-btn" data-id="${p.id}"><i class="fab fa-whatsapp"></i> order</button>
-                    </div>
-                </div>`;
+            // Wishlist functions
+            function updateWishlistCount() {
+                document.getElementById('wishlistCount').textContent = wishlist.length;
             }
 
-            function attachProductEvents() {
-                // Wishlist toggle
-                document.querySelectorAll('.wishlist-heart').forEach(heart => {
-                    heart.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const id = parseInt(this.dataset.id);
-                        if (wishlist.includes(id)) {
-                            wishlist = wishlist.filter(i => i !== id);
-                            this.classList.remove('active');
-                            this.innerHTML = '<i class="far fa-heart"></i>';
-                        } else {
-                            wishlist.push(id);
-                            this.classList.add('active');
-                            this.innerHTML = '<i class="fas fa-heart"></i>';
-                        }
-                        localStorage.setItem('wishlist', JSON.stringify(wishlist));
-                    });
-                });
-
-                // Image gallery: click thumbnail changes main image
-                document.querySelectorAll('.thumbnail').forEach(thumb => {
-                    thumb.addEventListener('click', function() {
-                        const card = this.closest('.product-card');
-                        const mainImg = card.querySelector('.main-image');
-                        const newSrc = this.src;
-                        mainImg.src = newSrc;
-                        card.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-                        this.classList.add('active');
-                    });
-                });
-
-                // Open lightbox on main image click
-                document.querySelectorAll('.main-image').forEach(img => {
-                    img.addEventListener('click', function() {
-                        document.getElementById('lightboxImg').src = this.src;
-                        document.getElementById('lightbox').style.display = 'flex';
-                    });
-                });
-
-                // Quantity update total
-                document.querySelectorAll('.quantity-input').forEach(input => {
-                    input.addEventListener('input', function() {
-                        const card = this.closest('.product-card');
-                        const basePrice = parseFloat(card.dataset.basePrice);
-                        const qty = parseInt(this.value) || 1;
-                        const totalSpan = card.querySelector('.total-price');
-                        totalSpan.textContent = 'total: ' + formatPrice(basePrice * qty);
-                    });
-                });
-
-                // Order button: show summary modal
-                document.querySelectorAll('.order-btn').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const card = this.closest('.product-card');
-                        const id = parseInt(card.dataset.id);
-                        const product = products.find(p => p.id === id);
-                        const nameInput = card.querySelector('input[placeholder*="full name"]').value;
-                        const addressInput = card.querySelector('input[placeholder*="address"]').value;
-                        const phoneInput = card.querySelector('input[placeholder*="phone"]').value;
-                        const notes = card.querySelector('textarea').value;
-                        const quantity = parseInt(card.querySelector('.quantity-input').value) || 1;
-                        const sizeSelect = card.querySelector('.size-select');
-                        const colorSelect = card.querySelector('.color-select');
-                        const size = sizeSelect ? sizeSelect.value : null;
-                        const color = colorSelect ? colorSelect.value : null;
-
-                        if (!nameInput || !addressInput || !phoneInput) {
-                            alert('Please fill name, address and phone');
-                            return;
-                        }
-
-                        currentOrderData = {
-                            productId: id,
-                            productName: product.name,
-                            basePrice: product.basePrice,
-                            quantity,
-                            name: nameInput,
-                            address: addressInput,
-                            phone: phoneInput,
-                            notes,
-                            size,
-                            color,
-                            discount: 0,
-                            deliveryCharge: 0
-                        };
-
-                        // Show modal with summary
-                        const modal = document.getElementById('orderModal');
-                        const summaryDiv = document.getElementById('summaryDetails');
-                        summaryDiv.innerHTML = `
-                            <div class="summary-item"><strong>${product.name}</strong> x${quantity} = ${formatPrice(product.basePrice * quantity)}</div>
-                            <div>Name: ${nameInput}</div>
-                            <div>Address: ${addressInput}</div>
-                            <div>Phone: ${phoneInput}</div>
-                            ${size ? '<div>Size: '+size+'</div>' : ''}
-                            ${color ? '<div>Color: '+color+'</div>' : ''}
-                            ${notes ? '<div>Notes: '+notes+'</div>' : ''}
-                            <div id="deliveryDisplay">Delivery: to be calculated</div>
-                            <div id="discountDisplay">Discount: ₹0</div>
-                            <div><strong>Total: ${formatPrice(product.basePrice * quantity)}</strong></div>
-                        `;
-                        modal.style.display = 'flex';
-
-                        // Clear previous estimates
-                        document.getElementById('deliveryCharge').innerText = '';
-                        document.getElementById('discountMsg').innerText = '';
-                    });
-                });
-
-                // Add to recently viewed when product card is clicked (anywhere)
-                document.querySelectorAll('.product-card').forEach(card => {
-                    card.addEventListener('click', function(e) {
-                        // avoid clicks on interactive elements
-                        if (e.target.closest('.btn-wa') || e.target.closest('.wishlist-heart') || e.target.closest('.thumbnail') || e.target.closest('.quantity-input') || e.target.closest('input') || e.target.closest('textarea') || e.target.closest('select')) return;
-                        const id = parseInt(this.dataset.id);
-                        if (!recentlyViewed.includes(id)) {
-                            recentlyViewed.unshift(id);
-                            if (recentlyViewed.length > 5) recentlyViewed.pop();
-                            localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
-                            updateRecentSidebar();
-                        }
-                    });
-                });
+            function saveWishlist() {
+                localStorage.setItem('wishlist', JSON.stringify(wishlist));
+                updateWishlistCount();
             }
 
-            // Recently viewed sidebar
-            function updateRecentSidebar() {
-                const listDiv = document.getElementById('recentList');
-                if (!recentlyViewed.length) {
-                    document.getElementById('recentSidebar').classList.remove('visible');
+            // Render cart modal
+            function renderCartModal() {
+                const container = document.getElementById('cartItems');
+                if (cart.length === 0) {
+                    container.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+                    document.getElementById('cartTotal').innerHTML = '';
                     return;
                 }
-                document.getElementById('recentSidebar').classList.add('visible');
+
                 let html = '';
-                recentlyViewed.forEach(id => {
-                    const p = products.find(p => p.id === id);
-                    if (p) {
-                        html += `<div class="recent-item"><img src="${imageMap[p.images[0]]}" width="30" height="30"> ${p.name}</div>`;
-                    }
+                let total = 0;
+                cart.forEach((item, index) => {
+                    const product = products.find(p => p.id === item.id);
+                    if (!product) return;
+                    const itemTotal = product.basePrice * item.quantity;
+                    total += itemTotal;
+                    html += `
+                        <div class="cart-item" data-index="${index}">
+                            <img src="${imageMap[product.images[0]]}" alt="${product.name}">
+                            <div class="cart-item-info">
+                                <h4>${product.name}</h4>
+                                <p>${formatPrice(product.basePrice)} each</p>
+                                ${item.size ? '<p>Size: ' + item.size + '</p>' : ''}
+                                ${item.color ? '<p>Color: ' + item.color + '</p>' : ''}
+                            </div>
+                            <div class="cart-item-actions">
+                                <input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${index}">
+                                <i class="fas fa-trash cart-item-remove" data-index="${index}"></i>
+                            </div>
+                        </div>
+                    `;
                 });
-                listDiv.innerHTML = html;
+                container.innerHTML = html;
+                document.getElementById('cartTotal').innerHTML = `<strong>Total: ${formatPrice(total)}</strong>`;
+
+                document.querySelectorAll('.cart-quantity').forEach(input => {
+                    input.addEventListener('change', function() {
+                        const index = this.dataset.index;
+                        const newQty = parseInt(this.value);
+                        if (newQty > 0) {
+                            cart[index].quantity = newQty;
+                            saveCart();
+                            renderCartModal();
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.cart-item-remove').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = this.dataset.index;
+                        cart.splice(index, 1);
+                        saveCart();
+                        renderCartModal();
+                    });
+                });
             }
 
-            // Delivery estimator (simple lookup)
-            const deliveryRates = { '110001': 50, '400001': 70, '700001': 100 }; // pincode -> charge
-            document.getElementById('estimateBtn')?.addEventListener('click', function() {
-                const pincode = document.getElementById('pincode').value;
-                const charge = deliveryRates[pincode] || 120; // default
-                document.getElementById('deliveryCharge').innerText = ' ₹' + charge;
-                if (currentOrderData) {
-                    currentOrderData.deliveryCharge = charge;
-                    document.getElementById('deliveryDisplay').innerText = `Delivery: ₹${charge}`;
+            // Render wishlist modal
+            function renderWishlistModal() {
+                const container = document.getElementById('wishlistItems');
+                if (wishlist.length === 0) {
+                    container.innerHTML = '<div class="empty-wishlist">Your wishlist is empty 💔</div>';
+                    return;
+                }
+
+                let html = '';
+                wishlist.forEach(id => {
+                    const product = products.find(p => p.id === id);
+                    if (product) {
+                        html += `
+                            <div class="wishlist-item" data-id="${product.id}">
+                                <img src="${imageMap[product.images[0]]}" alt="${product.name}">
+                                <div class="wishlist-item-info">
+                                    <h4>${product.name}</h4>
+                                    <p>${formatPrice(product.basePrice)}</p>
+                                </div>
+                                <i class="fas fa-trash remove-wishlist" data-id="${product.id}"></i>
+                            </div>
+                        `;
+                    }
+                });
+                container.innerHTML = html;
+
+                document.querySelectorAll('.remove-wishlist').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.dataset.id);
+                        wishlist = wishlist.filter(i => i !== id);
+                        saveWishlist();
+                        renderWishlistModal();
+                        renderProducts(); // update heart icons
+                    });
+                });
+            }
+
+            // Update order summary in delivery modal
+            function updateDeliverySummary() {
+                let subtotal = 0;
+                let totalWeight = 0;
+                cart.forEach(item => {
+                    const product = products.find(p => p.id === item.id);
+                    if (product) {
+                        subtotal += product.basePrice * item.quantity;
+                        totalWeight += item.quantity * 0.5; // Assume 500g per item
+                    }
+                });
+
+                const total = subtotal + currentDelivery.charge - currentDiscount;
+
+                let summaryHtml = `<strong>Subtotal:</strong> ₹${subtotal}<br>`;
+                summaryHtml += `<strong>Total Weight:</strong> ${totalWeight.toFixed(1)} kg<br>`;
+                if (currentDelivery.charge > 0) {
+                    summaryHtml += `<strong>DTDC Delivery:</strong> ₹${currentDelivery.charge} (${currentDelivery.service})<br>`;
+                }
+                if (currentDiscount > 0) summaryHtml += `<strong>Discount:</strong> -₹${currentDiscount}<br>`;
+                summaryHtml += `<strong style="font-size:1.2rem;">Total: ₹${total}</strong>`;
+
+                document.getElementById('deliveryOrderSummary').innerHTML = summaryHtml;
+            }
+
+            // Event listener for pincode estimation with Google Maps
+            document.getElementById('estimateDelivery').addEventListener('click', async function() {
+                const pincode = document.getElementById('pincode').value.trim();
+                if (!pincode || pincode.length !== 6 || !/^\d+$/.test(pincode)) {
+                    alert('Please enter a valid 6-digit pincode');
+                    return;
+                }
+
+                // Show loading
+                const area = document.getElementById('deliveryEstimateArea');
+                area.style.display = 'block';
+                document.getElementById('deliveryProvider').innerHTML = '<span class="loader"></span> Calculating DTDC rate...';
+
+                try {
+                    // Calculate distance using Google Maps
+                    const result = await calculateDistanceFromPincode(pincode);
+                    
+                    // Calculate total weight from cart
+                    const totalWeight = cart.reduce((sum, item) => {
+                        return sum + (item.quantity * 0.5); // Assume 500g per item
+                    }, 0);
+
+                    // Get DTDC rate based on distance
+                    const dtdcRate = calculateDTDCRate(result.distance, totalWeight);
+                    
+                    currentDelivery = {
+                        charge: dtdcRate.charge,
+                        provider: 'DTDC',
+                        eta: dtdcRate.eta,
+                        distance: Math.round(result.distance),
+                        service: dtdcRate.service
+                    };
+
+                    document.getElementById('deliveryProvider').innerHTML = `<i class="fas fa-truck"></i> DTDC Courier`;
+                    document.getElementById('deliveryCharge').innerText = currentDelivery.charge;
+                    document.getElementById('deliveryEta').innerText = currentDelivery.eta;
+                    document.getElementById('deliveryDistance').innerText = currentDelivery.distance;
+                    document.getElementById('deliveryService').innerText = currentDelivery.service;
+
+                    updateDeliverySummary();
+                } catch (error) {
+                    document.getElementById('deliveryProvider').innerHTML = 'Error calculating delivery. Please check pincode.';
+                    console.error(error);
                 }
             });
 
             // Coupon apply
-            document.getElementById('applyCoupon')?.addEventListener('click', function() {
-                const code = document.getElementById('couponCode').value;
-                let discount = 0;
-                if (code === 'SAVE10') discount = 0.1; // 10% off
-                else if (code === 'WELCOME') discount = 0.15;
-                if (discount > 0 && currentOrderData) {
-                    currentOrderData.discount = discount;
-                    const total = currentOrderData.basePrice * currentOrderData.quantity;
-                    const discAmount = Math.round(total * discount);
-                    document.getElementById('discountMsg').innerText = `Discount: ₹${discAmount}`;
-                    document.getElementById('discountDisplay').innerText = `Discount: -₹${discAmount}`;
-                } else {
-                    alert('Invalid code');
+            document.getElementById('applyCouponBtn').addEventListener('click', function() {
+                const code = document.getElementById('couponCode').value.trim().toUpperCase();
+                const coupon = coupons[code];
+                if (!coupon) {
+                    document.getElementById('couponMessage').innerText = 'Invalid coupon code';
+                    return;
                 }
+
+                let subtotal = 0;
+                cart.forEach(item => {
+                    const product = products.find(p => p.id === item.id);
+                    if (product) subtotal += product.basePrice * item.quantity;
+                });
+
+                if (coupon.type === 'percent') {
+                    currentDiscount = Math.round(subtotal * coupon.value / 100);
+                } else {
+                    currentDiscount = coupon.value;
+                }
+
+                if (currentDiscount > subtotal) currentDiscount = subtotal;
+
+                document.getElementById('couponMessage').innerHTML = `Discount applied: -₹${currentDiscount}`;
+                updateDeliverySummary();
             });
 
-            // Confirm order
-            document.getElementById('confirmOrder')?.addEventListener('click', function() {
-                if (!currentOrderData) return;
-                const d = currentOrderData;
-                const total = d.basePrice * d.quantity;
-                const disc = Math.round(total * d.discount);
-                const final = total - disc + d.deliveryCharge;
+            // Send order via WhatsApp
+            document.getElementById('sendOrder').addEventListener('click', function() {
+                const name = document.getElementById('deliveryName').value.trim();
+                const address = document.getElementById('deliveryAddress').value.trim();
+                const phone = document.getElementById('deliveryPhone').value.trim();
+                const notes = document.getElementById('deliveryNotes').value.trim();
+                const pincode = document.getElementById('pincode').value.trim();
 
-                let message = `Hello! I'd like to order:%0A`;
-                message += `- *${d.productName}* (x${d.quantity}) — ₹${d.basePrice} each, total ₹${total}%0A`;
-                message += `👤 Name: ${d.name}%0A`;
-                message += `📮 Address: ${d.address}%0A`;
-                message += `📞 Phone: ${d.phone}%0A`;
-                if (d.size) message += `Size: ${d.size}%0A`;
-                if (d.color) message += `Color: ${d.color}%0A`;
-                if (d.notes) message += `📝 Notes: ${d.notes}%0A`;
-                if (d.discount) message += `Discount: -₹${disc}%0A`;
-                message += `Delivery: ₹${d.deliveryCharge}%0A`;
-                message += `*Final total: ₹${final}*%0A`;
+                if (!name || !address || !phone || !pincode) {
+                    alert('Please fill all required fields (name, address, phone, pincode)');
+                    return;
+                }
+
+                let subtotal = 0;
+                let totalWeight = 0;
+                let message = `Hello! I'd like to place an order:%0A%0A`;
+                
+                cart.forEach(item => {
+                    const product = products.find(p => p.id === item.id);
+                    if (!product) return;
+                    const itemTotal = product.basePrice * item.quantity;
+                    subtotal += itemTotal;
+                    totalWeight += item.quantity * 0.5;
+                    message += `- *${product.name}* x${item.quantity}`;
+                    if (item.size) message += ` (Size: ${item.size}`;
+                    if (item.color) message += `${item.size ? ', ' : ' ('}Color: ${item.color}`;
+                    if (item.size || item.color) message += `)`;
+                    message += ` — ₹${product.basePrice} each, total ₹${itemTotal}%0A`;
+                });
+
+                const total = subtotal + currentDelivery.charge - currentDiscount;
+
+                message += `%0A👤 Name: ${name}%0A`;
+                message += `📮 Address: ${address}%0A`;
+                message += `📞 Phone: ${phone}%0A`;
+                message += `📍 Pincode: ${pincode}%0A`;
+                if (notes) message += `📝 Notes: ${notes}%0A`;
+                message += `📦 Total Weight: ${totalWeight.toFixed(1)} kg%0A`;
+                if (currentDelivery.charge > 0) {
+                    message += `🚚 DTDC Courier: ₹${currentDelivery.charge} (${currentDelivery.service})%0A`;
+                    message += `📏 Distance: ${currentDelivery.distance} km%0A`;
+                    message += `⏱️ Estimated Delivery: ${currentDelivery.eta}%0A`;
+                }
+                if (currentDiscount > 0) message += `🏷️ Discount: -₹${currentDiscount}%0A`;
+                message += `%0A*Grand Total: ₹${total}*%0A`;
                 message += `%0AThank you! 💛`;
 
                 const waUrl = `https://wa.me/15553278496?text=${message}`;
                 window.open(waUrl, '_blank');
-                document.getElementById('orderModal').style.display = 'none';
+                document.getElementById('deliveryModal').style.display = 'none';
+
+                // Optionally clear cart
+                cart = [];
+                saveCart();
+                renderCartModal();
             });
 
-            // Close modal
+            // Proceed to delivery
+            document.getElementById('proceedToDelivery').addEventListener('click', function() {
+                if (cart.length === 0) {
+                    alert('Your cart is empty');
+                    return;
+                }
+                // Reset delivery fields
+                document.getElementById('pincode').value = '';
+                document.getElementById('couponCode').value = '';
+                document.getElementById('deliveryEstimateArea').style.display = 'none';
+                document.getElementById('couponMessage').innerHTML = '';
+                currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '' };
+                currentDiscount = 0;
+                updateDeliverySummary();
+
+                document.getElementById('cartModal').style.display = 'none';
+                document.getElementById('deliveryModal').style.display = 'flex';
+            });
+
+            // Modal handling
+            document.getElementById('cartBtn').addEventListener('click', function() {
+                renderCartModal();
+                document.getElementById('cartModal').style.display = 'flex';
+            });
+
+            document.getElementById('wishlistBtn').addEventListener('click', function() {
+                renderWishlistModal();
+                document.getElementById('wishlistModal').style.display = 'flex';
+            });
+
             document.querySelectorAll('.close-modal').forEach(el => {
                 el.addEventListener('click', function() {
                     this.closest('.modal').style.display = 'none';
                 });
+            });
+
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
             });
 
             // Currency toggle
@@ -617,6 +791,151 @@
                 renderProducts();
             });
 
+            // ---------- PRODUCT RENDERING ----------
+            function renderProducts() {
+                const handmadeChecked = document.getElementById('filterHandmade').checked;
+                const clothesChecked = document.getElementById('filterClothes').checked;
+                const under1000Checked = document.getElementById('filterUnder1000').checked;
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const sortBy = document.getElementById('sortSelect').value;
+
+                let filtered = products.filter(p => {
+                    if (!handmadeChecked && p.category === 'handmade') return false;
+                    if (!clothesChecked && p.category === 'clothes') return false;
+                    if (under1000Checked && p.basePrice >= 1000) return false;
+                    if (searchTerm && !p.name.toLowerCase().includes(searchTerm)) return false;
+                    return true;
+                });
+
+                if (sortBy === 'priceAsc') filtered.sort((a,b) => a.basePrice - b.basePrice);
+                else if (sortBy === 'priceDesc') filtered.sort((a,b) => b.basePrice - a.basePrice);
+
+                const handmade = filtered.filter(p => p.category === 'handmade');
+                const clothes = filtered.filter(p => p.category === 'clothes');
+
+                let html = '';
+                if (handmade.length) {
+                    html += '<h2 class="section-title" id="handmade"><span>🧶 handmade collection</span></h2><div class="product-grid">';
+                    handmade.forEach(p => html += renderProductCard(p));
+                    html += '</div>';
+                }
+                if (clothes.length) {
+                    html += '<h2 class="section-title" id="clothes"><span>👗 clothes collection</span></h2><div class="product-grid">';
+                    clothes.forEach(p => html += renderProductCard(p));
+                    html += '</div>';
+                }
+                document.getElementById('productSections').innerHTML = html || '<p>No products match.</p>';
+
+                attachProductEvents();
+                updateWishlistCount();
+            }
+
+            function renderProductCard(p) {
+                const isWished = wishlist.includes(p.id);
+                const stockBadge = p.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock">Out of stock</span>';
+                const mainImage = imageMap[p.images[0]] || '';
+                const thumbnails = p.images.map(img => imageMap[img]).filter(Boolean);
+
+                let variantsHtml = '';
+                if (p.variants) {
+                    variantsHtml = '<div class="product-variants">';
+                    if (p.variants.sizes) {
+                        variantsHtml += `<div class="variant-row"><label>Size:</label> <select class="size-select">${p.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
+                    }
+                    if (p.variants.colors) {
+                        variantsHtml += `<div class="variant-row"><label>Color:</label> <select class="color-select">${p.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
+                    }
+                    variantsHtml += '</div>';
+                }
+
+                return `
+                <div class="product-card" data-id="${p.id}" data-base-price="${p.basePrice}">
+                    <div class="wishlist-heart ${isWished ? 'active' : ''}" data-id="${p.id}"><i class="${isWished ? 'fas' : 'far'} fa-heart"></i></div>
+                    <div class="product-images">
+                        <img src="${mainImage}" class="main-image" alt="${p.name}">
+                        <div class="thumbnail-strip">
+                            ${thumbnails.map((src, idx) => `<img src="${src}" class="thumbnail ${idx===0?'active':''}" data-index="${idx}">`).join('')}
+                        </div>
+                    </div>
+                    <h4>${p.name}</h4>
+                    ${stockBadge}
+                    ${variantsHtml}
+                    <div class="price-info">
+                        <span class="base-price">${formatPrice(p.basePrice)}</span>
+                    </div>
+                    <div class="order-row">
+                        <input type="number" min="1" value="1" class="quantity-input">
+                        <button class="btn-cart add-to-cart" data-id="${p.id}"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                    </div>
+                </div>`;
+            }
+
+            function attachProductEvents() {
+                // Wishlist
+                document.querySelectorAll('.wishlist-heart').forEach(heart => {
+                    heart.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = parseInt(this.dataset.id);
+                        if (wishlist.includes(id)) {
+                            wishlist = wishlist.filter(i => i !== id);
+                            this.classList.remove('active');
+                            this.innerHTML = '<i class="far fa-heart"></i>';
+                        } else {
+                            wishlist.push(id);
+                            this.classList.add('active');
+                            this.innerHTML = '<i class="fas fa-heart"></i>';
+                        }
+                        saveWishlist();
+                    });
+                });
+
+                // Image gallery
+                document.querySelectorAll('.thumbnail').forEach(thumb => {
+                    thumb.addEventListener('click', function() {
+                        const card = this.closest('.product-card');
+                        const mainImg = card.querySelector('.main-image');
+                        mainImg.src = this.src;
+                        card.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+
+                // Lightbox
+                document.querySelectorAll('.main-image').forEach(img => {
+                    img.addEventListener('click', function() {
+                        document.getElementById('lightboxImg').src = this.src;
+                        document.getElementById('lightbox').style.display = 'flex';
+                    });
+                });
+
+                // Add to cart
+                document.querySelectorAll('.add-to-cart').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const card = this.closest('.product-card');
+                        const id = parseInt(card.dataset.id);
+                        const quantity = parseInt(card.querySelector('.quantity-input').value) || 1;
+                        const sizeSelect = card.querySelector('.size-select');
+                        const colorSelect = card.querySelector('.color-select');
+                        const size = sizeSelect ? sizeSelect.value : null;
+                        const color = colorSelect ? colorSelect.value : null;
+                        addToCart(id, quantity, size, color);
+                    });
+                });
+
+                // Recently viewed
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.addEventListener('click', function(e) {
+                        if (e.target.closest('.wishlist-heart') || e.target.closest('.thumbnail') || e.target.closest('.add-to-cart') || e.target.closest('.quantity-input')) return;
+                        const id = parseInt(this.dataset.id);
+                        if (!recentlyViewed.includes(id)) {
+                            recentlyViewed.unshift(id);
+                            if (recentlyViewed.length > 5) recentlyViewed.pop();
+                            localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+                        }
+                    });
+                });
+            }
+
             // Filter events
             document.getElementById('searchInput').addEventListener('input', renderProducts);
             document.getElementById('filterHandmade').addEventListener('change', renderProducts);
@@ -624,18 +943,17 @@
             document.getElementById('filterUnder1000').addEventListener('change', renderProducts);
             document.getElementById('sortSelect').addEventListener('change', renderProducts);
 
-            // Floating WhatsApp
-            document.getElementById('floatingWA').addEventListener('click', function() {
-                window.open('https://wa.me/15553278496', '_blank');
+            // Sticky header
+            window.addEventListener('scroll', function() {
+                const header = document.getElementById('mainHeader');
+                if (window.scrollY > 50) header.classList.add('scrolled');
+                else header.classList.remove('scrolled');
             });
 
-            // Newsletter signup
-            document.getElementById('newsletterBtn').addEventListener('click', function() {
-                const email = document.getElementById('newsletterEmail').value;
-                if (email) {
-                    alert('Subscribed! (demo)');
-                    // You could send to a Google Form via fetch
-                } else alert('Enter email');
+            // Newsletter (demo)
+            document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Subscribed! (demo)');
             });
 
             // Lightbox close
@@ -643,16 +961,10 @@
                 if (e.target === this) this.style.display = 'none';
             });
 
-            // Sticky header transparency
-            window.addEventListener('scroll', function() {
-                const header = document.getElementById('mainHeader');
-                if (window.scrollY > 50) header.classList.add('scrolled');
-                else header.classList.remove('scrolled');
-            });
-
-            // Initial render
+            // Initialize
             renderProducts();
-            updateRecentSidebar();
+            updateCartCount();
+            updateWishlistCount();
         })();
     </script>
 </body>
