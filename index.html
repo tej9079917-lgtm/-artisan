@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>artisan & clothes · handmade with love</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fefaf5;
+            color: #1e2a2f;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .blob {
+            position: fixed;
+            top: -20vh;
+            right: -10vw;
+            width: 70vw;
+            height: 70vw;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 215, 175, 0.4) 0%, rgba(245, 215, 200, 0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .blob2 {
+            position: fixed;
+            bottom: -10vh;
+            left: -5vw;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle at 70% 30%, rgba(190, 220, 255, 0.5) 0%, rgba(210, 235, 255, 0) 70%);
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* sticky header */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            background: #fefaf5;
+            transition: background 0.3s ease, backdrop-filter 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .sticky-header.scrolled {
+            background: rgba(254, 250, 245, 0.4);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo i {
+            color: #c38e7b;
+            font-size: 2rem;
+            transform: rotate(5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover i {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.2rem;
+            font-weight: 500;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1e2a2f;
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #c38e7b;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        section[id], h2[id] {
+            scroll-margin-top: 90px;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .btn {
+            background: #1e2a2f;
+            color: #fff9f2;
+            padding: 0.7rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: 0.25s ease;
+            box-shadow: 0 8px 20px -8px rgba(0,0,0,0.2);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: #2d3f47;
+            transform: scale(1.02) translateY(-2px);
+            box-shadow: 0 16px 28px -8px rgba(0,0,0,0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #1e2a2f;
+            color: #1e2a2f;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: #1e2a2f;
+            color: #fff9f2;
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 3rem;
+            padding: 2.5rem 0 4rem;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .hero-content {
+            flex: 1 1 350px;
+            animation: fadeUp 1s ease-out;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2.4rem, 5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-content h1 span {
+            background: linear-gradient(145deg, #c38e7b, #dcb196);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: #3f4c53;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-visual {
+            flex: 1 1 350px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            animation: float 6s infinite alternate ease-in-out;
+        }
+
+        .hero-visual img {
+            max-width: 100%;
+            width: 400px;
+            filter: drop-shadow(0 20px 30px rgba(195,142,123,0.2));
+            border-radius: 30px;
+            transform: rotate(2deg);
+            transition: transform 0.4s;
+        }
+
+        .hero-visual:hover img {
+            transform: rotate(0deg) scale(1.01);
+        }
+
+        .floating-tag {
+            position: absolute;
+            top: 15%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 25px -8px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+            animation: popTag 3s infinite;
+        }
+
+        @keyframes popTag {
+            0%,100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .feature-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            padding: 3rem 0 4rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 2rem 1.8rem;
+            border-radius: 30px;
+            flex: 1 1 180px;
+            text-align: center;
+            border: 1px solid rgba(255, 250, 240, 0.8);
+            box-shadow: 0 20px 35px -12px rgba(195,142,123,0.15);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s;
+        }
+
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 32px 45px -12px #dcb196;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #c38e7b;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin: 2rem 0 1rem;
+        }
+
+        .section-title span {
+            background: #f1e0d6;
+            padding: 0.2rem 1rem;
+            border-radius: 60px;
+            display: inline-block;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0 4rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 35px;
+            padding: 1.8rem 1.2rem 1.8rem;
+            text-align: center;
+            box-shadow: 0 18px 35px -10px rgba(0,0,0,0.05);
+            transition: all 0.35s;
+            border: 1px solid rgba(255,235,220,0.7);
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) scale(1.01);
+            box-shadow: 0 35px 50px -18px #dcb196;
+        }
+
+        .product-img {
+            width: 130px;
+            height: 130px;
+            background: linear-gradient(145deg, #f6e4da, #f5dacb);
+            border-radius: 50%;
+            margin: 0 auto 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.2rem;
+            color: #c38e7b;
+            transition: 0.3s;
+        }
+
+        .product-card:hover .product-img {
+            transform: rotate(5deg) scale(1.02);
+        }
+
+        .product-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .price-info {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0.3rem;
+            margin: 0.4rem 0;
+            font-size: 1.1rem;
+            flex-wrap: wrap;
+        }
+        .price-info .base-price {
+            font-weight: 500;
+            color: #3f4c53;
+        }
+        .price-info .total-price {
+            font-weight: 700;
+            color: #1e2a2f;
+            background: #f1e0d6;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+        }
+
+        .delivery-note {
+            font-size: 0.8rem;
+            color: #7e8c92;
+            margin: 0.2rem 0 0.5rem;
+            font-style: italic;
+        }
+
+        .detail-field {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            margin: 0.3rem 0;
+            border: 1.5px solid #e2cfc0;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            background: #fffaf5;
+        }
+
+        .detail-field:focus {
+            outline: none;
+            border-color: #c38e7b;
+        }
+
+        .order-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin: 0.8rem 0;
+            flex-wrap: wrap;
+        }
+
+        .quantity-input {
+            width: 70px;
+            padding: 0.5rem;
+            border: 1.5px solid #e2cfc0;
+            border-radius: 30px;
+            text-align: center;
+            font-weight: 500;
+            background: #fffaf5;
+            font-size: 1rem;
+        }
+
+        .btn-wa {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 5px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-wa:hover {
+            background: #20b859;
+            transform: scale(1.02);
+        }
+
+        .btn-wa i {
+            font-size: 1.1rem;
+        }
+
+        .story-section {
+            background: #fff6f0;
+            border-radius: 50px;
+            padding: 3.5rem 2.5rem;
+            margin: 4rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 3rem;
+            box-shadow: 0 25px 40px -20px rgba(0,0,0,0.1);
+        }
+
+        .story-content {
+            flex: 2 1 300px;
+        }
+
+        .story-content h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+        }
+
+        .story-content p {
+            font-size: 1.1rem;
+            color: #3f4c53;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .story-image {
+            flex: 1 1 200px;
+            text-align: center;
+        }
+
+        .story-image i {
+            font-size: 10rem;
+            color: #dbb59b;
+            opacity: 0.8;
+        }
+
+        .contact-section {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            border-radius: 50px;
+            padding: 3rem 2rem;
+            margin: 4rem 0;
+            border: 1px solid #ffeede;
+        }
+
+        .contact-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            background: white;
+            border-radius: 40px;
+            padding: 2rem 2rem;
+            flex: 1 1 220px;
+            text-align: center;
+            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -10px #dbb59b;
+        }
+
+        .contact-item i {
+            font-size: 2.5rem;
+            color: #c38e7b;
+            margin-bottom: 1rem;
+        }
+
+        .contact-item h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-item .btn-wa {
+            margin-top: 1rem;
+            display: inline-flex;
+        }
+
+        .testimonial-section {
+            background: rgba(243, 224, 212, 0.4);
+            border-radius: 60px 60px 30px 30px;
+            padding: 3rem 0;
+            margin: 3rem 0;
+        }
+
+        .testimonial-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 40px;
+            padding: 2rem 2rem 1.8rem;
+            max-width: 320px;
+            box-shadow: 0 20px 30px -15px #dbbcaa;
+            transition: 0.25s;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .testimonial-card.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .testimonial-card:nth-child(2) {
+            transition-delay: 0.1s;
+        }
+        .testimonial-card:nth-child(3) {
+            transition-delay: 0.2s;
+        }
+
+        .testimonial-card i {
+            color: #c38e7b;
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .testimonial-card p {
+            font-style: italic;
+            margin-bottom: 1.2rem;
+        }
+
+        .customer {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .customer .avatar {
+            width: 45px;
+            height: 45px;
+            background: #eed7ca;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #7e5a48;
+        }
+
+        footer {
+            background: #1e2a2f;
+            color: #fff9f2;
+            padding: 2.5rem 0;
+            margin-top: 4rem;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .footer-col p {
+            color: #c0cbd1;
+            margin-top: 0.8rem;
+        }
+
+        .footer-col i {
+            margin-right: 0.5rem;
+            color: #c38e7b;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2.5rem;
+            color: #95a5a8;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-15px); }
+        }
+
+        .hidden-init {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+
+        .hidden-init.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .product-card:nth-child(1) { transition-delay: 0.05s; }
+        .product-card:nth-child(2) { transition-delay: 0.1s; }
+        .product-card:nth-child(3) { transition-delay: 0.15s; }
+        .product-card:nth-child(4) { transition-delay: 0.2s; }
+        .product-card:nth-child(5) { transition-delay: 0.25s; }
+        .product-card:nth-child(6) { transition-delay: 0.3s; }
+
+        @media (max-width: 700px) {
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="blob"></div>
+    <div class="blob2"></div>
+
+    <header class="sticky-header" id="mainHeader">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-feather-alt"></i>
+                <span>artisan</span>
+            </div>
+            <div class="nav-links">
+                <a href="#">home</a>
+                <a href="#handmade">handmade</a>
+                <a href="#clothes">clothes</a>
+                <a href="#story">story</a>
+                <a href="#contact">contact</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>handmade with <span>heart & soul</span></h1>
+                <p>Unique dresses, ceramics, and textiles — each piece tells a story. Direct from maker to you.</p>
+                <div class="hero-buttons">
+                    <a href="#handmade" class="btn">shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i></a>
+                    <a href="#clothes" class="btn btn-outline">shop clothes</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23f2dfd3' rx='60'/%3E%3Ccircle cx='140' cy='140' r='45' fill='%23dbb59b'/%3E%3Ccircle cx='260' cy='150' r='35' fill='%23c38e7b'/%3E%3Cpath d='M120 240 Q200 300 280 240' stroke='%239f6e5b' stroke-width='14' fill='none' stroke-linecap='round' /%3E%3Crect x='160' y='260' width='80' height='60' rx='12' fill='%23aa7a64' /%3E%3C/svg%3E"
+                     alt="handmade illustration">
+                <div class="floating-tag">
+                    <i class="fas fa-heart" style="color: #c38e7b;"></i>  ethically made
+                </div>
+            </div>
+        </section>
+
+        <div class="feature-grid">
+            <div class="feature-card hidden-init">
+                <i class="fas fa-hands"></i>
+                <h3>ethical making</h3>
+                <p>by local artisans</p>
+            </div>
+            <div class="feature-card hidden-init">
+                <i class="fas fa-palette"></i>
+                <h3>unique designs</h3>
+                <p>no mass production</p>
+            </div>
+            <div class="feature-card hidden-init">
+                <i class="fas fa-leaf"></i>
+                <h3>natural fibers</h3>
+                <p>cotton, wool, linen</p>
+            </div>
+            <div class="feature-card hidden-init">
+                <i class="fas fa-shipping-fast"></i>
+                <h3>fast & safe</h3>
+                <p>carbon-neutral</p>
+            </div>
+        </div>
+
+        <!-- HANDMADE SECTION -->
+        <h2 class="section-title" id="handmade"><span>🧶 handmade collection</span></h2>
+        <div class="product-grid">
+            <!-- product 1: ceramic mug ₹2200 -->
+            <div class="product-card hidden-init" data-base-price="2200">
+                <div class="product-img"><i class="fas fa-mug-hot"></i></div>
+                <h4>ceramic mug</h4>
+                <div class="price-info">
+                    <span class="base-price">₹<span class="base-value">2200</span></span>
+                    <span class="total-price">total: ₹<span class="total-value">2200</span></span>
+                </div>
+                <div class="delivery-note">+ delivery charges extra as per location</div>
+                <div class="order-row">
+                    <input type="number" min="1" value="1" class="quantity-input" aria-label="Quantity">
+                </div>
+                <input type="text" class="detail-field" placeholder="full name">
+                <input type="text" class="detail-field" placeholder="📮 delivery address">
+                <input type="tel" class="detail-field" placeholder="📞 phone number">
+                <textarea class="detail-field" placeholder="additional notes (optional)" rows="1" style="resize: vertical;"></textarea>
+                <button class="btn-wa" data-product="Ceramic mug"><i class="fab fa-whatsapp"></i> order via WhatsApp</button>
+            </div>
+            <!-- product 2: handwoven scarf ₹850 -->
+            <div class="product-card hidden-init" data-base-price="850">
+                <div class="product-img"><i class="fas fa-scarf"></i></div>
+                <h4>handwoven scarf</h4>
+                <div class="price-info">
+                    <span class="base-price">₹<span class="base-value">850</span></span>
+                    <span class="total-price">total: ₹<span class="total-value">850</span></span>
+                </div>
+                <div class="delivery-note">+ delivery charges extra as per location</div>
+                <div class="order-row">
+                    <input type="number" min="1" value="1" class="quantity-input" aria-label="Quantity">
+                </div>
+                <input type="text" class="detail-field" placeholder="full name">
+                <input type="text" class="detail-field" placeholder="📮 delivery address">
+                <input type="tel" class="detail-field" placeholder="📞 phone number">
+                <textarea class="detail-field" placeholder="additional notes (optional)" rows="1" style="resize: vertical;"></textarea>
+                <button class="btn-wa" data-product="Handwoven scarf"><i class="fab fa-whatsapp"></i> order via WhatsApp</button>
+            </div>
+            <!-- product 3: wooden earrings ₹700 -->
+            <div class="product-card hidden-init" data-base-price="700">
+                <div class="product-img"><i class="fas fa-gem"></i></div>
+                <h4>wooden earrings</h4>
+                <div class="price-info">
+                    <span class="base-price">₹<span class="base-value">700</span></span>
+                    <span class="total-price">total: ₹<span class="total-value">700</span></span>
+                </div>
+                <div class="delivery-note">+ delivery charges extra as per location</div>
+                <div class="order-row">
+                    <input type="number" min="1" value="1" class="quantity-input" aria-label="Quantity">
+                </div>
+                <input type="text" class="detail-field" placeholder="full name">
+                <input type="text" class="detail-field" placeholder="📮 delivery address">
+                <input type="tel" class="detail-field" placeholder="📞 phone number">
+                <textarea class="detail-field" placeholder="additional notes (optional)" rows="1" style="resize: vertical;"></textarea>
+                <button class="btn-wa" data-product="Wooden earrings"><i class="fab fa-whatsapp"></i> order via WhatsApp</button>
+            </div>
+        </div>
+
+        <!-- CLOTHES SECTION -->
+        <h2 class="section-title" id="clothes"><span>👗 clothes collection</span></h2>
+        <div class="product-grid">
+            <!-- product 4: embroidered dress ₹2200 -->
+            <div class="product-card hidden-init" data-base-price="2200">
+                <div class="product-img"><i class="fas fa-tshirt"></i></div>
+                <h4>embroidered dress</h4>
+                <div class="price-info">
+                    <span class="base-price">₹<span class="base-value">2200</span></span>
+                    <span class="total-price">total: ₹<span class="total-value">2200</span></span>
+                </div>
+                <div class="delivery-note">+ delivery charges extra as per location</div>
+                <div class="order-row">
+                    <input type="number" min="1" value="1" class="quantity-input" aria-label="Quantity">
+                </div>
+                <input type="text" class="detail-field" placeholder="full name">
+                <input type="text" class="detail-field" placeholder="📮 delivery address">
+                <input type="tel" class="detail-field" placeholder="📞 phone number">
+                <textarea class="detail-field" placeholder="additional notes (optional) e.g., size" rows="1" style="resize: vertical;"></textarea>
+                <button class="btn-wa" data-product="Embroidered dress"><i class="fab fa-whatsapp"></i> order via WhatsApp</button>
+            </div>
+            <!-- product 5: knitted sweater ₹2700 -->
+            <div class="product-card hidden-init" data-base-price="2700">
+                <div class="product-img"><i class="fas fa-vest"></i></div>
+                <h4>knitted sweater</h4>
+                <div class="price-info">
+                    <span class="base-price">₹<span class="base-value">2700</span></span>
+                    <span class="total-price">total: ₹<span class="total-value">2700</span></span>
+                </div>
+                <div class="delivery-note">+ delivery charges extra as per location</div>
+                <div class="order-row">
+                    <input type="number" min="1" value="1" class="quantity-input" aria-label="Quantity">
+                </div>
+                <input type="text" class="detail-field" placeholder="full name">
+                <input type="text" class="detail-field" placeholder="📮 delivery address">
+                <input type="tel" class="detail-field" placeholder="📞 phone number">
+                <textarea class="detail-field" placeholder="additional notes (optional) e.g., size" rows="1" style="resize: vertical;"></textarea>
+                <button class="btn-wa" data-product="Knitted sweater"><i class="fab fa-whatsapp"></i> order via WhatsApp</button>
+            </div>
+            <!-- product 6: linen tote bag ₹1000 -->
+            <div class="product-card hidden-init" data-base-price="1000">
+                <div class="product-img"><i class="fas fa-bag-shopping"></i></div>
+                <h4>linen tote bag</h4>
+                <div class="price-info">
+                    <span class="base-price">₹<span class="base-value">1000</span></span>
+                    <span class="total-price">total: ₹<span class="total-value">1000</span></span>
+                </div>
+                <div class="delivery-note">+ delivery charges extra as per location</div>
+                <div class="order-row">
+                    <input type="number" min="1" value="1" class="quantity-input" aria-label="Quantity">
+                </div>
+                <input type="text" class="detail-field" placeholder="full name">
+                <input type="text" class="detail-field" placeholder="📮 delivery address">
+                <input type="tel" class="detail-field" placeholder="📞 phone number">
+                <textarea class="detail-field" placeholder="additional notes (optional)" rows="1" style="resize: vertical;"></textarea>
+                <button class="btn-wa" data-product="Linen tote bag"><i class="fab fa-whatsapp"></i> order via WhatsApp</button>
+            </div>
+        </div>
+
+        <!-- OUR STORY SECTION -->
+        <section id="story" class="story-section hidden-init">
+            <div class="story-content">
+                <h2>our story</h2>
+                <p>Artisan was born in a small workshop surrounded by looms and clay. We believe that objects made by hand carry a warmth that machines can't replicate. Every dress, every mug, every scarf is crafted slowly by skilled artisans who pour their hearts into their work.</p>
+                <p>We collaborate directly with makers from rural communities, ensuring fair wages and preserving traditional techniques. When you choose Artisan, you become part of a story — one that values people and planet over mass production.</p>
+                <p><i class="fas fa-feather-alt" style="color:#c38e7b;"></i> thank you for keeping handmade alive.</p>
+            </div>
+            <div class="story-image">
+                <i class="fas fa-hands-praying"></i>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="contact-section hidden-init">
+            <h2 class="section-title" style="margin-top:0;"><span>📬 get in touch</span></h2>
+            <div class="contact-grid">
+                <div class="contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <h4>WhatsApp</h4>
+                    <p>quick replies, order updates</p>
+                    <a href="https://wa.me/15553278496" target="_blank" class="btn-wa" style="text-decoration: none;"><i class="fab fa-whatsapp"></i> chat now</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <h4>Email</h4>
+                    <p>hello@artisan.crafts</p>
+                    <p style="font-size:0.9rem;">we reply within 24h</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <h4>Phone</h4>
+                    <p>+1 (555) 327‑8496</p>
+                    <p style="font-size:0.9rem;">Mon-Fri 9am–6pm</p>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-pin"></i>
+                    <h4>Studio</h4>
+                    <p>Portland, OR</p>
+                    <p>visits by appointment</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="testimonial-section">
+            <div class="container" style="padding: 0 2rem;">
+                <h2 class="section-title" style="margin-top: 0;"><span>💬 makers’ love 💬</span></h2>
+                <div class="testimonial-grid">
+                    <div class="testimonial-card hidden-init">
+                        <i class="fas fa-quote-left"></i>
+                        <p>The dress feels so special, like wearing art. I get compliments every time.</p>
+                        <div class="customer">
+                            <span class="avatar">EL</span>
+                            <span>Elena, artist</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card hidden-init">
+                        <i class="fas fa-quote-left"></i>
+                        <p>I ordered a ceramic mug for my sister – she cried. It's that beautiful.</p>
+                        <div class="customer">
+                            <span class="avatar">MN</span>
+                            <span>Mina, potter</span>
+                        </div>
+                    </div>
+                    <div class="testimonial-card hidden-init">
+                        <i class="fas fa-quote-left"></i>
+                        <p>Quick WhatsApp response and the scarf arrived in two days. Amazing!</p>
+                        <div class="customer">
+                            <span class="avatar">OJ</span>
+                            <span>Ori, designer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h4><i class="fas fa-feather-alt"></i> artisan collective</h4>
+                    <p>celebrating hands that create.<br>every purchase supports a maker.</p>
+                </div>
+                <div class="footer-col">
+                    <h5>explore</h5>
+                    <p>new arrivals<br>makers<br>our story</p>
+                </div>
+                <div class="footer-col">
+                    <h5>social</h5>
+                    <p>ig · fb · pinterest</p>
+                </div>
+                <div class="footer-col">
+                    <h5>hello@artisan.crafts</h5>
+                    <p><i class="fas fa-phone-alt"></i> +1 (555) 327‑8496</p>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2026 artisan — made slowly, with intention
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            // Sticky header transparency
+            const header = document.getElementById('mainHeader');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            // Intersection Observer for reveal animations
+            const targets = document.querySelectorAll('.hidden-init');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2, rootMargin: '0px 0px -20px 0px' });
+            targets.forEach(el => observer.observe(el));
+
+            // Dynamic price update based on quantity
+            document.querySelectorAll('.product-card').forEach(card => {
+                const basePrice = parseFloat(card.dataset.basePrice);
+                const quantityInput = card.querySelector('.quantity-input');
+                const totalSpan = card.querySelector('.total-value');
+
+                function updateTotal() {
+                    let qty = parseInt(quantityInput.value);
+                    if (isNaN(qty) || qty < 1) qty = 1;
+                    quantityInput.value = qty;
+                    totalSpan.textContent = (basePrice * qty).toFixed(0);
+                }
+
+                quantityInput.addEventListener('input', updateTotal);
+                updateTotal();
+            });
+
+            // WhatsApp order buttons (owner's number)
+            const OWNER_WHATSAPP = '15553278496';  // replace with your actual WhatsApp number
+
+            document.querySelectorAll('.product-card .btn-wa').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const card = this.closest('.product-card');
+                    if (!card) return;
+
+                    const productName = this.dataset.product;
+                    const basePrice = parseFloat(card.dataset.basePrice);
+                    const quantityInput = card.querySelector('.quantity-input');
+                    const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+                    const total = basePrice * quantity;
+
+                    const nameInput = card.querySelector('input[placeholder*="full name"]');
+                    const addressInput = card.querySelector('input[placeholder*="address"]');
+                    const phoneInput = card.querySelector('input[placeholder*="phone"]');
+                    const notesTextarea = card.querySelector('textarea');
+
+                    const name = nameInput ? nameInput.value.trim() : '';
+                    const address = addressInput ? addressInput.value.trim() : '';
+                    const phone = phoneInput ? phoneInput.value.trim() : '';
+                    const notes = notesTextarea ? notesTextarea.value.trim() : '';
+
+                    if (!name || !address || !phone) {
+                        alert('Please fill in name, address, and phone number.');
+                        return;
+                    }
+
+                    let message = `Hello! I'd like to order:%0A`;
+                    message += `- *${productName}* (x${quantity}) — ₹${basePrice} each, total ₹${total}%0A`;
+                    message += `👤 Name: ${name}%0A`;
+                    message += `📮 Address: ${address}%0A`;
+                    message += `📞 Phone: ${phone}%0A`;
+                    if (notes) message += `📝 Notes: ${notes}%0A`;
+                    message += `%0A(Note: delivery charges extra as per location)%0A%0AThank you! 💛`;
+
+                    const waUrl = `https://wa.me/${OWNER_WHATSAPP}?text=${message}`;
+                    window.open(waUrl, '_blank');
+                });
+            });
+
+            // subtle blob parallax
+            window.addEventListener('mousemove', (e) => {
+                const blob1 = document.querySelector('.blob');
+                const blob2 = document.querySelector('.blob2');
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                if (blob1) blob1.style.transform = `translate(${x * 15}px, ${y * 10}px)`;
+                if (blob2) blob2.style.transform = `translate(${x * -10}px, ${y * -15}px)`;
+            });
+        })();
+    </script>
+    <noscript><style>.hidden-init { opacity: 1; transform: none; }</style></noscript>
+</body>
+</html>
