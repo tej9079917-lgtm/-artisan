@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>artisan • product detail modal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>artisan • responsive product grid</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* (All previous styles remain, plus new ones for product detail modal) */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #fefaf5; color: #1e2a2f; line-height: 1.5; overflow-x: hidden; }
         html { scroll-behavior: smooth; }
@@ -40,6 +39,7 @@
         .btn-outline:hover { background: #1e2a2f; color: #fff9f2; }
         .btn-cart { background: #c38e7b; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.4rem; }
         .btn-cart:hover { background: #a67463; }
+
         .hero { display: flex; align-items: center; justify-content: space-between; gap: 3rem; padding: 2.5rem 0 4rem; flex-wrap: wrap; }
         .hero-content { flex: 1 1 350px; animation: fadeUp 1s ease-out; }
         .hero-content h1 { font-size: clamp(2.4rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1.2rem; }
@@ -53,6 +53,7 @@
         @keyframes popTag { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
+
         .control-bar { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; margin: 2rem 0; }
         .search-box { flex: 2; min-width: 200px; }
         .search-box input { width: 100%; padding: 0.7rem 1.5rem; border-radius: 40px; border: 1.5px solid #e2cfc0; background: #fffaf5; font-size: 1rem; }
@@ -60,9 +61,44 @@
         .filters select, .filters .checkbox-group { background: white; border-radius: 40px; padding: 0.4rem 1rem; border: 1px solid #e2cfc0; }
         .checkbox-group label { margin-right: 1rem; }
         .sort-select { padding: 0.4rem 1rem; border-radius: 40px; border: 1.5px solid #e2cfc0; background: white; }
-        .product-card { background: white; border-radius: 35px; padding: 1.5rem; box-shadow: 0 18px 35px -10px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid rgba(255,235,220,0.7); position: relative; display: flex; flex-direction: column; transform-style: preserve-3d; will-change: transform; cursor: pointer; }
+
+        /* ----- RESPONSIVE GRID ----- */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            padding: 2rem 0;
+            justify-items: center;
+            align-items: start;
+        }
+        @media (max-width: 1200px) {
+            .product-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 480px) {
+            .product-grid { grid-template-columns: 1fr; }
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 35px;
+            padding: 1.5rem;
+            box-shadow: 0 18px 35px -10px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: 1px solid rgba(255,235,220,0.7);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transform-style: preserve-3d;
+            will-change: transform;
+            cursor: pointer;
+            width: 100%;
+            max-width: 320px;
+        }
         .product-card:hover { box-shadow: 0 25px 40px -15px #dcb196; }
-        .product-images { position: relative; overflow: hidden; cursor: pointer; }
+        .product-images { position: relative; overflow: hidden; cursor: pointer; border-radius: 20px; }
         .product-images::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none; }
         .product-images:hover::after { transform: translateX(100%); }
         .product-images img { transition: transform 0.4s ease; width: 100%; border-radius: 20px; aspect-ratio: 1/1; object-fit: cover; background: #f6e4da; }
@@ -82,6 +118,8 @@
         .price-info { display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0; flex-wrap: wrap; }
         .base-price { font-weight: 500; color: #3f4c53; }
         .quantity-input { width: 70px; padding: 0.5rem; border: 1.5px solid #e2cfc0; border-radius: 30px; text-align: center; }
+
+        /* cart / wishlist / delivery modals */
         .cart-item, .wishlist-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid #eee; }
         .cart-item img, .wishlist-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
         .cart-item-info, .wishlist-item-info { flex: 1; }
@@ -145,6 +183,7 @@
             </div>
         </div>
     </header>
+
     <div class="container" id="mainContainer">
         <section class="hero">
             <div class="hero-content">
@@ -160,6 +199,7 @@
                 <div class="floating-tag"><i class="fas fa-heart" style="color: #c38e7b;"></i> ethically made</div>
             </div>
         </section>
+
         <div class="control-bar">
             <div class="search-box"><input type="text" id="searchInput" placeholder="🔍 Search products..."></div>
             <div class="filters">
@@ -175,50 +215,28 @@
                 </select>
             </div>
         </div>
+
         <div id="productSections"></div>
-        <section id="story" class="story-section hidden-init"><div class="story-content"><h2>our story</h2><p>Artisan was born in a small workshop surrounded by looms and clay...</p><p><i class="fas fa-feather-alt" style="color:#c38e7b;"></i> thank you for keeping handmade alive.</p></div><div class="story-image"><i class="fas fa-hands-praying"></i></div></section>
-        <section id="contact" class="contact-section hidden-init"><h2 class="section-title"><span>📬 get in touch</span></h2><div class="contact-grid"><div class="contact-item"><i class="fab fa-whatsapp"></i><h4>WhatsApp</h4><a href="https://wa.me/15553278496" target="_blank" class="btn-wa">chat now</a></div><div class="contact-item"><i class="fas fa-envelope"></i><h4>Email</h4><p>hello@artisan.crafts</p></div><div class="contact-item"><i class="fas fa-phone-alt"></i><h4>Phone</h4><p>+1 (555) 327‑8496</p></div><div class="contact-item"><i class="fas fa-map-pin"></i><h4>Studio</h4><p>Portland, OR</p></div></div></section>
+
+        <section id="story" style="margin: 4rem 0;"><div style="background: #fff6f0; border-radius: 50px; padding: 3rem;"><h2>our story</h2><p>Artisan was born in a small workshop surrounded by looms and clay...</p><p><i class="fas fa-feather-alt" style="color:#c38e7b;"></i> thank you for keeping handmade alive.</p></div></section>
+
+        <section id="contact" style="margin: 4rem 0; text-align: center;"><h2><span style="background:#f1e0d6; padding:0.2rem 1rem; border-radius:60px;">📬 get in touch</span></h2><div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin-top: 2rem;"><div style="background: white; border-radius: 40px; padding: 2rem; text-align: center;"><i class="fab fa-whatsapp" style="font-size:2.5rem; color:#c38e7b;"></i><h4>WhatsApp</h4><a href="https://wa.me/15553278496" target="_blank" class="btn-wa">chat now</a></div><div style="background: white; border-radius: 40px; padding: 2rem; text-align: center;"><i class="fas fa-envelope" style="font-size:2.5rem; color:#c38e7b;"></i><h4>Email</h4><p>hello@artisan.crafts</p></div><div style="background: white; border-radius: 40px; padding: 2rem; text-align: center;"><i class="fas fa-phone-alt" style="font-size:2.5rem; color:#c38e7b;"></i><h4>Phone</h4><p>+1 (555) 327‑8496</p></div><div style="background: white; border-radius: 40px; padding: 2rem; text-align: center;"><i class="fas fa-map-pin" style="font-size:2.5rem; color:#c38e7b;"></i><h4>Studio</h4><p>Portland, OR</p></div></div></section>
+
         <div class="newsletter-section"><h2>Join our artisan community</h2><p>Get updates on new collections and exclusive offers</p><form class="newsletter-form" id="newsletterForm"><input type="email" id="newsletterEmail" placeholder="Your email address" required><button type="submit">Subscribe</button></form></div>
     </div>
+
     <footer><div class="container"><div class="footer-content"><div class="footer-col"><h4><i class="fas fa-feather-alt"></i> artisan</h4><p>celebrating hands that create.</p></div><div class="footer-col"><h5>explore</h5><p>new arrivals<br>makers<br>our story</p></div><div class="footer-col"><h5>social</h5><p>ig · fb · pinterest</p></div><div class="footer-col"><h5>hello@artisan.crafts</h5><p><i class="fas fa-phone-alt"></i> +1 (555) 327‑8496</p></div></div><div class="copyright">© 2026 artisan — made slowly, with intention</div></div></footer>
 
-    <!-- Cart Modal -->
+    <!-- Modals -->
     <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">&times;</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Delivery</button></div></div>
-    <!-- Delivery Modal -->
-    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">&times;</span><h2>Delivery Details <span class="dtdc-service-badge">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati, Chandragiri)" required><button class="btn" id="estimateDelivery">Calculate DTDC Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong>₹<span id="deliveryCharge"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:#c38e7b;"></div><div class="order-summary" id="deliveryOrderSummary"></div><button class="btn-wa" id="sendOrder" style="width:100%;">Send Order via WhatsApp</button></div></div></div>
-    <!-- Wishlist Modal -->
+    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">&times;</span><h2>Delivery Details <span class="dtdc-service-badge" style="background:#c38e7b; color:white; padding:0.2rem 1rem; border-radius:30px; font-size:0.7rem; margin-left:0.5rem;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati, Chandragiri)" required><button class="btn" id="estimateDelivery">Calculate DTDC Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong>₹<span id="deliveryCharge"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:#c38e7b;"></div><div class="order-summary" id="deliveryOrderSummary"></div><button class="btn-wa" id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:0.6rem; border-radius:40px; font-weight:600; cursor:pointer;">Send Order via WhatsApp</button></div></div></div>
     <div id="wishlistModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeWishlist">&times;</span><h2>Your Wishlist ❤️</h2><div id="wishlistItems"></div></div></div>
-    <!-- Lightbox for enlarged image (existing) -->
     <div id="lightbox" class="modal" style="background: rgba(0,0,0,0.8);"><span class="close-modal" style="color:white; position:absolute; top:20px; right:30px;">&times;</span><img id="lightboxImg" style="max-width:90%; max-height:90%; margin:auto; display:block;"></div>
-
-    <!-- NEW: Product Detail Modal -->
-    <div id="productDetailModal" class="modal product-detail-modal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeProductDetail">&times;</span>
-            <div class="product-detail-images">
-                <img id="detailMainImage" class="main-image-detail" src="" alt="Product Image">
-                <div id="detailThumbnails" class="product-detail-thumbnails"></div>
-            </div>
-            <div class="product-detail-info">
-                <h2 id="detailName"></h2>
-                <div id="detailStock" class="stock-badge"></div>
-                <div class="price-info">
-                    <span id="detailPrice" class="base-price"></span>
-                    <span id="detailTotalPrice" class="total-price" style="background:#f1e0d6; padding:0.2rem 0.8rem; border-radius:40px;"></span>
-                </div>
-                <div id="detailVariants" class="product-variants"></div>
-                <div class="order-row">
-                    <input type="number" id="detailQuantity" min="1" value="1" class="quantity-input">
-                    <button id="detailAddToCart" class="btn-cart"><i class="fas fa-cart-plus"></i> Add to Cart</button>
-                </div>
-                <p id="detailDescription" style="margin-top:1rem; color:#4a5b63;"></p>
-            </div>
-        </div>
-    </div>
+    <div id="productDetailModal" class="modal product-detail-modal"><div class="modal-content"><span class="close-modal" id="closeProductDetail">&times;</span><div class="product-detail-images"><img id="detailMainImage" class="main-image-detail" src="" alt="Product Image"><div id="detailThumbnails" class="product-detail-thumbnails"></div></div><div class="product-detail-info"><h2 id="detailName"></h2><div id="detailStock" class="stock-badge"></div><div class="price-info"><span id="detailPrice" class="base-price"></span><span id="detailTotalPrice" style="background:#f1e0d6; padding:0.2rem 0.8rem; border-radius:40px;"></span></div><div id="detailVariants" class="product-variants"></div><div class="order-row"><input type="number" id="detailQuantity" min="1" value="1" class="quantity-input"><button id="detailAddToCart" class="btn-cart"><i class="fas fa-cart-plus"></i> Add to Cart</button></div><p id="detailDescription" style="margin-top:1rem; color:#4a5b63;"></p></div></div></div>
 
     <script>
         (function() {
-            // ---------- product data ----------
+            // ---------- PRODUCT DATA ----------
             const products = [
                 { id: 1, name: "Ceramic Mug", category: "handmade", basePrice: 2200, images: ["mug1", "mug2"], stock: 5, variants: null, description: "Hand-thrown stoneware mug with a smooth glaze. Perfect for your morning coffee." },
                 { id: 2, name: "Handwoven Scarf", category: "handmade", basePrice: 850, images: ["scarf1", "scarf2"], stock: 10, variants: null, description: "Soft, ethically sourced cotton scarf. Handwoven by local artisans." },
@@ -254,7 +272,6 @@
             const defaultDistance = 500;
             const coupons = { 'DTDC10': { type: 'percent', value: 10 }, 'WELCOME': { type: 'fixed', value: 100 }, 'FREESHIP': { type: 'fixed', value: 0 } };
 
-            // ---------- helper functions ----------
             function formatPrice(p) { return currentCurrency === 'USD' ? '$' + (p/exchangeRate).toFixed(2) : '₹' + p; }
             function updateCartCount() { document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.quantity,0); }
             function saveCart() { localStorage.setItem('cart',JSON.stringify(cart)); updateCartCount(); }
@@ -284,7 +301,7 @@
                 }
                 requestAnimationFrame(step);
             }
-            function addToCart(id, qty, size, color) {
+            function addToCart(id, qty, size, color, eventTarget) {
                 let existing = cart.find(i=>i.id===id && i.size===size && i.color===color);
                 if(existing) existing.quantity += qty;
                 else cart.push({ id, quantity:qty, size, color });
@@ -292,43 +309,40 @@
                 const cartIcon = document.querySelector('.cart-btn');
                 cartIcon.classList.add('wiggle');
                 setTimeout(()=>cartIcon.classList.remove('wiggle'), 300);
-                const btn = event.currentTarget;
-                const clone = btn.cloneNode(true);
-                clone.style.position = 'fixed';
-                clone.style.left = btn.getBoundingClientRect().left + 'px';
-                clone.style.top = btn.getBoundingClientRect().top + 'px';
-                clone.style.width = btn.offsetWidth + 'px';
-                clone.style.height = btn.offsetHeight + 'px';
-                clone.style.opacity = '0.7';
-                clone.style.transition = 'all 0.5s ease';
-                clone.style.pointerEvents = 'none';
-                document.body.appendChild(clone);
-                const targetRect = document.querySelector('.cart-btn').getBoundingClientRect();
-                clone.animate([
-                    { transform: 'scale(1)', opacity: 0.7 },
-                    { transform: 'scale(0.3)', opacity: 0, left: targetRect.left + targetRect.width/2 + 'px', top: targetRect.top + targetRect.height/2 + 'px' }
-                ], { duration: 500, fill: 'forwards' });
-                setTimeout(()=>clone.remove(), 500);
+                if(eventTarget) {
+                    const clone = eventTarget.cloneNode(true);
+                    clone.style.position = 'fixed';
+                    clone.style.left = eventTarget.getBoundingClientRect().left + 'px';
+                    clone.style.top = eventTarget.getBoundingClientRect().top + 'px';
+                    clone.style.width = eventTarget.offsetWidth + 'px';
+                    clone.style.height = eventTarget.offsetHeight + 'px';
+                    clone.style.opacity = '0.7';
+                    clone.style.transition = 'all 0.5s ease';
+                    clone.style.pointerEvents = 'none';
+                    document.body.appendChild(clone);
+                    const targetRect = document.querySelector('.cart-btn').getBoundingClientRect();
+                    clone.animate([
+                        { transform: 'scale(1)', opacity: 0.7 },
+                        { transform: 'scale(0.3)', opacity: 0, left: targetRect.left + targetRect.width/2 + 'px', top: targetRect.top + targetRect.height/2 + 'px' }
+                    ], { duration: 500, fill: 'forwards' });
+                    setTimeout(()=>clone.remove(), 500);
+                }
                 alert('Added to cart!');
             }
 
-            // ---------- product detail modal ----------
+            // product detail modal
             let currentDetailProduct = null;
-
             function openProductDetail(productId) {
                 const product = products.find(p => p.id === productId);
                 if (!product) return;
                 currentDetailProduct = product;
-                // set main image
                 document.getElementById('detailMainImage').src = imageMap[product.images[0]];
                 document.getElementById('detailName').textContent = product.name;
                 document.getElementById('detailPrice').textContent = formatPrice(product.basePrice);
                 document.getElementById('detailTotalPrice').textContent = 'total: ' + formatPrice(product.basePrice);
                 document.getElementById('detailDescription').textContent = product.description || "A beautiful handmade item from our collection.";
-                // stock badge
                 const stockBadge = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock">Out of stock</span>';
                 document.getElementById('detailStock').innerHTML = stockBadge;
-                // thumbnails
                 const thumbContainer = document.getElementById('detailThumbnails');
                 thumbContainer.innerHTML = '';
                 product.images.forEach((imgKey, idx) => {
@@ -343,21 +357,13 @@
                     });
                     thumbContainer.appendChild(thumb);
                 });
-                // variants
                 const variantsDiv = document.getElementById('detailVariants');
                 if (product.variants) {
                     let html = '';
-                    if (product.variants.sizes) {
-                        html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
-                    }
-                    if (product.variants.colors) {
-                        html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
-                    }
+                    if (product.variants.sizes) html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
+                    if (product.variants.colors) html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
                     variantsDiv.innerHTML = html;
-                } else {
-                    variantsDiv.innerHTML = '';
-                }
-                // quantity input listener to update total
+                } else variantsDiv.innerHTML = '';
                 const qtyInput = document.getElementById('detailQuantity');
                 qtyInput.value = 1;
                 qtyInput.oninput = () => {
@@ -365,20 +371,18 @@
                     const total = product.basePrice * qty;
                     document.getElementById('detailTotalPrice').textContent = 'total: ' + formatPrice(total);
                 };
-                // add to cart button
                 const addBtn = document.getElementById('detailAddToCart');
-                addBtn.onclick = () => {
+                addBtn.onclick = (e) => {
                     const qty = parseInt(document.getElementById('detailQuantity').value) || 1;
                     const size = document.getElementById('detailSize') ? document.getElementById('detailSize').value : null;
                     const color = document.getElementById('detailColor') ? document.getElementById('detailColor').value : null;
-                    addToCart(product.id, qty, size, color);
+                    addToCart(product.id, qty, size, color, addBtn);
                     document.getElementById('productDetailModal').style.display = 'none';
                 };
-                // show modal
                 document.getElementById('productDetailModal').style.display = 'flex';
             }
 
-            // ---------- render products ----------
+            // product rendering
             function renderProducts() {
                 const h = document.getElementById('filterHandmade').checked;
                 const c = document.getElementById('filterClothes').checked;
@@ -391,8 +395,8 @@
                 const handmade = filtered.filter(p=>p.category==='handmade');
                 const clothes = filtered.filter(p=>p.category==='clothes');
                 let html = '';
-                if(handmade.length) html += '<h2 class="section-title" id="handmade"><span>🧶 handmade collection</span></h2><div class="product-grid">'+handmade.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
-                if(clothes.length) html += '<h2 class="section-title" id="clothes"><span>👗 clothes collection</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i+handmade.length)).join('')+'</div>';
+                if(handmade.length) html += '<h2 class="section-title" id="handmade"><span style="background:#f1e0d6; padding:0.2rem 1rem; border-radius:60px;">🧶 handmade collection</span></h2><div class="product-grid">'+handmade.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
+                if(clothes.length) html += '<h2 class="section-title" id="clothes"><span style="background:#f1e0d6; padding:0.2rem 1rem; border-radius:60px;">👗 clothes collection</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i+handmade.length)).join('')+'</div>';
                 document.getElementById('productSections').innerHTML = html || '<p>No products match.</p>';
                 attachProductEvents();
                 updateWishlistCount();
@@ -420,87 +424,76 @@
             }
 
             function attachProductEvents() {
-                // wishlist
-                document.querySelectorAll('.wishlist-heart').forEach(heart=>{
-                    heart.addEventListener('click', function(e){
+                // Wishlist: update state and refresh heart icon locally without full rerender
+                document.querySelectorAll('.wishlist-heart').forEach(heart => {
+                    heart.removeEventListener('click', heart._listener);
+                    const listener = function(e) {
                         e.stopPropagation();
-                        const id=parseInt(this.dataset.id);
-                        if(wishlist.includes(id)) wishlist=wishlist.filter(i=>i!==id);
-                        else wishlist.push(id);
+                        const id = parseInt(this.dataset.id);
+                        if (wishlist.includes(id)) {
+                            wishlist = wishlist.filter(i => i !== id);
+                            this.classList.remove('active');
+                            this.innerHTML = '<i class="far fa-heart"></i>';
+                        } else {
+                            wishlist.push(id);
+                            this.classList.add('active');
+                            this.innerHTML = '<i class="fas fa-heart"></i>';
+                        }
                         saveWishlist();
-                        this.classList.toggle('active');
-                        this.innerHTML = `<i class="${wishlist.includes(id)?'fas':'far'} fa-heart"></i>`;
                         this.classList.add('heart-pulse');
-                        setTimeout(()=>this.classList.remove('heart-pulse'), 400);
-                        renderProducts(); // refresh hearts
-                    });
+                        setTimeout(() => this.classList.remove('heart-pulse'), 400);
+                    };
+                    heart.addEventListener('click', listener);
+                    heart._listener = listener;
                 });
-                // gallery thumbnails inside product card
+
                 document.querySelectorAll('.thumbnail').forEach(t=>t.addEventListener('click',function(e){
                     e.stopPropagation();
                     let card=this.closest('.product-card'), main=card.querySelector('.main-image');
                     main.src=this.src; card.querySelectorAll('.thumbnail').forEach(tt=>tt.classList.remove('active')); this.classList.add('active');
                 }));
-                // lightbox on main image
                 document.querySelectorAll('.main-image').forEach(img=>img.addEventListener('click',function(e){
                     e.stopPropagation();
                     document.getElementById('lightboxImg').src=this.src;
                     document.getElementById('lightbox').style.display='flex';
                 }));
-                // add to cart button
                 document.querySelectorAll('.add-to-cart').forEach(btn=>{
-                    btn.addEventListener('click',function(e){
+                    btn.removeEventListener('click', btn._listener);
+                    const cartListener = function(e){
                         e.stopPropagation();
                         let card=this.closest('.product-card'), id=parseInt(card.dataset.id), qty=parseInt(card.querySelector('.quantity-input').value)||1;
                         let sizeSelect=card.querySelector('.size-select'), colorSelect=card.querySelector('.color-select');
                         let size=sizeSelect?sizeSelect.value:null, color=colorSelect?colorSelect.value:null;
-                        addToCart(id,qty,size,color);
+                        addToCart(id,qty,size,color, this);
                         updateCartCount();
-                    });
+                    };
+                    btn.addEventListener('click', cartListener);
+                    btn._listener = cartListener;
                 });
-                // product card click to open detail modal (excluding interactive elements)
                 document.querySelectorAll('.product-card').forEach(card=>{
-                    card.addEventListener('click',function(e){
-                        // don't open if clicked on heart, thumbnail, quantity, add-to-cart button, or any interactive element inside
+                    card.removeEventListener('click', card._listener);
+                    const cardListener = function(e){
                         if(e.target.closest('.wishlist-heart') || e.target.closest('.thumbnail') || e.target.closest('.quantity-input') || e.target.closest('.add-to-cart') || e.target.closest('select')) return;
                         const id = parseInt(this.dataset.id);
                         openProductDetail(id);
-                        // recently viewed
                         if(!recentlyViewed.includes(id)){ recentlyViewed.unshift(id); if(recentlyViewed.length>5) recentlyViewed.pop(); localStorage.setItem('recentlyViewed',JSON.stringify(recentlyViewed)); }
-                    });
+                    };
+                    card.addEventListener('click', cardListener);
+                    card._listener = cardListener;
                 });
-                // animated price on quantity change
                 document.querySelectorAll('.quantity-input').forEach(input=>{
-                    input.addEventListener('input',function(){
+                    input.removeEventListener('input', input._listener);
+                    const qtyListener = function(){
                         let card=this.closest('.product-card'), base=parseFloat(card.dataset.basePrice), qty=parseInt(this.value)||1, total=base*qty;
                         let totalSpan = card.querySelector('.total-price');
                         if(totalSpan) animateNumber(totalSpan, parseFloat(totalSpan.textContent.replace(/[^0-9]/g,'')), total);
-                    });
+                    };
+                    input.addEventListener('input', qtyListener);
+                    input._listener = qtyListener;
                 });
             }
 
-            // ---- smooth transitions, modals, etc. ----
-            window.addEventListener('scroll',()=>{
-                let scrollY = window.scrollY;
-                document.getElementById('blob1').style.transform = `translateY(${scrollY*0.05}px)`;
-                document.getElementById('blob2').style.transform = `translateY(${-scrollY*0.05}px)`;
-            });
-            document.querySelectorAll('.nav-links a').forEach(link=>{
-                link.addEventListener('click',function(e){
-                    e.preventDefault();
-                    let targetId = this.getAttribute('href').substring(1);
-                    if(!targetId) targetId='';
-                    const container = document.getElementById('mainContainer');
-                    container.classList.add('page-transition-out');
-                    setTimeout(()=>{
-                        if(targetId){
-                            let target = document.getElementById(targetId);
-                            if(target) target.scrollIntoView({behavior:'smooth'});
-                        } else window.scrollTo({top:0,behavior:'smooth'});
-                        setTimeout(()=>container.classList.remove('page-transition-out'),100);
-                    },200);
-                });
-            });
+            // delivery and other handlers (unchanged)
             document.getElementById('estimateDelivery').addEventListener('click',()=>{
                 let city = document.getElementById('deliveryCity').value.trim().toLowerCase();
                 if(!city) return alert('Enter city');
@@ -565,6 +558,7 @@
             document.getElementById('sortSelect').addEventListener('change',renderProducts);
             document.getElementById('newsletterForm').addEventListener('submit',e=>{ e.preventDefault(); alert('Subscribed! (demo)'); });
             document.getElementById('lightbox').addEventListener('click',e=>{ if(e.target===document.getElementById('lightbox')) e.target.style.display='none'; });
+
             // initial loading skeleton
             const container = document.getElementById('productSections');
             container.innerHTML = '<div class="product-grid skeleton"><div class="product-card"></div><div class="product-card"></div><div class="product-card"></div><div class="product-card"></div><div class="product-card"></div><div class="product-card"></div></div>';
@@ -572,6 +566,13 @@
                 renderProducts();
                 document.querySelectorAll('.product-card').forEach(card=>setTimeout(()=>card.classList.add('visible'), 50));
             }, 300);
+
+            // parallax blobs
+            window.addEventListener('scroll',()=>{
+                let scrollY = window.scrollY;
+                document.getElementById('blob1').style.transform = `translateY(${scrollY*0.05}px)`;
+                document.getElementById('blob2').style.transform = `translateY(${-scrollY*0.05}px)`;
+            });
             // 3D tilt
             document.body.addEventListener('mousemove', function(e){
                 document.querySelectorAll('.product-card').forEach(card=>{
@@ -587,6 +588,24 @@
                     }
                 });
             });
+            // smooth page transitions
+            document.querySelectorAll('.nav-links a').forEach(link=>{
+                link.addEventListener('click',function(e){
+                    e.preventDefault();
+                    let targetId = this.getAttribute('href').substring(1);
+                    if(!targetId) targetId='';
+                    const container = document.getElementById('mainContainer');
+                    container.classList.add('page-transition-out');
+                    setTimeout(()=>{
+                        if(targetId){
+                            let target = document.getElementById(targetId);
+                            if(target) target.scrollIntoView({behavior:'smooth'});
+                        } else window.scrollTo({top:0,behavior:'smooth'});
+                        setTimeout(()=>container.classList.remove('page-transition-out'),100);
+                    },200);
+                });
+            });
+
             updateCartCount(); updateWishlistCount();
         })();
     </script>
