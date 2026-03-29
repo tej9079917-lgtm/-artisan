@@ -3,224 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>artisan • responsive product grid</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>artisan • handmade marketplace</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#fefaf5">
+    <link rel="apple-touch-icon" href="icon-192.png"> <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #fefaf5; color: #1e2a2f; line-height: 1.5; overflow-x: hidden; }
-        html { scroll-behavior: smooth; }
-        
-        /* Background Blobs */
-        .blob, .blob2 { position: fixed; z-index: -2; pointer-events: none; will-change: transform; }
-        .blob { top: -20vh; right: -10vw; width: 70vw; height: 70vw; background: radial-gradient(circle at 30% 50%, rgba(255, 215, 175, 0.4) 0%, rgba(245, 215, 200, 0) 70%); border-radius: 50%; filter: blur(80px); }
-        .blob2 { bottom: -10vh; left: -5vw; width: 50vw; height: 50vw; background: radial-gradient(circle at 70% 30%, rgba(190, 220, 255, 0.5) 0%, rgba(210, 235, 255, 0) 70%); border-radius: 50%; filter: blur(90px); }
-        
-        /* Glassy Header */
-        .sticky-header { 
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            width: 100%; 
-            background: rgba(254, 250, 245, 0.3); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-            transition: background 0.3s ease, box-shadow 0.3s ease; 
-        }
-        .sticky-header.scrolled { 
-            background: rgba(254, 250, 245, 0.7); 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
-        }
-        
-        .header-container { max-width: 1280px; margin: 0 auto; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-        .logo { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 1.5rem; letter-spacing: -0.02em; }
-        .logo i { color: #c38e7b; font-size: 2rem; transform: rotate(5deg); transition: transform 0.3s ease; }
-        .logo:hover i { transform: rotate(0deg) scale(1.1); }
-        
-        /* Nav Links & Floating Animation */
-        .nav-links { display: flex; gap: 2.2rem; font-weight: 500; }
-        .nav-links a { 
-            text-decoration: none; 
-            color: #1e2a2f; 
-            position: relative; 
-            padding-bottom: 4px; 
-            display: inline-block;
-            animation: floatNav 3s ease-in-out infinite;
-            transition: color 0.3s ease; 
-        }
-        .nav-links a:nth-child(1) { animation-delay: 0s; }
-        .nav-links a:nth-child(2) { animation-delay: 0.2s; }
-        .nav-links a:nth-child(3) { animation-delay: 0.4s; }
-        .nav-links a:nth-child(4) { animation-delay: 0.6s; }
-        .nav-links a:nth-child(5) { animation-delay: 0.8s; }
-
-        @keyframes floatNav {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .nav-links a:hover { color: #c38e7b; }
-        
-        .header-actions { display: flex; align-items: center; gap: 1rem; }
-        .cart-btn, .wishlist-btn { position: relative; background: none; border: none; font-size: 1.5rem; color: #c38e7b; cursor: pointer; transition: transform 0.1s; }
-        .cart-count, .wishlist-count { position: absolute; top: -5px; right: -5px; background: #c38e7b; color: white; font-size: 0.7rem; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .cart-btn.wiggle { animation: wiggle 0.3s ease; }
-        @keyframes wiggle { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(10deg); } 75% { transform: rotate(-10deg); } }
-        
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; transition: opacity 0.3s ease; }
-        section[id], h2[id] { scroll-margin-top: 90px; }
-        
-        /* Buttons */
-        .btn { background: #1e2a2f; color: #fff9f2; padding: 0.7rem 1.8rem; border-radius: 40px; font-weight: 500; border: none; cursor: pointer; transition: 0.25s ease; box-shadow: 0 8px 20px -8px rgba(0,0,0,0.2); text-decoration: none; display: inline-block; }
-        .btn:hover { background: #2d3f47; transform: scale(1.02) translateY(-2px); box-shadow: 0 16px 28px -8px rgba(0,0,0,0.2); }
-        .btn-outline { background: transparent; border: 1.5px solid #1e2a2f; color: #1e2a2f; }
-        .btn-outline:hover { background: #1e2a2f; color: #fff9f2; }
-        .btn-cart { background: #c38e7b; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.4rem; }
-        .btn-cart:hover { background: #a67463; }
-
-        /* Hero */
-        .hero { display: flex; align-items: center; justify-content: space-between; gap: 3rem; padding: 2.5rem 0 4rem; flex-wrap: wrap; }
-        .hero-content { flex: 1 1 350px; animation: fadeUp 1s ease-out; }
-        .hero-content h1 { font-size: clamp(2.4rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 1.2rem; }
-        .hero-content h1 span { background: linear-gradient(145deg, #c38e7b, #dcb196); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .hero-content p { font-size: 1.2rem; color: #3f4c53; margin-bottom: 2.5rem; max-width: 500px; }
-        .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .hero-visual { flex: 1 1 350px; position: relative; display: flex; justify-content: center; animation: float 6s infinite alternate ease-in-out; }
-        .hero-visual img { max-width: 100%; width: 400px; filter: drop-shadow(0 20px 30px rgba(195,142,123,0.2)); border-radius: 30px; transform: rotate(2deg); transition: transform 0.4s; }
-        .hero-visual:hover img { transform: rotate(0deg) scale(1.01); }
-        .floating-tag { position: absolute; top: 15%; right: 0; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); padding: 0.5rem 1.2rem; border-radius: 60px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 10px 25px -8px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.5); animation: popTag 3s infinite; }
-        @keyframes popTag { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
-        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
-        @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
-
-        /* Controls */
-        .control-bar { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; margin: 2rem 0; }
-        .search-box { flex: 2; min-width: 200px; }
-        .search-box input { width: 100%; padding: 0.7rem 1.5rem; border-radius: 40px; border: 1.5px solid #e2cfc0; background: #fffaf5; font-size: 1rem; }
-        .filters { display: flex; gap: 0.8rem; flex-wrap: wrap; }
-        .filters select, .filters .checkbox-group { background: white; border-radius: 40px; padding: 0.4rem 1rem; border: 1px solid #e2cfc0; }
-        .checkbox-group label { margin-right: 1rem; }
-        .sort-select { padding: 0.4rem 1rem; border-radius: 40px; border: 1.5px solid #e2cfc0; background: white; }
-
-        /* ----- 4-COLUMN RESPONSIVE GRID ----- */
-        .product-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 1.5rem; 
-            padding: 2rem 0; 
-            justify-items: center; 
-            align-items: start; 
-        }
-        @media (max-width: 1024px) { 
-            .product-grid { grid-template-columns: repeat(3, 1fr); } 
-        }
-        @media (max-width: 768px) { 
-            .product-grid { grid-template-columns: repeat(2, 1fr); } 
-        }
-        @media (max-width: 480px) { 
-            .product-grid { grid-template-columns: 1fr; } 
-        }
-
-        /* Product Cards */
-        .product-card { background: white; border-radius: 35px; padding: 1.5rem; box-shadow: 0 18px 35px -10px rgba(0,0,0,0.05); transition: opacity 0.5s ease, transform 0.2s ease, box-shadow 0.3s ease; border: 1px solid rgba(255,235,220,0.7); position: relative; display: flex; flex-direction: column; cursor: pointer; width: 100%; max-width: 320px; opacity: 0; transform: scale(0.95); transition-delay: calc(var(--card-index, 0) * 0.05s); }
-        .product-card.visible { opacity: 1; transform: scale(1); }
-        .product-card:hover { box-shadow: 0 25px 40px -15px #dcb196; }
-        .product-images { position: relative; overflow: hidden; cursor: pointer; border-radius: 20px; }
-        .product-images::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none; }
-        .product-images:hover::after { transform: translateX(100%); }
-        .product-images img { transition: transform 0.4s ease; width: 100%; border-radius: 20px; aspect-ratio: 1/1; object-fit: cover; background: #f6e4da; }
-        .product-images:hover img { transform: scale(1.03); }
-        .thumbnail-strip { display: flex; gap: 0.5rem; margin-top: 0.5rem; justify-content: center; }
-        .thumbnail { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; cursor: pointer; opacity: 0.7; transition: 0.2s; }
-        .thumbnail:hover, .thumbnail.active { opacity: 1; border: 2px solid #c38e7b; }
-        .wishlist-heart { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: #ccc; cursor: pointer; transition: 0.2s; z-index: 2; }
-        .wishlist-heart.active { color: #c38e7b; }
-        .heart-pulse { animation: heartPulse 0.4s ease; }
-        @keyframes heartPulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-        .product-variants { margin: 0.8rem 0; display: flex; flex-direction: column; gap: 0.5rem; }
-        .variant-row { display: flex; align-items: center; gap: 0.5rem; }
-        .variant-row select { padding: 0.3rem; border-radius: 30px; border: 1.5px solid #e2cfc0; background: #fffaf5; }
-        .stock-badge { font-size: 0.8rem; padding: 0.2rem 0.8rem; border-radius: 40px; display: inline-block; margin-bottom: 0.5rem; width: fit-content; }
-        .in-stock { background: #d4edda; color: #155724; }
-        .price-info { display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0; flex-wrap: wrap; }
-        .base-price { font-weight: 500; color: #3f4c53; }
-        .quantity-input { width: 70px; padding: 0.5rem; border: 1.5px solid #e2cfc0; border-radius: 30px; text-align: center; }
-
-        /* Modals & Forms */
-        .cart-item, .wishlist-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid #eee; }
-        .cart-item img, .wishlist-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
-        .cart-item-info, .wishlist-item-info { flex: 1; }
-        .cart-item-actions { display: flex; align-items: center; gap: 0.5rem; }
-        .cart-item-remove, .remove-wishlist { color: #c38e7b; cursor: pointer; }
-        .empty-wishlist, .empty-cart { text-align: center; padding: 2rem; color: #7e8c92; }
-        .delivery-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
-        .delivery-form input, .delivery-form textarea { width: 100%; padding: 0.8rem 1.2rem; border: 1.5px solid #e2cfc0; border-radius: 40px; background: #fffaf5; }
-        .city-row, .coupon-row { display: flex; gap: 0.5rem; align-items: center; }
-        .city-row input, .coupon-row input { flex: 2; }
-        .delivery-estimate { background: #f1e0d6; border-radius: 30px; padding: 0.8rem; margin: 0.5rem 0; font-size: 0.9rem; }
-        .order-summary { background: #f9f0e9; border-radius: 20px; padding: 1rem; margin: 1rem 0; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: white; border-radius: 40px; padding: 2rem; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; }
-        .product-detail-modal .modal-content { max-width: 1000px; display: flex; gap: 2rem; flex-wrap: wrap; }
-        .product-detail-images { flex: 1; min-width: 250px; }
-        .product-detail-images .main-image-detail { width: 100%; border-radius: 20px; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 1rem; }
-        .product-detail-thumbnails { display: flex; gap: 0.5rem; justify-content: center; }
-        .product-detail-thumbnails img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; cursor: pointer; opacity: 0.7; }
-        .product-detail-thumbnails img.active { opacity: 1; border: 2px solid #c38e7b; }
-        .product-detail-info { flex: 1; min-width: 250px; }
-        .close-modal { float: right; font-size: 1.5rem; cursor: pointer; }
-        .currency-toggle { display: flex; gap: 0.5rem; align-items: center; }
-        .currency-toggle button { background: none; border: 1px solid #e2cfc0; padding: 0.3rem 0.8rem; border-radius: 30px; cursor: pointer; }
-        .currency-toggle button.active { background: #c38e7b; color: white; border-color: #c38e7b; }
-        
-        /* Aesthetic Lightbox Animation */
-        #lightbox {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%;
-            background: rgba(10, 15, 20, 0.85); 
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 2000;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            opacity: 0; 
-            visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-        #lightbox.show { opacity: 1; visibility: visible; }
-        #lightboxImg {
-            max-width: 90%; 
-            max-height: 90vh; 
-            border-radius: 20px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            transform: scale(0.85);
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        #lightbox.show #lightboxImg { transform: scale(1); }
-        .close-lightbox {
-            position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; cursor: pointer; transition: transform 0.2s ease, color 0.2s ease;
-        }
-        .close-lightbox:hover { color: #c38e7b; transform: scale(1.1); }
-
-        /* Footer & Extra Sections */
-        .newsletter-section { background: linear-gradient(145deg, #fff2e8, #ffe5d8); border-radius: 50px; padding: 3rem; margin: 3rem 0; text-align: center; }
-        .newsletter-form { display: flex; gap: 1rem; max-width: 500px; margin: 2rem auto 0; }
-        .newsletter-form input { flex: 1; padding: 1rem 1.5rem; border: 2px solid #e2cfc0; border-radius: 50px; font-size: 1rem; }
-        .newsletter-form button { background: #c38e7b; color: white; border: none; padding: 1rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer; }
-        footer { background: #1e2a2f; color: #fff9f2; padding: 2.5rem 0; margin-top: 4rem; border-radius: 40px 40px 0 0; }
-        .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
-        .footer-col p { color: #c0cbd1; }
-        .footer-col i { margin-right: 0.5rem; color: #c38e7b; }
-        .copyright { text-align: center; padding-top: 2.5rem; color: #95a5a8; }
-        .page-transition-out { opacity: 0 !important; transition: opacity 0.2s ease; }
-    </style>
+    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="blob" id="blob1"></div>
@@ -234,12 +26,14 @@
                     <a href="#" data-target="home">home</a>
                     <a href="#handmade" data-target="handmade">handmade</a>
                     <a href="#clothes" data-target="clothes">clothes</a>
-                    <a href="#story" data-target="story">story</a>
                     <a href="#contact" data-target="contact">contact</a>
                 </div>
                 <div class="header-actions">
                     <button class="cart-btn" id="cartBtn" aria-label="Open Cart"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></button>
                     <button class="wishlist-btn" id="wishlistBtn" aria-label="Open Wishlist"><i class="fas fa-heart"></i><span class="wishlist-count" id="wishlistCount">0</span></button>
+                    
+                    <button id="themeToggle" class="theme-btn" aria-label="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+                    
                     <div class="currency-toggle"><button id="currencyINR" class="active">₹</button><button id="currencyUSD">$</button></div>
                 </div>
             </div>
@@ -268,7 +62,6 @@
                 <div class="checkbox-group">
                     <label><input type="checkbox" id="filterHandmade" checked> Handmade</label>
                     <label><input type="checkbox" id="filterClothes" checked> Clothes</label>
-                    <label><input type="checkbox" id="filterUnder1000"> Under ₹1000</label>
                 </div>
                 <select id="sortSelect" class="sort-select">
                     <option value="default">Sort by</option>
@@ -278,472 +71,59 @@
             </div>
         </div>
 
-        <div id="productSections"></div>
+        <div id="productSections">
+            </div>
 
-        <section id="story" style="margin: 4rem 0;"><div style="background: #fff6f0; border-radius: 50px; padding: 3rem;"><h2>our story</h2><p>Artisan was born in a small workshop surrounded by looms and clay...</p><p><i class="fas fa-feather-alt" style="color:#c38e7b;"></i> thank you for keeping handmade alive.</p></div></section>
-
-        <section id="contact" style="margin: 4rem 0; text-align: center;"><h2><span style="background:#f1e0d6; padding:0.2rem 1rem; border-radius:60px;">📬 get in touch</span></h2><div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin-top: 2rem;"><div style="background: white; border-radius: 40px; padding: 2rem; text-align: center;"><i class="fab fa-whatsapp" style="font-size:2.5rem; color:#c38e7b;"></i><h4>WhatsApp</h4><a href="#" id="directChatBtn" class="btn">chat now</a></div><div style="background: white; border-radius: 40px; padding: 2rem; text-align: center;"><i class="fas fa-envelope" style="font-size:2.5rem; color:#c38e7b;"></i><h4>Email</h4><p>hello@artisan.crafts</p></div><div style="background: white; border-radius: 40px; padding: 2rem; text-align: center;"><i class="fas fa-phone-alt" style="font-size:2.5rem; color:#c38e7b;"></i><h4>Phone</h4><p>+91 6309 645 717</p></div><div style="background: white; border-radius: 40px; padding: 2rem; text-align: center;"><i class="fas fa-map-pin" style="font-size:2.5rem; color:#c38e7b;"></i><h4>Studio</h4><p>Portland, OR</p></div></div></section>
-
-        <div class="newsletter-section"><h2>Join our artisan community</h2><p>Get updates on new collections and exclusive offers</p><form class="newsletter-form" id="newsletterForm"><input type="email" id="newsletterEmail" placeholder="Your email address" required><button type="submit">Subscribe</button></form></div>
+        <section id="contact" style="margin: 4rem 0; text-align: center;">
+            <h2><span class="badge-title">📬 get in touch</span></h2>
+            <div class="contact-grid">
+                <div class="contact-card"><i class="fab fa-whatsapp"></i><h4>WhatsApp</h4><a href="#" id="directChatBtn" class="btn">chat now</a></div>
+                <div class="contact-card"><i class="fas fa-envelope"></i><h4>Email</h4><p>hello@artisan.crafts</p></div>
+                <div class="contact-card"><i class="fas fa-phone-alt"></i><h4>Phone</h4><p>+91 6309 645 717</p></div>
+            </div>
+        </section>
     </div>
 
-    <footer><div class="container"><div class="footer-content"><div class="footer-col"><h4><i class="fas fa-feather-alt"></i> artisan</h4><p>celebrating hands that create.</p></div><div class="footer-col"><h5>explore</h5><p>new arrivals<br>makers<br>our story</p></div><div class="footer-col"><h5>social</h5><p>ig · fb · pinterest</p></div><div class="footer-col"><h5>hello@artisan.crafts</h5><p><i class="fas fa-phone-alt"></i> +91 6309 645 717</p></div></div><div class="copyright">© 2026 artisan — made slowly, with intention</div></div></footer>
-
-    <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">&times;</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><br><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Delivery</button></div></div>
+    <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">&times;</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><br><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Checkout</button></div></div>
     
-    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">&times;</span><h2>Delivery Details <span style="background:#c38e7b; color:white; padding:0.2rem 1rem; border-radius:30px; font-size:0.7rem; margin-left:0.5rem;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati, Chandragiri)" required><button class="btn" id="estimateDelivery">Calculate Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:#c38e7b;"></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button></div></div></div>
+    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">&times;</span><h2>Delivery Details <span class="shipping-badge">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><div class="city-row"><input type="text" id="deliveryCity" placeholder="City (e.g., Tirupati)" required><button class="btn" id="estimateDelivery">Calculate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" class="btn-whatsapp"><i class="fab fa-whatsapp"></i> Order via WhatsApp</button></div></div></div>
     
     <div id="wishlistModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeWishlist">&times;</span><h2>Your Wishlist ❤️</h2><div id="wishlistItems"></div></div></div>
     
-    <div id="lightbox">
-        <span class="close-lightbox" id="closeLightboxBtn">&times;</span>
-        <img id="lightboxImg">
-    </div>
+    <div id="lightbox"><span class="close-lightbox" id="closeLightboxBtn">&times;</span><img id="lightboxImg"></div>
     
-    <div id="productDetailModal" class="modal product-detail-modal"><div class="modal-content"><span class="close-modal" id="closeProductDetail">&times;</span><div class="product-detail-images"><img id="detailMainImage" class="main-image-detail" src="" alt="Product Image"><div id="detailThumbnails" class="product-detail-thumbnails"></div></div><div class="product-detail-info"><h2 id="detailName"></h2><div id="detailStock" class="stock-badge"></div><div class="price-info"><span id="detailPrice" class="base-price"></span><span id="detailTotalPrice" style="background:#f1e0d6; padding:0.2rem 0.8rem; border-radius:40px;"></span></div><div id="detailVariants" class="product-variants"></div><div class="order-row" style="margin-top:1rem;"><input type="number" id="detailQuantity" min="1" value="1" class="quantity-input"><button id="detailAddToCart" class="btn-cart" style="margin-left:1rem;"><i class="fas fa-cart-plus"></i> Add to Cart</button></div><p id="detailDescription" style="margin-top:1rem; color:#4a5b63;"></p></div></div></div>
+    <div id="productDetailModal" class="modal product-detail-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeProductDetail">&times;</span>
+            <div class="product-detail-images">
+                <div class="magnifier-wrapper" id="magnifierWrapper">
+                    <img id="detailMainImage" class="main-image-detail" src="" alt="Product">
+                </div>
+                <div id="detailThumbnails" class="product-detail-thumbnails"></div>
+            </div>
+            <div class="product-detail-info">
+                <h2 id="detailName"></h2>
+                <div id="detailStock" class="stock-badge"></div>
+                <div class="price-info"><span id="detailPrice" class="base-price"></span><span id="detailTotalPrice" class="total-badge"></span></div>
+                <p id="detailDescription" class="desc-text"></p>
+                <div id="detailVariants" class="product-variants"></div>
+                
+                <div class="sticky-action-bar">
+                    <input type="number" id="detailQuantity" min="1" value="1" class="quantity-input">
+                    <button id="detailAddToCart" class="btn-cart"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="app.js"></script>
+    
     <script>
-        (function() {
-            // ---------- SMART WHATSAPP ROUTER ----------
-            function openWhatsApp(message) {
-                const phone = '916309645717';
-                const encodedMsg = encodeURIComponent(message || '');
-                // Check if user is on mobile
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                
-                // Route directly to app on mobile, or web portal on desktop (Bypassing blocked api.whatsapp.com)
-                const url = isMobile 
-                    ? `whatsapp://send?phone=${phone}&text=${encodedMsg}` 
-                    : `https://web.whatsapp.com/send?phone=${phone}&text=${encodedMsg}`;
-                    
-                window.open(url, '_blank');
-            }
-
-            // Direct Chat Button Listener
-            document.getElementById('directChatBtn').addEventListener('click', (e) => {
-                e.preventDefault();
-                openWhatsApp("Hello! I have a question from your website.");
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW registered!', reg.scope)).catch(err => console.log('SW failed', err));
             });
-
-            // ---------- PRODUCT DATA ----------
-            const products = [
-                { id: 1, name: "Ceramic Mug", category: "handmade", basePrice: 2200, images: ["mug1", "mug2"], stock: 5, variants: null, description: "Hand-thrown stoneware mug with a smooth glaze. Perfect for your morning coffee." },
-                { id: 2, name: "Handwoven Scarf", category: "handmade", basePrice: 850, images: ["scarf1", "scarf2"], stock: 10, variants: null, description: "Soft, ethically sourced cotton scarf. Handwoven by local artisans." },
-                { id: 3, name: "Wooden Earrings", category: "handmade", basePrice: 700, images: ["earrings1", "earrings2"], stock: 3, variants: null, description: "Lightweight wooden earrings with a natural finish. Unique grain patterns." },
-                { id: 4, name: "Embroidered Dress", category: "clothes", basePrice: 2200, images: ["dress1", "dress2"], stock: 2, variants: { sizes: ["S", "M", "L"], colors: ["Red", "Blue"] }, description: "Floral embroidered dress with a flattering A-line cut. Made from breathable cotton." },
-                { id: 5, name: "Knitted Sweater", category: "clothes", basePrice: 2700, images: ["sweater1", "sweater2"], stock: 4, variants: { sizes: ["M", "L", "XL"], colors: ["Gray", "Green"] }, description: "Cozy hand-knitted sweater, perfect for chilly evenings. 100% wool." },
-                { id: 6, name: "Linen Tote Bag", category: "clothes", basePrice: 1000, images: ["totebag1", "totebag2"], stock: 8, variants: null, description: "Durable linen tote bag, ideal for shopping or daily use. Natural color." }
-            ];
-
-            const imageMap = {
-                mug1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23dbb59b'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='20' text-anchor='middle'%3Emug%3C/text%3E%3C/svg%3E",
-                mug2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23c38e7b'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='20' text-anchor='middle'%3Emug2%3C/text%3E%3C/svg%3E",
-                scarf1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23aac7b9'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Escarf%3C/text%3E%3C/svg%3E",
-                scarf2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%238bb3a0'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Escarf2%3C/text%3E%3C/svg%3E",
-                earrings1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23e6b89c'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Eearrings%3C/text%3E%3C/svg%3E",
-                earrings2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23d49c7a'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Eearrings2%3C/text%3E%3C/svg%3E",
-                dress1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23e0a28f'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Edress%3C/text%3E%3C/svg%3E",
-                dress2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23c27f68'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Edress2%3C/text%3E%3C/svg%3E",
-                sweater1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%239f8c76'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Esweater%3C/text%3E%3C/svg%3E",
-                sweater2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23856f59'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Esweater2%3C/text%3E%3C/svg%3E",
-                totebag1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23b8a99a'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Etote%3C/text%3E%3C/svg%3E",
-                totebag2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%239e8d7c'/%3E%3Ctext x='50%25' y='50%25' fill='white'%3Etote2%3C/text%3E%3C/svg%3E"
-            };
-
-            let currentCurrency = 'INR';
-            const exchangeRate = 83;
-            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            let recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed')) || [];
-            let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '' };
-            let currentDiscount = 0;
-            const cityDistances = { tirupati:0, tirupathi:0, chandragiri:15, renigunta:10, srikalahasti:36, puttur:40, chittoor:65, nellore:130, kadapa:140, chennai:160, bangalore:250, hyderabad:520, vijayawada:360, vizag:620, mumbai:1000, delhi:1800, kolkata:1500 };
-            const defaultDistance = 500;
-            const coupons = { 'DTDC10': { type: 'percent', value: 10 }, 'WELCOME': { type: 'fixed', value: 100 }, 'FREESHIP': { type: 'fixed', value: 0 } };
-
-            function formatPrice(p) { return currentCurrency === 'USD' ? '$' + (p/exchangeRate).toFixed(2) : '₹' + p; }
-            function updateCartCount() { document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.quantity,0); }
-            function saveCart() { localStorage.setItem('cart',JSON.stringify(cart)); updateCartCount(); }
-            function updateWishlistCount() { document.getElementById('wishlistCount').textContent = wishlist.length; }
-            function saveWishlist() { localStorage.setItem('wishlist',JSON.stringify(wishlist)); updateWishlistCount(); }
-            
-            function calculateDTDCRate(distanceKm, totalWeight=1) {
-                if(distanceKm <= 15) { let c = Math.floor(Math.random()*51)+100; return { charge:c, service:'DTDC Local Express', eta:'Same day' }; }
-                let base=0, service='';
-                if(distanceKm<=50) { base=60; service='DTDC Plus (Local)'; }
-                else if(distanceKm<=200) { base=90; service='DTDC Regional Plus'; }
-                else if(distanceKm<=500) { base=120; service='DTDC Zonal Plus'; }
-                else if(distanceKm<=1500) { base=200; service='DTDC National Plus'; }
-                else { base=300; service='DTDC Prime'; }
-                let charge = base * Math.ceil(totalWeight*2);
-                let eta = distanceKm<=50?'Same day':(distanceKm<=200?'Next business day':(distanceKm<=500?'2 business days':(distanceKm<=1500?'3-4 business days':'5-7 business days')));
-                return { charge, service, eta };
-            }
-
-            function addToCart(id, qty, size, color, eventTarget) {
-                let existing = cart.find(i=>i.id===id && i.size===size && i.color===color);
-                if(existing) existing.quantity += qty;
-                else cart.push({ id, quantity:qty, size, color });
-                saveCart();
-                const cartIcon = document.querySelector('.cart-btn');
-                cartIcon.classList.add('wiggle');
-                setTimeout(()=>cartIcon.classList.remove('wiggle'), 300);
-                setTimeout(() => alert('Item added to cart!'), 100);
-            }
-
-            function openProductDetail(productId) {
-                const product = products.find(p => p.id === productId);
-                if (!product) return;
-                document.getElementById('detailMainImage').src = imageMap[product.images[0]];
-                document.getElementById('detailName').textContent = product.name;
-                document.getElementById('detailPrice').textContent = formatPrice(product.basePrice);
-                document.getElementById('detailTotalPrice').textContent = 'total: ' + formatPrice(product.basePrice);
-                document.getElementById('detailDescription').textContent = product.description || "A beautiful handmade item from our collection.";
-                const stockBadge = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
-                document.getElementById('detailStock').innerHTML = stockBadge;
-                const thumbContainer = document.getElementById('detailThumbnails');
-                thumbContainer.innerHTML = '';
-                product.images.forEach((imgKey, idx) => {
-                    const thumb = document.createElement('img');
-                    thumb.src = imageMap[imgKey];
-                    thumb.classList.add('product-detail-thumb');
-                    if (idx === 0) thumb.classList.add('active');
-                    thumb.addEventListener('click', () => {
-                        document.getElementById('detailMainImage').src = imageMap[imgKey];
-                        document.querySelectorAll('.product-detail-thumb').forEach(t => t.classList.remove('active'));
-                        thumb.classList.add('active');
-                    });
-                    thumbContainer.appendChild(thumb);
-                });
-                const variantsDiv = document.getElementById('detailVariants');
-                if (product.variants) {
-                    let html = '';
-                    if (product.variants.sizes) html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
-                    if (product.variants.colors) html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
-                    variantsDiv.innerHTML = html;
-                } else variantsDiv.innerHTML = '';
-                
-                const qtyInput = document.getElementById('detailQuantity');
-                qtyInput.value = 1;
-                qtyInput.oninput = () => {
-                    const qty = parseInt(qtyInput.value) || 1;
-                    const total = product.basePrice * qty;
-                    document.getElementById('detailTotalPrice').textContent = 'total: ' + formatPrice(total);
-                };
-                const addBtn = document.getElementById('detailAddToCart');
-                addBtn.onclick = () => {
-                    const qty = parseInt(document.getElementById('detailQuantity').value) || 1;
-                    const size = document.getElementById('detailSize') ? document.getElementById('detailSize').value : null;
-                    const color = document.getElementById('detailColor') ? document.getElementById('detailColor').value : null;
-                    addToCart(product.id, qty, size, color, addBtn);
-                    document.getElementById('productDetailModal').style.display = 'none';
-                };
-                document.getElementById('productDetailModal').style.display = 'flex';
-            }
-
-            function renderProducts() {
-                const h = document.getElementById('filterHandmade').checked;
-                const c = document.getElementById('filterClothes').checked;
-                const u = document.getElementById('filterUnder1000').checked;
-                const s = document.getElementById('searchInput').value.toLowerCase();
-                const sort = document.getElementById('sortSelect').value;
-                let filtered = products.filter(p => (h||p.category!=='handmade') && (c||p.category!=='clothes') && (!u||p.basePrice<1000) && (!s||p.name.toLowerCase().includes(s)));
-                if(sort==='priceAsc') filtered.sort((a,b)=>a.basePrice-b.basePrice);
-                else if(sort==='priceDesc') filtered.sort((a,b)=>b.basePrice-a.basePrice);
-                const handmade = filtered.filter(p=>p.category==='handmade');
-                const clothes = filtered.filter(p=>p.category==='clothes');
-                let html = '';
-                if(handmade.length) html += '<h2 class="section-title" id="handmade" style="margin-top:2rem;"><span style="background:#f1e0d6; padding:0.2rem 1rem; border-radius:60px;">🧶 handmade collection</span></h2><div class="product-grid">'+handmade.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
-                if(clothes.length) html += '<h2 class="section-title" id="clothes"><span style="background:#f1e0d6; padding:0.2rem 1rem; border-radius:60px;">👗 clothes collection</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i+handmade.length)).join('')+'</div>';
-                document.getElementById('productSections').innerHTML = html || '<p>No products match your filters.</p>';
-                
-                attachProductEvents();
-                updateWishlistCount();
-                
-                setTimeout(() => {
-                    document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible'));
-                }, 50);
-            }
-
-            function renderProductCard(p, idx) {
-                const isWished = wishlist.includes(p.id);
-                const stockBadge = p.stock>0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
-                const mainImg = imageMap[p.images[0]];
-                const thumbs = p.images.map(img=>imageMap[img]).filter(Boolean);
-                let variantsHtml = '';
-                if(p.variants) {
-                    variantsHtml = '<div class="product-variants">';
-                    if(p.variants.sizes) variantsHtml += `<div class="variant-row"><label>Size:</label> <select class="size-select">${p.variants.sizes.map(s=>`<option>${s}</option>`).join('')}</select></div>`;
-                    if(p.variants.colors) variantsHtml += `<div class="variant-row"><label>Color:</label> <select class="color-select">${p.variants.colors.map(c=>`<option>${c}</option>`).join('')}</select></div>`;
-                    variantsHtml += '</div>';
-                }
-                return `<div class="product-card" data-id="${p.id}" data-base-price="${p.basePrice}" style="--card-index:${idx}">
-                    <div class="wishlist-heart ${isWished?'active':''}" data-id="${p.id}"><i class="${isWished?'fas':'far'} fa-heart"></i></div>
-                    <div class="product-images"><img src="${mainImg}" class="main-image" alt="${p.name}"><div class="thumbnail-strip">${thumbs.map((src,i)=>`<img src="${src}" class="thumbnail ${i===0?'active':''}" data-index="${i}">`).join('')}</div></div>
-                    <h4 style="margin-top:1rem;">${p.name}</h4>${stockBadge}${variantsHtml}
-                    <div class="price-info"><span class="base-price">${formatPrice(p.basePrice)}</span></div>
-                    <div class="order-row" style="display:flex; gap:0.5rem; margin-top:auto; padding-top:1rem;"><input type="number" min="1" value="1" class="quantity-input"><button class="btn-cart add-to-cart" data-id="${p.id}" style="flex:1; justify-content:center;"><i class="fas fa-cart-plus"></i> Add</button></div>
-                </div>`;
-            }
-
-            function attachProductEvents() {
-                document.querySelectorAll('.wishlist-heart').forEach(heart => {
-                    heart.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const id = parseInt(this.dataset.id);
-                        if (wishlist.includes(id)) {
-                            wishlist = wishlist.filter(i => i !== id);
-                            this.classList.remove('active');
-                            this.innerHTML = '<i class="far fa-heart"></i>';
-                        } else {
-                            wishlist.push(id);
-                            this.classList.add('active');
-                            this.innerHTML = '<i class="fas fa-heart"></i>';
-                        }
-                        saveWishlist();
-                        this.classList.add('heart-pulse');
-                        setTimeout(() => this.classList.remove('heart-pulse'), 400);
-                    });
-                });
-
-                document.querySelectorAll('.thumbnail').forEach(t => t.addEventListener('click', function(e){
-                    e.stopPropagation();
-                    let card = this.closest('.product-card');
-                    let main = card.querySelector('.main-image');
-                    main.src = this.src; 
-                    card.querySelectorAll('.thumbnail').forEach(tt=>tt.classList.remove('active')); 
-                    this.classList.add('active');
-                }));
-                
-                // Aesthetic Lightbox Trigger
-                document.querySelectorAll('.main-image').forEach(img => img.addEventListener('click', function(e){
-                    e.stopPropagation();
-                    document.getElementById('lightboxImg').src = this.src;
-                    document.getElementById('lightbox').classList.add('show');
-                }));
-                
-                document.querySelectorAll('.add-to-cart').forEach(btn => {
-                    btn.addEventListener('click', function(e){
-                        e.stopPropagation();
-                        let card=this.closest('.product-card'), id=parseInt(card.dataset.id), qty=parseInt(card.querySelector('.quantity-input').value)||1;
-                        let sizeSelect=card.querySelector('.size-select'), colorSelect=card.querySelector('.color-select');
-                        let size=sizeSelect?sizeSelect.value:null, color=colorSelect?colorSelect.value:null;
-                        addToCart(id,qty,size,color, this);
-                        updateCartCount();
-                    });
-                });
-
-                document.querySelectorAll('.product-card').forEach(card => {
-                    card.addEventListener('click', function(e){
-                        if(e.target.closest('.wishlist-heart') || e.target.closest('.thumbnail') || e.target.closest('.quantity-input') || e.target.closest('.add-to-cart') || e.target.closest('select')) return;
-                        const id = parseInt(this.dataset.id);
-                        openProductDetail(id);
-                        if(!recentlyViewed.includes(id)){ recentlyViewed.unshift(id); if(recentlyViewed.length>5) recentlyViewed.pop(); localStorage.setItem('recentlyViewed',JSON.stringify(recentlyViewed)); }
-                    });
-                    card.addEventListener('mousemove', function(e) {
-                        let rect = this.getBoundingClientRect();
-                        let x = (e.clientX - rect.left) / rect.width - 0.5;
-                        let y = (e.clientY - rect.top) / rect.height - 0.5;
-                        let rotateY = x * 8;
-                        let rotateX = y * -8;
-                        this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-                    });
-                    card.addEventListener('mouseleave', function() {
-                        this.style.transform = '';
-                    });
-                });
-            }
-
-            // Close Lightbox Events
-            document.getElementById('closeLightboxBtn').addEventListener('click', () => {
-                document.getElementById('lightbox').classList.remove('show');
-            });
-            document.getElementById('lightbox').addEventListener('click', (e) => {
-                if(e.target === document.getElementById('lightbox')) {
-                    document.getElementById('lightbox').classList.remove('show');
-                }
-            });
-
-            document.getElementById('estimateDelivery').addEventListener('click',()=>{
-                let city = document.getElementById('deliveryCity').value.trim().toLowerCase();
-                if(!city) return alert('Please enter a city first');
-                let dist = cityDistances[city] || defaultDistance;
-                let weight = cart.reduce((s,i)=>s+(i.quantity*0.5),0);
-                let rate = calculateDTDCRate(dist, weight);
-                currentDelivery = { charge:rate.charge, provider:'DTDC', eta:rate.eta, distance:dist, service:rate.service };
-                
-                let area = document.getElementById('deliveryEstimateArea');
-                area.style.display='block';
-                document.getElementById('deliveryChargeUI').innerText = formatPrice(currentDelivery.charge); 
-                document.getElementById('deliveryEta').innerText = currentDelivery.eta;
-                document.getElementById('deliveryDistance').innerText = currentDelivery.distance;
-                document.getElementById('deliveryService').innerText = currentDelivery.service;
-                updateDeliverySummary();
-            });
-
-            function updateDeliverySummary(){
-                let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
-                let total = subtotal + currentDelivery.charge - currentDiscount;
-                document.getElementById('deliveryOrderSummary').innerHTML = `
-                    <strong>Subtotal:</strong> ${formatPrice(subtotal)}<br>
-                    ${currentDelivery.charge>0?`<strong>DTDC Delivery:</strong> ${formatPrice(currentDelivery.charge)} (${currentDelivery.service})<br>`:''}
-                    ${currentDiscount>0?`<strong>Discount:</strong> -${formatPrice(currentDiscount)}<br>`:''}
-                    <strong style="font-size:1.2rem;">Total: ${formatPrice(total)}</strong>`;
-            }
-
-            document.getElementById('applyCouponBtn').addEventListener('click',()=>{
-                let code = document.getElementById('couponCode').value.trim().toUpperCase();
-                let coupon = coupons[code];
-                if(!coupon){ document.getElementById('couponMessage').innerText='Invalid code'; return; }
-                let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
-                if(coupon.type==='percent') currentDiscount = Math.round(subtotal*coupon.value/100);
-                else currentDiscount = coupon.value;
-                if(currentDiscount>subtotal) currentDiscount=subtotal;
-                document.getElementById('couponMessage').innerHTML = `Discount applied: -${formatPrice(currentDiscount)}`;
-                updateDeliverySummary();
-            });
-
-            document.getElementById('sendOrder').addEventListener('click',()=>{
-                let name=document.getElementById('deliveryName').value.trim();
-                let addr=document.getElementById('deliveryAddress').value.trim(); 
-                let phone=document.getElementById('deliveryPhone').value.trim(); 
-                let notes=document.getElementById('deliveryNotes').value.trim(); 
-                let city=document.getElementById('deliveryCity').value.trim();
-                
-                if(!name||!addr||!phone||!city) return alert('Please fill in all required delivery fields.');
-                
-                let subtotal=0, msg=`Hello! I'd like to place an order:\n\n`;
-                
-                cart.forEach(i=>{ 
-                    let p=products.find(p=>p.id===i.id); 
-                    if(p){ 
-                        let t=p.basePrice*i.quantity; 
-                        subtotal+=t; 
-                        msg+=`- *${p.name}* x${i.quantity}`; 
-                        if(i.size) msg+=` (Size: ${i.size}`; 
-                        if(i.color) msg+=`${i.size?', ':' ('}Color: ${i.color}`; 
-                        if(i.size||i.color) msg+=`)`; 
-                        msg+=` — ${formatPrice(p.basePrice)} each, total ${formatPrice(t)}\n`; 
-                    } 
-                });
-                
-                let total = subtotal + currentDelivery.charge - currentDiscount;
-                
-                msg += `\n👤 Name: ${name}\n📮 Address: ${addr}\n📞 Phone: ${phone}\n📍 City: ${city}\n`;
-                if(notes) msg += `📝 Notes: ${notes}\n`;
-                if(currentDelivery.charge>0) msg += `🚚 DTDC Courier: ${formatPrice(currentDelivery.charge)} (${currentDelivery.service})\n📏 Distance: ${currentDelivery.distance} km\n⏱️ Estimated Delivery: ${currentDelivery.eta}\n`;
-                if(currentDiscount>0) msg += `🏷️ Discount: -${formatPrice(currentDiscount)}\n`;
-                msg += `\n*Grand Total: ${formatPrice(total)}*\n\nThank you! 💛`;
-                
-                // Using the new smart router
-                openWhatsApp(msg);
-                
-                document.getElementById('deliveryModal').style.display='none';
-                cart=[]; saveCart(); renderCartModal();
-            });
-
-            document.getElementById('cartBtn').addEventListener('click',()=>{ renderCartModal(); document.getElementById('cartModal').style.display='flex'; });
-            document.getElementById('wishlistBtn').addEventListener('click',()=>{ renderWishlistModal(); document.getElementById('wishlistModal').style.display='flex'; });
-            document.getElementById('proceedToDelivery').addEventListener('click',()=>{
-                if(cart.length===0) return alert('Cart empty');
-                document.getElementById('cartModal').style.display='none'; 
-                document.getElementById('deliveryModal').style.display='flex';
-                document.getElementById('deliveryCity').value=''; 
-                document.getElementById('couponCode').value=''; 
-                document.getElementById('deliveryEstimateArea').style.display='none'; 
-                document.getElementById('couponMessage').innerHTML=''; 
-                currentDelivery={charge:0}; currentDiscount=0; 
-                updateDeliverySummary();
-            });
-
-            function renderCartModal(){ 
-                let cont=document.getElementById('cartItems'); 
-                if(cart.length===0){ 
-                    cont.innerHTML='<div class="empty-cart">Your cart is empty</div>'; 
-                    document.getElementById('cartTotal').innerHTML=''; 
-                    return; 
-                } 
-                let html='', total=0; 
-                cart.forEach((item,idx)=>{ 
-                    let p=products.find(p=>p.id===item.id); 
-                    if(!p) return; 
-                    let t=p.basePrice*item.quantity; 
-                    total+=t; 
-                    html+=`<div class="cart-item" data-index="${idx}"><img src="${imageMap[p.images[0]]}"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" style="width:50px; text-align:center; border-radius:10px; border:1px solid #ccc;" class="cart-quantity" data-index="${idx}"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; 
-                }); 
-                cont.innerHTML=html; 
-                document.getElementById('cartTotal').innerHTML=`<strong>Total: ${formatPrice(total)}</strong>`; 
-                
-                document.querySelectorAll('.cart-quantity').forEach(inp=>inp.addEventListener('change',function(){ 
-                    let idx=this.dataset.index, nq=parseInt(this.value); 
-                    if(nq>0){ cart[idx].quantity=nq; saveCart(); renderCartModal(); } 
-                })); 
-                document.querySelectorAll('.cart-item-remove').forEach(btn=>btn.addEventListener('click',function(){ 
-                    let idx=this.dataset.index; cart.splice(idx,1); saveCart(); renderCartModal(); 
-                })); 
-            }
-
-            function renderWishlistModal(){ 
-                let cont=document.getElementById('wishlistItems'); 
-                if(wishlist.length===0){ 
-                    cont.innerHTML='<div class="empty-wishlist">Your wishlist is empty 💔</div>'; 
-                    return; 
-                } 
-                let html=''; 
-                wishlist.forEach(id=>{ 
-                    let p=products.find(p=>p.id===id); 
-                    if(p) html+=`<div class="wishlist-item" data-id="${p.id}"><img src="${imageMap[p.images[0]]}"><div class="wishlist-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)}</p></div><i class="fas fa-trash remove-wishlist" data-id="${p.id}"></i></div>`; 
-                }); 
-                cont.innerHTML=html; 
-                document.querySelectorAll('.remove-wishlist').forEach(btn=>btn.addEventListener('click',function(e){ 
-                    e.stopPropagation(); let id=parseInt(this.dataset.id); wishlist=wishlist.filter(i=>i!==id); saveWishlist(); renderWishlistModal(); renderProducts(); 
-                })); 
-            }
-
-            document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ this.closest('.modal').style.display='none'; }));
-            window.addEventListener('click',e=>{ if(e.target.classList.contains('modal')) e.target.style.display='none'; });
-
-            document.getElementById('currencyINR').addEventListener('click',()=>{ currentCurrency='INR'; document.getElementById('currencyINR').classList.add('active'); document.getElementById('currencyUSD').classList.remove('active'); renderProducts(); });
-            document.getElementById('currencyUSD').addEventListener('click',()=>{ currentCurrency='USD'; document.getElementById('currencyUSD').classList.add('active'); document.getElementById('currencyINR').classList.remove('active'); renderProducts(); });
-            document.getElementById('searchInput').addEventListener('input',renderProducts);
-            document.getElementById('filterHandmade').addEventListener('change',renderProducts);
-            document.getElementById('filterClothes').addEventListener('change',renderProducts);
-            document.getElementById('filterUnder1000').addEventListener('change',renderProducts);
-            document.getElementById('sortSelect').addEventListener('change',renderProducts);
-            document.getElementById('newsletterForm').addEventListener('submit',e=>{ e.preventDefault(); alert('Subscribed!'); });
-
-            const container = document.getElementById('productSections');
-            container.innerHTML = '<p>Loading products...</p>';
-            setTimeout(renderProducts, 300);
-
-            window.addEventListener('scroll', () => {
-                let scrollY = window.scrollY;
-                document.getElementById('mainHeader').classList.toggle('scrolled', scrollY > 50);
-                requestAnimationFrame(() => {
-                    document.getElementById('blob1').style.transform = `translateY(${scrollY*0.05}px)`;
-                    document.getElementById('blob2').style.transform = `translateY(${-scrollY*0.05}px)`;
-                });
-            });
-
-            document.querySelectorAll('.nav-links a').forEach(link=>{
-                link.addEventListener('click',function(e){
-                    e.preventDefault();
-                    let targetId = this.getAttribute('href').substring(1);
-                    if(!targetId) targetId='';
-                    const transitionContainer = document.getElementById('mainContainer');
-                    transitionContainer.classList.add('page-transition-out');
-                    setTimeout(()=>{
-                        if(targetId){
-                            let target = document.getElementById(targetId);
-                            if(target) target.scrollIntoView({behavior:'smooth'});
-                        } else window.scrollTo({top:0,behavior:'smooth'});
-                        setTimeout(()=>transitionContainer.classList.remove('page-transition-out'),100);
-                    },200);
-                });
-            });
-
-            updateCartCount(); updateWishlistCount();
-        })();
+        }
     </script>
 </body>
 </html>
