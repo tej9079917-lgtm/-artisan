@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>artisan • handmade marketplace</title>
+    <title>artisan • responsive product grid</title>
     
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#fefaf5">
-    <link rel="apple-touch-icon" href="icon-192.png"> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -26,13 +24,14 @@
                     <a href="#" data-target="home">home</a>
                     <a href="#handmade" data-target="handmade">handmade</a>
                     <a href="#clothes" data-target="clothes">clothes</a>
+                    <a href="#story" data-target="story">story</a>
                     <a href="#contact" data-target="contact">contact</a>
                 </div>
                 <div class="header-actions">
                     <button class="cart-btn" id="cartBtn" aria-label="Open Cart"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></button>
                     <button class="wishlist-btn" id="wishlistBtn" aria-label="Open Wishlist"><i class="fas fa-heart"></i><span class="wishlist-count" id="wishlistCount">0</span></button>
                     
-                    <button id="themeToggle" class="theme-btn" aria-label="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+                    <button id="themeToggle" class="theme-btn" aria-label="Toggle Dark Mode" style="background:none; border:none; font-size:1.2rem; color:var(--accent-color); cursor:pointer;"><i class="fas fa-moon"></i></button>
                     
                     <div class="currency-toggle"><button id="currencyINR" class="active">₹</button><button id="currencyUSD">$</button></div>
                 </div>
@@ -62,6 +61,7 @@
                 <div class="checkbox-group">
                     <label><input type="checkbox" id="filterHandmade" checked> Handmade</label>
                     <label><input type="checkbox" id="filterClothes" checked> Clothes</label>
+                    <label><input type="checkbox" id="filterUnder1000"> Under ₹1000</label>
                 </div>
                 <select id="sortSelect" class="sort-select">
                     <option value="default">Sort by</option>
@@ -71,59 +71,30 @@
             </div>
         </div>
 
-        <div id="productSections">
-            </div>
+        <div id="productSections"></div>
 
-        <section id="contact" style="margin: 4rem 0; text-align: center;">
-            <h2><span class="badge-title">📬 get in touch</span></h2>
-            <div class="contact-grid">
-                <div class="contact-card"><i class="fab fa-whatsapp"></i><h4>WhatsApp</h4><a href="#" id="directChatBtn" class="btn">chat now</a></div>
-                <div class="contact-card"><i class="fas fa-envelope"></i><h4>Email</h4><p>hello@artisan.crafts</p></div>
-                <div class="contact-card"><i class="fas fa-phone-alt"></i><h4>Phone</h4><p>+91 6309 645 717</p></div>
-            </div>
-        </section>
+        <section id="story" style="margin: 4rem 0;"><div class="story-box"><h2>our story</h2><p>Artisan was born in a small workshop surrounded by looms and clay...</p><p><i class="fas fa-feather-alt" style="color:var(--accent-color);"></i> thank you for keeping handmade alive.</p></div></section>
+
+        <section id="contact" style="margin: 4rem 0; text-align: center;"><h2><span class="badge">📬 get in touch</span></h2><div class="contact-grid"><div class="contact-card"><i class="fab fa-whatsapp"></i><h4>WhatsApp</h4><a href="#" id="directChatBtn" class="btn">chat now</a></div><div class="contact-card"><i class="fas fa-envelope"></i><h4>Email</h4><p>hello@artisan.crafts</p></div><div class="contact-card"><i class="fas fa-phone-alt"></i><h4>Phone</h4><p>+91 6309 645 717</p></div><div class="contact-card"><i class="fas fa-map-pin"></i><h4>Studio</h4><p>Portland, OR</p></div></div></section>
+
+        <div class="newsletter-section"><h2>Join our artisan community</h2><p>Get updates on new collections and exclusive offers</p><form class="newsletter-form" id="newsletterForm"><input type="email" id="newsletterEmail" placeholder="Your email address" required><button type="submit">Subscribe</button></form></div>
     </div>
 
-    <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">&times;</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><br><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Checkout</button></div></div>
+    <footer><div class="container"><div class="footer-content"><div class="footer-col"><h4><i class="fas fa-feather-alt"></i> artisan</h4><p>celebrating hands that create.</p></div><div class="footer-col"><h5>explore</h5><p>new arrivals<br>makers<br>our story</p></div><div class="footer-col"><h5>social</h5><p>ig · fb · pinterest</p></div><div class="footer-col"><h5>hello@artisan.crafts</h5><p><i class="fas fa-phone-alt"></i> +91 6309 645 717</p></div></div><div class="copyright">© 2026 artisan — made slowly, with intention</div></div></footer>
+
+    <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">&times;</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><br><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Delivery</button></div></div>
     
-    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">&times;</span><h2>Delivery Details <span class="shipping-badge">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><div class="city-row"><input type="text" id="deliveryCity" placeholder="City (e.g., Tirupati)" required><button class="btn" id="estimateDelivery">Calculate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" class="btn-whatsapp"><i class="fab fa-whatsapp"></i> Order via WhatsApp</button></div></div></div>
+    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">&times;</span><h2>Delivery Details <span class="badge" style="font-size:0.7rem; margin-left:0.5rem; background:var(--accent-color); color:white;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati, Chandragiri)" required><button class="btn" id="estimateDelivery">Calculate Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:var(--accent-color);"></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button></div></div></div>
     
     <div id="wishlistModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeWishlist">&times;</span><h2>Your Wishlist ❤️</h2><div id="wishlistItems"></div></div></div>
     
-    <div id="lightbox"><span class="close-lightbox" id="closeLightboxBtn">&times;</span><img id="lightboxImg"></div>
-    
-    <div id="productDetailModal" class="modal product-detail-modal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeProductDetail">&times;</span>
-            <div class="product-detail-images">
-                <div class="magnifier-wrapper" id="magnifierWrapper">
-                    <img id="detailMainImage" class="main-image-detail" src="" alt="Product">
-                </div>
-                <div id="detailThumbnails" class="product-detail-thumbnails"></div>
-            </div>
-            <div class="product-detail-info">
-                <h2 id="detailName"></h2>
-                <div id="detailStock" class="stock-badge"></div>
-                <div class="price-info"><span id="detailPrice" class="base-price"></span><span id="detailTotalPrice" class="total-badge"></span></div>
-                <p id="detailDescription" class="desc-text"></p>
-                <div id="detailVariants" class="product-variants"></div>
-                
-                <div class="sticky-action-bar">
-                    <input type="number" id="detailQuantity" min="1" value="1" class="quantity-input">
-                    <button id="detailAddToCart" class="btn-cart"><i class="fas fa-cart-plus"></i> Add to Cart</button>
-                </div>
-            </div>
-        </div>
+    <div id="lightbox">
+        <span class="close-lightbox" id="closeLightboxBtn">&times;</span>
+        <img id="lightboxImg">
     </div>
+    
+    <div id="productDetailModal" class="modal product-detail-modal"><div class="modal-content"><span class="close-modal" id="closeProductDetail">&times;</span><div class="product-detail-images"><img id="detailMainImage" class="main-image-detail" src="" alt="Product Image"><div id="detailThumbnails" class="product-detail-thumbnails"></div></div><div class="product-detail-info"><h2 id="detailName"></h2><div id="detailStock" class="stock-badge"></div><div class="price-info"><span id="detailPrice" class="base-price"></span><span id="detailTotalPrice" class="badge"></span></div><div id="detailVariants" class="product-variants"></div><div class="order-row" style="margin-top:1rem;"><input type="number" id="detailQuantity" min="1" value="1" class="quantity-input"><button id="detailAddToCart" class="btn-cart" style="margin-left:1rem;"><i class="fas fa-cart-plus"></i> Add to Cart</button></div><p id="detailDescription" style="margin-top:1rem; color:var(--text-color); opacity: 0.8;"></p></div></div></div>
 
     <script src="app.js"></script>
-    
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').then(reg => console.log('SW registered!', reg.scope)).catch(err => console.log('SW failed', err));
-            });
-        }
-    </script>
 </body>
 </html>
