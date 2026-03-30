@@ -47,7 +47,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); line-height: 1.5; overflow-x: hidden; transition: background 0.3s, color 0.3s; width: 100vw; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); line-height: 1.5; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
         html { scroll-behavior: smooth; }
 
         /* ------------------------------------------- */
@@ -57,7 +57,6 @@
             body { cursor: none; }
             a, button, input, select, textarea, i, img, .product-card, .logo-wrapper { cursor: none; }
             
-            /* The Feather Pointer Only */
             .cursor-feather {
                 position: fixed; top: 0; left: 0;
                 display: flex; align-items: center; justify-content: center;
@@ -68,7 +67,6 @@
                 filter: drop-shadow(0 2px 4px rgba(195, 142, 123, 0.6));
             }
             
-            /* Hover State for the Feather */
             .cursor-feather.hovering {
                 transform: translate(-50%, -50%) scale(1.2) rotate(10deg);
                 color: var(--text-color);
@@ -181,28 +179,6 @@
         }
         .action-btn-glass.wiggle { animation: wiggle 0.4s ease; }
         @keyframes wiggle { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-3px) rotate(10deg); } 75% { transform: translateY(-3px) rotate(-10deg); } }
-
-        /* --- MOBILE RESPONSIVE HEADER FIX --- */
-        @media (max-width: 768px) {
-            .header-container { flex-direction: column; justify-content: center; padding: 1rem; gap: 1rem; }
-            .brand-section { width: 100%; justify-content: center; gap: 1rem; }
-            .nav-container { width: 100%; justify-content: center; gap: 1rem; flex-direction: column;}
-            .nav-links { justify-content: center; gap: 1rem; flex-wrap: wrap; font-size: 0.95rem; }
-            .artisan-text { font-size: 2rem; }
-            .floral-flourish { width: 35px; height: 35px; }
-            .floral-left { top: -8px; left: -8px; }
-            .floral-right { bottom: -8px; right: -8px; }
-            .logo-3d-scene { width: 30px; height: 30px; }
-            .cube-face { width: 30px; height: 30px; border-radius: 8px;}
-            .face-front  { transform: rotateY(0deg) translateZ(15px); }
-            .face-right  { transform: rotateY(90deg) translateZ(15px); }
-            .face-back   { transform: rotateY(180deg) translateZ(15px); }
-            .face-left   { transform: rotateY(-90deg) translateZ(15px); }
-            
-            .hero { padding: 1.5rem 0 3rem; text-align: center; }
-            .hero-buttons { justify-content: center; }
-            .hero-visual { margin-top: 2rem; }
-        }
 
         .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; transition: opacity 0.2s ease; }
         section[id], h2[id] { scroll-margin-top: 90px; }
@@ -326,6 +302,38 @@
         .footer-col i { margin-right: 0.5rem; color: var(--accent-color); transition: transform 0.3s; }
         .footer-col i:hover { transform: scale(1.2) translateY(-2px); }
         .copyright { text-align: center; padding-top: 2.5rem; opacity: 0.5; }
+
+        /* --- MOBILE RESPONSIVE FIXES --- */
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; }
+            .header-container { flex-direction: column; justify-content: center; padding: 1rem; gap: 1rem; }
+            .brand-section { width: 100%; justify-content: center; gap: 1rem; }
+            .nav-container { width: 100%; justify-content: center; gap: 1rem; flex-direction: column;}
+            .nav-links { justify-content: center; gap: 1rem; flex-wrap: wrap; font-size: 0.95rem; }
+            .artisan-text { font-size: 2rem; }
+            .floral-flourish { width: 35px; height: 35px; }
+            .floral-left { top: -8px; left: -8px; }
+            .floral-right { bottom: -8px; right: -8px; }
+            .logo-3d-scene { width: 30px; height: 30px; }
+            .cube-face { width: 30px; height: 30px; border-radius: 8px;}
+            .face-front  { transform: rotateY(0deg) translateZ(15px); }
+            .face-right  { transform: rotateY(90deg) translateZ(15px); }
+            .face-back   { transform: rotateY(180deg) translateZ(15px); }
+            .face-left   { transform: rotateY(-90deg) translateZ(15px); }
+            
+            .hero { padding: 1.5rem 0 3rem; text-align: center; }
+            .hero-buttons { justify-content: center; }
+            .hero-visual { margin-top: 2rem; }
+            
+            .control-bar { flex-direction: column; align-items: stretch; }
+            .search-box { width: 100%; }
+            .filters { justify-content: center; width: 100%; }
+            
+            .newsletter-section { padding: 2rem 1.5rem; border-radius: 30px; }
+            .newsletter-form { flex-direction: column; width: 100%; }
+            .newsletter-form button { width: 100%; }
+            .story-box { padding: 2rem 1.5rem; border-radius: 30px; }
+        }
 
         /* Page Transition */
         .page-transition-out { opacity: 0 !important; transition: opacity 0.2s ease; }
