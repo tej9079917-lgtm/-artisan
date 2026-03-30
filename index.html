@@ -47,75 +47,44 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); line-height: 1.5; overflow-x: hidden; transition: background 0.3s, color 0.3s; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); line-height: 1.5; overflow-x: hidden; transition: background 0.3s, color 0.3s; width: 100vw; }
         html { scroll-behavior: smooth; }
 
         /* ------------------------------------------- */
-        /* --- AESTHETIC CUSTOM CURSOR --- */
+        /* --- AESTHETIC FEATHER CUSTOM CURSOR --- */
         /* ------------------------------------------- */
         @media (pointer: fine) {
             body { cursor: none; }
-            a, button, input, select, textarea, i, img, .product-card { cursor: none; }
+            a, button, input, select, textarea, i, img, .product-card, .logo-wrapper { cursor: none; }
             
-            .cursor-dot {
-                position: fixed; top: 0; left: 0; width: 6px; height: 6px;
-                background: var(--accent-color); border-radius: 50%;
+            /* The Feather Pointer Only */
+            .cursor-feather {
+                position: fixed; top: 0; left: 0;
+                display: flex; align-items: center; justify-content: center;
+                color: var(--accent-color); font-size: 1.4rem;
                 pointer-events: none; z-index: 10000;
-                transform: translate(-50%, -50%);
-                transition: background 0.2s ease, transform 0.1s ease;
-            }
-            .cursor-ring {
-                position: fixed; top: 0; left: 0; width: 34px; height: 34px;
-                border: 2px solid var(--accent-color); border-radius: 50%;
-                pointer-events: none; z-index: 9999;
-                transform: translate(-50%, -50%);
-                transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, background 0.3s ease, transform 0.1s ease-out;
-                box-shadow: 0 0 10px rgba(195, 142, 123, 0.3);
+                transform: translate(-50%, -50%) rotate(-15deg);
+                transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease, filter 0.2s ease;
+                filter: drop-shadow(0 2px 4px rgba(195, 142, 123, 0.6));
             }
             
-            .cursor-ring.hovering {
-                width: 60px; height: 60px;
-                background: rgba(195, 142, 123, 0.15);
-                border-color: rgba(195, 142, 123, 0.6);
-            }
-            body.dark-mode .cursor-ring.hovering { background: rgba(220, 177, 150, 0.1); }
-            
-            .cursor-dot.hovering {
-                transform: translate(-50%, -50%) scale(0.5);
-                background: var(--text-color);
+            /* Hover State for the Feather */
+            .cursor-feather.hovering {
+                transform: translate(-50%, -50%) scale(1.2) rotate(10deg);
+                color: var(--text-color);
+                filter: drop-shadow(0 4px 8px var(--shadow-color));
             }
         }
 
         /* ------------------------------------------- */
         /* --- AESTHETIC ELEMENT HOVER ANIMATIONS --- */
         /* ------------------------------------------- */
-        h1, h2, h4, p {
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease, text-shadow 0.3s ease;
-        }
-
-        h1:hover, h2:hover, h4:hover {
-            transform: translateY(-4px) scale(1.02);
-            color: var(--accent-color);
-            text-shadow: 0 8px 25px rgba(195, 142, 123, 0.4);
-        }
-        body.dark-mode h1:hover, body.dark-mode h2:hover, body.dark-mode h4:hover {
-            text-shadow: 0 8px 25px rgba(220, 177, 150, 0.25);
-        }
-
-        p:hover {
-            transform: translateY(-2px);
-            color: var(--accent-color);
-        }
-
-        i {
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease, filter 0.3s ease;
-            display: inline-block;
-        }
-        i:hover {
-            transform: scale(1.3) translateY(-4px);
-            color: var(--accent-color) !important;
-            filter: drop-shadow(0 5px 10px rgba(195, 142, 123, 0.5));
-        }
+        h1, h2, h4, p { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease, text-shadow 0.3s ease; }
+        h1:hover, h2:hover, h4:hover { transform: translateY(-4px) scale(1.02); color: var(--accent-color); text-shadow: 0 8px 25px rgba(195, 142, 123, 0.4); }
+        body.dark-mode h1:hover, body.dark-mode h2:hover, body.dark-mode h4:hover { text-shadow: 0 8px 25px rgba(220, 177, 150, 0.25); }
+        p:hover { transform: translateY(-2px); color: var(--accent-color); }
+        i { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease, filter 0.3s ease; display: inline-block; }
+        i:hover { transform: scale(1.3) translateY(-4px); color: var(--accent-color) !important; filter: drop-shadow(0 5px 10px rgba(195, 142, 123, 0.5)); }
 
         /* Background Blobs */
         .blob, .blob2 { position: fixed; z-index: -2; pointer-events: none; will-change: transform; transition: opacity 0.3s;}
@@ -129,15 +98,12 @@
         .header-container { max-width: 1280px; margin: 0 auto; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
         
         .brand-section { display: flex; align-items: center; gap: 2rem; }
+        .nav-container { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
 
         /* 1. SEPARATED 3D LOGO ICON */
-        .logo-icon-link {
-            display: block; perspective: 800px; transition: transform 0.3s ease;
-        }
+        .logo-icon-link { display: block; perspective: 800px; transition: transform 0.3s ease; }
         .logo-icon-link:hover { transform: scale(1.1); }
-        .logo-icon-link:hover .logo-3d-scene {
-            animation-duration: 4s; /* Spins much faster on hover */
-        }
+        .logo-icon-link:hover .logo-3d-scene { animation-duration: 4s; }
         
         .logo-3d-scene {
             width: 40px; height: 40px; position: relative; transform-style: preserve-3d;
@@ -181,31 +147,12 @@
         .floral-left { top: -15px; left: -15px; transform: rotate(-10deg); }
         .floral-right { bottom: -15px; right: -15px; transform: rotate(10deg); }
 
-        /* Logo Text Hover Expansion */
-        .artisan-text-wrapper:hover .artisan-text {
-            letter-spacing: 7px;
-            transform: scale(1.05);
-            text-shadow: 0 5px 15px rgba(195, 142, 123, 0.4);
-        }
+        .artisan-text-wrapper:hover .artisan-text { letter-spacing: 7px; transform: scale(1.05); text-shadow: 0 5px 15px rgba(195, 142, 123, 0.4); }
         .artisan-text-wrapper:hover .floral-left { transform: rotate(-25deg) scale(1.1) translateX(-8px); }
         .artisan-text-wrapper:hover .floral-right { transform: rotate(25deg) scale(1.1) translateX(8px); }
 
-        @media (max-width: 768px) {
-            .brand-section { gap: 1rem; }
-            .artisan-text { font-size: 1.8rem; }
-            .floral-flourish { width: 35px; height: 35px; }
-            .floral-left { top: -8px; left: -8px; }
-            .floral-right { bottom: -8px; right: -8px; }
-            .logo-3d-scene { width: 30px; height: 30px; }
-            .cube-face { width: 30px; height: 30px; border-radius: 8px;}
-            .face-front  { transform: rotateY(0deg) translateZ(15px); }
-            .face-right  { transform: rotateY(90deg) translateZ(15px); }
-            .face-back   { transform: rotateY(180deg) translateZ(15px); }
-            .face-left   { transform: rotateY(-90deg) translateZ(15px); }
-        }
-
         /* Nav Links */
-        .nav-links { display: flex; gap: 2.2rem; font-weight: 500; }
+        .nav-links { display: flex; gap: 2.2rem; font-weight: 500; flex-wrap: wrap; align-items: center;}
         .nav-links a { text-decoration: none; color: var(--text-color); position: relative; padding-bottom: 4px; display: inline-block; animation: floatNav 3s ease-in-out infinite; transition: color 0.3s ease, transform 0.3s ease; }
         .nav-links a:nth-child(1) { animation-delay: 0s; }
         .nav-links a:nth-child(2) { animation-delay: 0.2s; }
@@ -217,7 +164,6 @@
 
         /* 3D GLASSY ACTION BUTTONS */
         .header-actions { display: flex; align-items: center; gap: 1rem; }
-        
         .action-btn-glass {
             display: flex; align-items: center; justify-content: center; width: 44px; height: 44px;
             border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border);
@@ -225,12 +171,8 @@
             box-shadow: 0 4px 10px var(--shadow-color), inset 0 2px 5px var(--glass-glow);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; cursor: pointer;
         }
-        .action-btn-glass:hover {
-            transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 15px var(--shadow-color), inset 0 2px 5px var(--glass-glow);
-            background: rgba(195, 142, 123, 0.25);
-        }
+        .action-btn-glass:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 15px var(--shadow-color), inset 0 2px 5px var(--glass-glow); background: rgba(195, 142, 123, 0.25); }
         body.dark-mode .action-btn-glass:hover { background: rgba(220, 177, 150, 0.15); }
-        
         .cart-count, .wishlist-count { 
             position: absolute; top: -6px; right: -6px; background: var(--accent-color); color: white; 
             font-size: 0.7rem; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; 
@@ -239,6 +181,28 @@
         }
         .action-btn-glass.wiggle { animation: wiggle 0.4s ease; }
         @keyframes wiggle { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-3px) rotate(10deg); } 75% { transform: translateY(-3px) rotate(-10deg); } }
+
+        /* --- MOBILE RESPONSIVE HEADER FIX --- */
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; justify-content: center; padding: 1rem; gap: 1rem; }
+            .brand-section { width: 100%; justify-content: center; gap: 1rem; }
+            .nav-container { width: 100%; justify-content: center; gap: 1rem; flex-direction: column;}
+            .nav-links { justify-content: center; gap: 1rem; flex-wrap: wrap; font-size: 0.95rem; }
+            .artisan-text { font-size: 2rem; }
+            .floral-flourish { width: 35px; height: 35px; }
+            .floral-left { top: -8px; left: -8px; }
+            .floral-right { bottom: -8px; right: -8px; }
+            .logo-3d-scene { width: 30px; height: 30px; }
+            .cube-face { width: 30px; height: 30px; border-radius: 8px;}
+            .face-front  { transform: rotateY(0deg) translateZ(15px); }
+            .face-right  { transform: rotateY(90deg) translateZ(15px); }
+            .face-back   { transform: rotateY(180deg) translateZ(15px); }
+            .face-left   { transform: rotateY(-90deg) translateZ(15px); }
+            
+            .hero { padding: 1.5rem 0 3rem; text-align: center; }
+            .hero-buttons { justify-content: center; }
+            .hero-visual { margin-top: 2rem; }
+        }
 
         .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; transition: opacity 0.2s ease; }
         section[id], h2[id] { scroll-margin-top: 90px; }
@@ -282,18 +246,18 @@
         @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr; } }
 
         /* Product Cards */
-        .product-card { background: var(--card-bg); border-radius: 35px; padding: 1.5rem; box-shadow: 0 18px 35px -10px var(--shadow-color); border: 1px solid var(--card-border); position: relative; display: flex; flex-direction: column; cursor: pointer; width: 100%; max-width: 320px; opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease, box-shadow 0.3s ease; transition-delay: calc(var(--card-index, 0) * 0.05s); }
+        .product-card { background: var(--card-bg); border-radius: 35px; padding: 1.5rem; box-shadow: 0 18px 35px -10px var(--shadow-color); border: 1px solid var(--card-border); position: relative; display: flex; flex-direction: column; width: 100%; max-width: 320px; opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease, box-shadow 0.3s ease; transition-delay: calc(var(--card-index, 0) * 0.05s); }
         .product-card.visible { opacity: 1; transform: scale(1); }
         .product-card:hover { box-shadow: 0 25px 40px -15px var(--accent-color); }
-        .product-images { position: relative; overflow: hidden; cursor: pointer; border-radius: 20px; }
+        .product-images { position: relative; overflow: hidden; border-radius: 20px; }
         .product-images::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none; }
         .product-images:hover::after { transform: translateX(100%); }
         .product-images img { transition: transform 0.4s ease; width: 100%; border-radius: 20px; aspect-ratio: 1/1; object-fit: cover; }
         .product-images:hover img { transform: scale(1.03); }
         .thumbnail-strip { display: flex; gap: 0.5rem; margin-top: 0.5rem; justify-content: center; }
-        .thumbnail { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; cursor: pointer; opacity: 0.7; transition: 0.2s; }
+        .thumbnail { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; opacity: 0.7; transition: 0.2s; }
         .thumbnail:hover, .thumbnail.active { opacity: 1; border: 2px solid var(--accent-color); }
-        .wishlist-heart { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: #ccc; cursor: pointer; transition: 0.2s; z-index: 2; }
+        .wishlist-heart { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: #ccc; transition: 0.2s; z-index: 2; }
         .wishlist-heart.active { color: var(--accent-color); }
         .heart-pulse { animation: heartPulse 0.4s ease; }
         @keyframes heartPulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
@@ -311,7 +275,7 @@
         /* Modals & Forms */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--modal-bg); border-radius: 40px; padding: 2rem; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative; border: 1px solid var(--card-border); }
-        .close-modal { float: right; font-size: 1.5rem; cursor: pointer; color: var(--text-color); transition: color 0.3s ease, transform 0.3s; }
+        .close-modal { float: right; font-size: 1.5rem; color: var(--text-color); transition: color 0.3s ease, transform 0.3s; }
         .close-modal:hover { color: var(--accent-color); transform: scale(1.2); }
         .badge { background: var(--badge-bg); padding: 0.2rem 1rem; border-radius: 60px; display: inline-block; }
         .story-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 50px; padding: 3rem; }
@@ -323,7 +287,7 @@
         .cart-item img, .wishlist-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
         .cart-item-info, .wishlist-item-info { flex: 1; }
         .cart-item-actions { display: flex; align-items: center; gap: 0.5rem; }
-        .cart-item-remove, .remove-wishlist { color: var(--accent-color); cursor: pointer; transition: transform 0.2s;}
+        .cart-item-remove, .remove-wishlist { color: var(--accent-color); transition: transform 0.2s;}
         .cart-item-remove:hover, .remove-wishlist:hover { transform: scale(1.2); }
         .empty-wishlist, .empty-cart { text-align: center; padding: 2rem; opacity: 0.6; }
         .delivery-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
@@ -337,7 +301,7 @@
         .product-detail-images { flex: 1; min-width: 250px; }
         .product-detail-images .main-image-detail { width: 100%; border-radius: 20px; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 1rem; }
         .product-detail-thumbnails { display: flex; gap: 0.5rem; justify-content: center; }
-        .product-detail-thumbnails img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; cursor: pointer; opacity: 0.7; }
+        .product-detail-thumbnails img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; opacity: 0.7; }
         .product-detail-thumbnails img.active { opacity: 1; border: 2px solid var(--accent-color); }
         .product-detail-info { flex: 1; min-width: 250px; }
 
@@ -346,7 +310,7 @@
         #lightbox.show { opacity: 1; visibility: visible; }
         #lightboxImg { max-width: 90%; max-height: 90vh; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); transform: scale(0.85); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         #lightbox.show #lightboxImg { transform: scale(1); }
-        .close-lightbox { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; cursor: pointer; transition: transform 0.2s ease, color 0.2s ease; }
+        .close-lightbox { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; transition: transform 0.2s ease, color 0.2s ease; }
         .close-lightbox:hover { color: var(--accent-color); transform: scale(1.1); }
 
         /* Footer & Extra Sections */
@@ -354,7 +318,7 @@
         .newsletter-form { display: flex; gap: 1rem; max-width: 500px; margin: 2rem auto 0; }
         .newsletter-form input { flex: 1; padding: 1rem 1.5rem; border: 2px solid var(--card-border); border-radius: 50px; font-size: 1rem; background: var(--input-bg); color: var(--text-color); transition: border-color 0.3s;}
         .newsletter-form input:hover { border-color: var(--accent-color); }
-        .newsletter-form button { background: var(--accent-color); color: white; border: none; padding: 1rem 2rem; border-radius: 50px; font-weight: 600; cursor: pointer; transition: filter 0.3s;}
+        .newsletter-form button { background: var(--accent-color); color: white; border: none; padding: 1rem 2rem; border-radius: 50px; font-weight: 600; transition: filter 0.3s;}
         .newsletter-form button:hover { filter: brightness(0.9); }
         footer { background: #1e2a2f; color: #fff9f2; padding: 2.5rem 0; margin-top: 4rem; border-radius: 40px 40px 0 0; }
         .footer-content { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; }
@@ -369,8 +333,7 @@
 </head>
 <body>
     
-    <div class="cursor-dot" id="cursorDot"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
+    <i class="fas fa-feather-alt cursor-feather" id="cursorFeather"></i>
 
     <div class="blob" id="blob1"></div>
     <div class="blob2" id="blob2"></div>
@@ -411,9 +374,7 @@
                         <path d="M50 70 Q40 50 55 45 Q65 60 50 70" fill="currentColor"/>
                         <path d="M20 30 Q10 20 20 10 Q30 20 20 30" fill="currentColor"/>
                     </svg>
-                    
                     <span class="artisan-text">Artisan</span>
-                    
                     <svg class="floral-flourish floral-right" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M20 20 Q50 20 70 50 T90 90" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
                         <path d="M70 50 Q85 45 90 60 Q75 65 70 50" fill="currentColor"/>
@@ -423,7 +384,7 @@
                 </a>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 2rem;">
+            <div class="nav-container">
                 <div class="nav-links">
                     <a href="#" data-target="home">home</a>
                     <a href="#handmade" data-target="handmade">handmade</a>
@@ -509,16 +470,13 @@
 
     <script>
         (function() {
-            // --- CUSTOM CURSOR LOGIC ---
+            // --- CUSTOM CURSOR LOGIC (FEATHER ONLY) ---
             if (window.matchMedia("(pointer: fine)").matches) {
-                const cursorDot = document.getElementById('cursorDot');
-                const cursorRing = document.getElementById('cursorRing');
+                const cursorFeather = document.getElementById('cursorFeather');
                 
                 document.addEventListener('mousemove', (e) => {
-                    cursorDot.style.left = e.clientX + 'px';
-                    cursorDot.style.top = e.clientY + 'px';
-                    cursorRing.style.left = e.clientX + 'px';
-                    cursorRing.style.top = e.clientY + 'px';
+                    cursorFeather.style.left = e.clientX + 'px';
+                    cursorFeather.style.top = e.clientY + 'px';
                 });
 
                 // Bind hover state to interactive/text elements
@@ -529,12 +487,10 @@
                         el.dataset.cursorBound = "true";
                         
                         el.addEventListener('mouseenter', () => {
-                            cursorRing.classList.add('hovering');
-                            cursorDot.classList.add('hovering');
+                            cursorFeather.classList.add('hovering');
                         });
                         el.addEventListener('mouseleave', () => {
-                            cursorRing.classList.remove('hovering');
-                            cursorDot.classList.remove('hovering');
+                            cursorFeather.classList.remove('hovering');
                         });
                     });
                 };
@@ -607,6 +563,7 @@
                 themeBtn.innerHTML = isNowDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
             });
 
+            // Prices are now strictly INR
             function formatPrice(p) { return '₹' + p; }
             
             function updateCartCount() { document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.quantity,0); }
