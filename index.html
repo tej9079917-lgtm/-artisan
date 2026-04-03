@@ -20,83 +20,50 @@
     <style>
         /* --- THEME VARIABLES --- */
         :root {
-            --bg-color: #fefaf5;
-            --text-color: #1e2a2f;
-            --header-bg: rgba(254, 250, 245, 0.3);
-            --header-scrolled: rgba(254, 250, 245, 0.7);
-            --accent-color: #c38e7b;
-            --card-bg: #ffffff;
-            --card-border: rgba(255, 235, 220, 0.7);
-            --input-bg: #fffaf5;
-            --modal-bg: #ffffff;
-            --badge-bg: #f1e0d6;
-            --shadow-color: rgba(0,0,0,0.05);
-            --glass-bg: rgba(195, 142, 123, 0.15);
-            --glass-border: rgba(195, 142, 123, 0.4);
-            --glass-glow: rgba(255,255,255,0.4);
+            /* HANDMADE THEME */
+            --bg-color: #fefaf5; --text-color: #1e2a2f; --header-bg: rgba(254, 250, 245, 0.3); --header-scrolled: rgba(254, 250, 245, 0.7);
+            --accent-color: #c38e7b; --card-bg: #ffffff; --card-border: rgba(255, 235, 220, 0.7); --input-bg: #fffaf5;
+            --modal-bg: #ffffff; --badge-bg: #f1e0d6; --shadow-color: rgba(0,0,0,0.05);
+            --glass-bg: rgba(195, 142, 123, 0.15); --glass-border: rgba(195, 142, 123, 0.4); --glass-glow: rgba(255,255,255,0.4);
         }
-
         body.theme-fashion {
-            --bg-color: #f4f7f9;
-            --text-color: #172026;
-            --header-bg: rgba(244, 247, 249, 0.3);
-            --header-scrolled: rgba(244, 247, 249, 0.7);
-            --accent-color: #5a7b8c;
-            --card-bg: #ffffff;
-            --card-border: rgba(200, 215, 225, 0.7);
-            --input-bg: #ffffff;
-            --badge-bg: #e1e8ed;
-            --glass-bg: rgba(90, 123, 140, 0.15);
-            --glass-border: rgba(90, 123, 140, 0.4);
+            /* FASHION THEME */
+            --bg-color: #f4f7f9; --text-color: #172026; --header-bg: rgba(244, 247, 249, 0.3); --header-scrolled: rgba(244, 247, 249, 0.7);
+            --accent-color: #5a7b8c; --card-border: rgba(200, 215, 225, 0.7); --input-bg: #ffffff;
+            --badge-bg: #e1e8ed; --glass-bg: rgba(90, 123, 140, 0.15); --glass-border: rgba(90, 123, 140, 0.4);
         }
-
         body.dark-mode {
-            --bg-color: #121212;
-            --text-color: #eaeaea;
-            --header-bg: rgba(18, 18, 18, 0.4);
-            --header-scrolled: rgba(18, 18, 18, 0.85);
-            --accent-color: #dcb196;
-            --card-bg: #1e1e1e;
-            --card-border: rgba(255, 255, 255, 0.1);
-            --input-bg: #2a2a2a;
-            --modal-bg: #1e1e1e;
-            --badge-bg: #2c2420;
-            --shadow-color: rgba(0,0,0,0.3);
-            --glass-bg: rgba(220, 177, 150, 0.1);
-            --glass-border: rgba(220, 177, 150, 0.2);
-            --glass-glow: rgba(255,255,255,0.05);
+            --bg-color: #121212; --text-color: #eaeaea; --header-bg: rgba(18, 18, 18, 0.4); --header-scrolled: rgba(18, 18, 18, 0.85);
+            --accent-color: #dcb196; --card-bg: #1e1e1e; --card-border: rgba(255, 255, 255, 0.1); --input-bg: #2a2a2a;
+            --modal-bg: #1e1e1e; --badge-bg: #2c2420; --shadow-color: rgba(0,0,0,0.3);
+            --glass-bg: rgba(220, 177, 150, 0.1); --glass-border: rgba(220, 177, 150, 0.2); --glass-glow: rgba(255,255,255,0.05);
         }
-        
         body.dark-mode.theme-fashion {
-            --bg-color: #0f1418;
-            --header-bg: rgba(15, 20, 24, 0.4);
-            --header-scrolled: rgba(15, 20, 24, 0.85);
-            --accent-color: #8caec0;
-            --badge-bg: #1f2933;
-            --glass-bg: rgba(140, 174, 192, 0.1);
-            --glass-border: rgba(140, 174, 192, 0.2);
+            --bg-color: #0f1418; --header-bg: rgba(15, 20, 24, 0.4); --header-scrolled: rgba(15, 20, 24, 0.85);
+            --accent-color: #8caec0; --badge-bg: #1f2933; --glass-bg: rgba(140, 174, 192, 0.1); --glass-border: rgba(140, 174, 192, 0.2);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); line-height: 1.5; overflow-x: hidden; transition: background 0.6s ease, color 0.6s ease; width: 100vw; }
         html { scroll-behavior: smooth; }
 
-        /* --- AESTHETIC DYNAMIC CUSTOM CURSOR --- */
+        /* --- 1. CINEMATIC SPLASH SCREEN --- */
+        .splash-screen { position: fixed; inset: 0; background: var(--bg-color); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1), opacity 1s ease; }
+        .splash-screen.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        .splash-text { font-family: 'Cinzel Decorative', serif; font-size: 3rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-color); filter: drop-shadow(0px 2px 4px var(--shadow-color)); margin-top: 1.5rem; animation: pulseText 2s infinite alternate; }
+        @keyframes pulseText { 0% { opacity: 0.7; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* --- AESTHETIC CUSTOM CURSOR --- */
         @media (pointer: fine) {
             body, a, button, input, select, textarea, i, img, .product-card, .logo-wrapper, .toggle-btn, .f-btn { cursor: none; }
-            
-            .cursor-icon {
-                position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center;
-                color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000;
-                transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%;
-                transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease, filter 0.2s ease, font-size 0.5s ease;
-                filter: drop-shadow(0 2px 4px var(--glass-border));
-            }
+            .cursor-icon { position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000; transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease, filter 0.2s ease, font-size 0.5s ease; filter: drop-shadow(0 2px 4px var(--glass-border)); }
             .cursor-icon.hovering { transform: translate(-15%, -85%) scale(1.2) rotate(10deg); color: var(--text-color); filter: drop-shadow(0 4px 8px var(--shadow-color)); }
-            
             body.theme-fashion .cursor-icon { transform: translate(-50%, -50%) rotate(0deg); transform-origin: center center; font-size: 1.2rem; }
             body.theme-fashion .cursor-icon.hovering { transform: translate(-50%, -50%) scale(1.5) rotate(0deg); color: var(--text-color); }
         }
+
+        /* --- 2. MAGIC FLIGHT CART ANIMATION --- */
+        .cart-flying-img { position: fixed; z-index: 999999; border-radius: 20px; object-fit: cover; pointer-events: none; box-shadow: 0 15px 35px rgba(0,0,0,0.3); transition: all 0.7s cubic-bezier(0.25, 1, 0.3, 1); }
 
         h1, h2, h4, p { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease, text-shadow 0.5s ease; }
         h1:hover, h2:hover, h4:hover { transform: translateY(-4px) scale(1.02); color: var(--accent-color); text-shadow: 0 8px 25px var(--glass-border); }
@@ -119,10 +86,7 @@
         .logo-icon-link:hover .logo-3d-scene { animation-duration: 4s; }
         .logo-3d-scene { width: 40px; height: 40px; position: relative; transform-style: preserve-3d; animation: spin3DLogo 12s infinite cubic-bezier(0.25, 1, 0.5, 1); }
         .cube-face { position: absolute; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--accent-color); backdrop-filter: blur(4px); box-shadow: inset 0 0 10px var(--glass-glow); transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease; }
-        .face-front  { transform: rotateY(0deg) translateZ(20px); }
-        .face-right  { transform: rotateY(90deg) translateZ(20px); }
-        .face-back   { transform: rotateY(180deg) translateZ(20px); }
-        .face-left   { transform: rotateY(-90deg) translateZ(20px); }
+        .face-front  { transform: rotateY(0deg) translateZ(20px); } .face-right  { transform: rotateY(90deg) translateZ(20px); } .face-back   { transform: rotateY(180deg) translateZ(20px); } .face-left   { transform: rotateY(-90deg) translateZ(20px); }
         @keyframes spin3DLogo { 0%, 20% { transform: rotateX(-15deg) rotateY(0deg); } 25%, 45% { transform: rotateX(-15deg) rotateY(-90deg); } 50%, 70% { transform: rotateX(-15deg) rotateY(-180deg); } 75%, 95% { transform: rotateX(-15deg) rotateY(-270deg); } 100% { transform: rotateX(-15deg) rotateY(-360deg); } }
 
         .icon-handmade, .icon-fashion { position: absolute; transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -134,16 +98,13 @@
         .artisan-text { font-family: 'Cinzel Decorative', serif; font-size: 2.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-color); filter: drop-shadow(0px 2px 4px var(--shadow-color)); position: relative; z-index: 2; line-height: 1; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s ease, font-size 0.5s ease; }
         body.theme-fashion .artisan-text { font-size: 1.5rem; letter-spacing: 1px; }
         .floral-flourish { position: absolute; width: 45px; height: 45px; pointer-events: none; z-index: 1; color: var(--accent-color); filter: drop-shadow(0px 2px 3px var(--shadow-color)); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s ease; }
-        .floral-left { top: -15px; left: -15px; transform: rotate(-10deg); }
-        .floral-right { bottom: -15px; right: -15px; transform: rotate(10deg); }
+        .floral-left { top: -15px; left: -15px; transform: rotate(-10deg); } .floral-right { bottom: -15px; right: -15px; transform: rotate(10deg); }
         .artisan-text-wrapper:hover .artisan-text { letter-spacing: 7px; transform: scale(1.05); text-shadow: 0 5px 15px var(--glass-border); }
         body.theme-fashion .artisan-text-wrapper:hover .artisan-text { letter-spacing: 3px; }
-        .artisan-text-wrapper:hover .floral-left { transform: rotate(-25deg) scale(1.1) translateX(-8px); }
-        .artisan-text-wrapper:hover .floral-right { transform: rotate(25deg) scale(1.1) translateX(8px); }
+        .artisan-text-wrapper:hover .floral-left { transform: rotate(-25deg) scale(1.1) translateX(-8px); } .artisan-text-wrapper:hover .floral-right { transform: rotate(25deg) scale(1.1) translateX(8px); }
 
         .nav-links { display: flex; gap: 2.2rem; font-weight: 500; flex-wrap: wrap; align-items: center;}
         .nav-links a { text-decoration: none; color: var(--text-color); position: relative; padding-bottom: 4px; display: inline-block; animation: floatNav 3s ease-in-out infinite; transition: color 0.6s ease, transform 0.3s ease; }
-        .nav-links a:nth-child(1) { animation-delay: 0s; } .nav-links a:nth-child(2) { animation-delay: 0.2s; } .nav-links a:nth-child(3) { animation-delay: 0.4s; }
         @keyframes floatNav { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
         .nav-links a:hover { transform: translateY(-3px) scale(1.1); color: var(--accent-color); text-shadow: 0 4px 10px var(--glass-border); }
 
@@ -163,15 +124,12 @@
         .toggle-slider { position: absolute; top: 5px; left: 5px; height: calc(100% - 10px); width: 50%; background: var(--accent-color); border-radius: 40px; z-index: 1; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.6s ease; box-shadow: 0 4px 10px var(--glass-border); }
         body.theme-fashion .toggle-slider { transform: translateX(calc(100% - 10px)); }
 
-        /* --- NEW: FASHION SUB-NAVIGATION FILTERS --- */
         .fashion-filters-container { display: none; flex-direction: column; align-items: center; margin-bottom: 3rem; }
         body.theme-fashion .fashion-filters-container { display: flex; animation: fadeUp 0.6s ease-out; }
-        
         .filter-row { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-bottom: 0.5rem;}
         .f-btn { background: transparent; border: 1.5px solid var(--card-border); color: var(--text-color); padding: 0.5rem 1.5rem; border-radius: 30px; cursor: pointer; transition: all 0.3s; font-size: 0.95rem; font-family: 'Inter', sans-serif; font-weight: 500;}
         .f-btn:hover { border-color: var(--accent-color); }
         .f-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        
         .gender-filters { display: none; gap: 0.8rem; justify-content: center; flex-wrap: wrap; padding-top: 0.5rem;}
         .gender-filters.active { display: flex; animation: fadeUp 0.4s ease-out; }
 
@@ -203,43 +161,35 @@
         .search-box input { width: 100%; padding: 0.7rem 1.5rem; border-radius: 40px; border: 1.5px solid var(--card-border); background: var(--input-bg); font-size: 1rem; color: var(--text-color); transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease; }
         .filters select { background: var(--modal-bg); color: var(--text-color); border-radius: 40px; padding: 0.4rem 1rem; border: 1px solid var(--card-border); transition: all 0.6s ease; }
 
+        /* --- 3. PREMIUM GRID STAGGER & MASONRY --- */
         .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; padding: 2rem 0; justify-items: center; align-items: start; transition: all 0.5s ease;}
         body.theme-fashion .product-grid { display: block; column-count: 4; column-gap: 1.5rem; }
         body.theme-fashion .product-card { display: inline-block; width: 100%; margin-bottom: 1.5rem; break-inside: avoid; }
         
-        @media (max-width: 1024px) { 
-            .product-grid { grid-template-columns: repeat(3, 1fr); } 
-            body.theme-fashion .product-grid { column-count: 3; }
-        }
-        @media (max-width: 768px) { 
-            .product-grid { grid-template-columns: repeat(2, 1fr); } 
-            body.theme-fashion .product-grid { column-count: 2; }
-        }
-        @media (max-width: 480px) { 
-            .product-grid { grid-template-columns: 1fr; } 
-            body.theme-fashion .product-grid { column-count: 1; }
-        }
+        @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } body.theme-fashion .product-grid { column-count: 3; } }
+        @media (max-width: 768px) { .product-grid { grid-template-columns: repeat(2, 1fr); } body.theme-fashion .product-grid { column-count: 2; } }
+        @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr; } body.theme-fashion .product-grid { column-count: 1; } }
 
-        .product-card { background: var(--card-bg); border-radius: 35px; padding: 1.5rem; box-shadow: 0 18px 35px -10px var(--shadow-color); border: 1px solid var(--card-border); position: relative; display: flex; flex-direction: column; width: 100%; max-width: 320px; opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease, box-shadow 0.3s ease, background 0.6s ease, border-color 0.6s ease; transition-delay: calc(var(--card-index, 0) * 0.05s); overflow: hidden; }
-        .product-card.visible { opacity: 1; transform: scale(1); }
+        /* Staggered Entry Animation */
+        .product-card { 
+            background: var(--card-bg); border-radius: 35px; padding: 1.5rem; box-shadow: 0 18px 35px -10px var(--shadow-color); border: 1px solid var(--card-border); position: relative; display: flex; flex-direction: column; width: 100%; max-width: 320px; 
+            transition: box-shadow 0.3s ease, background 0.6s ease, border-color 0.6s ease; overflow: hidden; 
+            animation: slideInCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: calc(var(--card-index, 0) * 0.1s);
+        }
+        @keyframes slideInCard { 0% { opacity: 0; transform: translateY(40px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         .product-card:hover { box-shadow: 0 25px 40px -15px var(--accent-color); }
         
-        body.theme-fashion .product-card::before {
-            content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg); z-index: 10; pointer-events: none;
-        }
+        body.theme-fashion .product-card::before { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); z-index: 10; pointer-events: none; }
         body.theme-fashion .product-card:hover::before { animation: shimmerEffect 1s forwards; }
         @keyframes shimmerEffect { 0% { left: -150%; } 100% { left: 250%; } }
 
         .product-images { position: relative; overflow: hidden; border-radius: 20px; }
         .product-images img { transition: transform 0.6s ease, opacity 0.5s ease; width: 100%; border-radius: 20px; object-fit: cover; }
         .main-image { position: relative; z-index: 1; }
-        
         .hover-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; z-index: 2; transition: opacity 0.6s ease, transform 0.6s ease; }
         body.theme-fashion .product-images:hover .hover-image { opacity: 1; transform: scale(1.05); }
         body.theme-fashion .product-images:hover .main-image { opacity: 0; }
-        
         body:not(.theme-fashion) .product-images::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none; z-index:3;}
         body:not(.theme-fashion) .product-images:hover::after { transform: translateX(100%); }
         body:not(.theme-fashion) .product-images:hover img { transform: scale(1.03); }
@@ -268,22 +218,41 @@
         body.theme-fashion .review-card .stars { color: #a8b8c2; }
         .review-card p { font-style: italic; opacity: 0.9; margin-bottom: 1rem; }
 
+        /* --- 5. PARALLAX STORY SECTION --- */
+        #story {
+            position: relative;
+            background-image: url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?q=80&w=2000&auto=format&fit=crop');
+            background-attachment: fixed; background-position: center; background-size: cover;
+            border-radius: 50px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            min-height: 500px; margin: 6rem 0; box-shadow: 0 20px 40px var(--shadow-color); transition: background-image 0.8s ease;
+        }
+        body.theme-fashion #story { background-image: url('https://images.unsplash.com/photo-1611042553365-9b101441c135?q=80&w=2000&auto=format&fit=crop'); }
+        #story::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 1; transition: background 0.6s ease;}
+        body.theme-fashion #story::before { background: rgba(0,0,0,0.6); }
+        
+        .story-box { 
+            position: relative; z-index: 2; background: rgba(255,255,255,0.1) !important; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2) !important; color: white !important; max-width: 600px; text-align: center;
+            border-radius: 40px; padding: 3rem; transition: all 0.6s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .story-box h2 { color: white !important; }
+        .story-box p { color: rgba(255,255,255,0.95) !important; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
         .modal-content { background: var(--modal-bg); border-radius: 40px; padding: 2rem; max-width: 800px; width: 100%; max-height: 85vh; overflow-y: auto; position: relative; border: 1px solid var(--card-border); transition: all 0.6s ease;}
-        .close-modal { float: right; font-size: 1.5rem; color: var(--text-color); transition: color 0.3s ease, transform 0.3s; }
+        .close-modal { float: right; font-size: 1.5rem; color: var(--text-color); transition: color 0.3s ease, transform 0.3s; cursor: pointer; }
         .close-modal:hover { color: var(--accent-color); transform: scale(1.2); }
         .badge { background: var(--badge-bg); padding: 0.2rem 1rem; border-radius: 60px; display: inline-block; transition: background 0.6s ease;}
         
-        .story-box, .contact-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 40px; padding: 2rem; transition: all 0.6s ease; }
         .contact-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; margin-top: 2rem; }
-        .contact-card { width: 220px; display: flex; flex-direction: column; align-items: center; }
+        .contact-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 40px; padding: 2rem; transition: all 0.6s ease; width: 220px; display: flex; flex-direction: column; align-items: center; }
         .contact-card i { font-size: 2.5rem; color: var(--accent-color); margin-bottom: 1rem; transition: color 0.6s ease;}
 
         .cart-item, .wishlist-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--card-border); transition: border-color 0.6s ease;}
         .cart-item img, .wishlist-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
         .cart-item-info, .wishlist-item-info { flex: 1; }
         .cart-item-actions { display: flex; align-items: center; gap: 0.5rem; }
-        .cart-item-remove, .remove-wishlist { color: var(--accent-color); transition: transform 0.2s, color 0.6s ease;}
+        .cart-item-remove, .remove-wishlist { color: var(--accent-color); transition: transform 0.2s, color 0.6s ease; cursor: pointer;}
         .cart-item-remove:hover, .remove-wishlist:hover { transform: scale(1.2); }
         .delivery-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
         .delivery-form input, .delivery-form textarea { width: 100%; padding: 0.8rem 1.2rem; border: 1.5px solid var(--card-border); border-radius: 40px; background: var(--input-bg); color: var(--text-color); transition: all 0.6s ease;}
@@ -296,7 +265,7 @@
         .product-detail-images { flex: 1; min-width: 250px; }
         .product-detail-images .main-image-detail { width: 100%; border-radius: 20px; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 1rem; }
         .product-detail-thumbnails { display: flex; gap: 0.5rem; justify-content: center; }
-        .product-detail-thumbnails img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; opacity: 0.7; }
+        .product-detail-thumbnails img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; opacity: 0.7; cursor: pointer;}
         .product-detail-thumbnails img.active { opacity: 1; border: 2px solid var(--accent-color); }
         .product-detail-info { flex: 1; min-width: 250px; }
 
@@ -304,7 +273,7 @@
         #lightbox.show { opacity: 1; visibility: visible; }
         #lightboxImg { max-width: 90%; max-height: 90vh; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); transform: scale(0.85); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         #lightbox.show #lightboxImg { transform: scale(1); }
-        .close-lightbox { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; transition: transform 0.2s ease, color 0.2s ease; }
+        .close-lightbox { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; transition: transform 0.2s ease, color 0.2s ease; cursor: pointer;}
         .close-lightbox:hover { color: var(--accent-color); transform: scale(1.1); }
 
         .toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
@@ -340,35 +309,16 @@
             .brand-section { width: 100%; justify-content: center; gap: 1rem; }
             .nav-container { width: 100%; justify-content: center; gap: 1rem; flex-direction: column;}
             .nav-links { justify-content: center; gap: 1rem; flex-wrap: wrap; font-size: 0.95rem; }
-            
             body.theme-fashion .artisan-text { font-size: 1rem; letter-spacing: 0; }
             body.theme-fashion .artisan-text-wrapper:hover .artisan-text { letter-spacing: 1px; }
-            
-            .floral-flourish { width: 35px; height: 35px; }
-            .floral-left { top: -8px; left: -8px; }
-            .floral-right { bottom: -8px; right: -8px; }
-            .logo-3d-scene { width: 30px; height: 30px; }
-            .cube-face { width: 30px; height: 30px; border-radius: 8px;}
-            
-            .mode-toggle-container { padding: 0 1rem; }
-            .mode-toggle { width: 100%; }
-            .toggle-btn { flex: 1; padding: 0.8rem 0; font-size: 0.9rem; }
-            
-            .fashion-filters-container { padding: 0 1rem; }
-            .f-btn { font-size: 0.85rem; padding: 0.4rem 1rem; }
-            
-            .hero { padding: 1.5rem 0 3rem; text-align: center; }
-            .hero-buttons { justify-content: center; }
-            .hero-visual { margin-top: 2rem; }
-            
-            .control-bar { flex-direction: column; align-items: stretch; }
-            .search-box { width: 100%; }
-            .filters { justify-content: center; width: 100%; }
-            
-            .newsletter-section { padding: 2rem 1.5rem; border-radius: 30px; }
-            .newsletter-form { flex-direction: column; width: 100%; }
-            .newsletter-form button { width: 100%; }
-            .story-box { padding: 2rem 1.5rem; border-radius: 30px; }
+            .floral-flourish { width: 35px; height: 35px; } .floral-left { top: -8px; left: -8px; } .floral-right { bottom: -8px; right: -8px; }
+            .logo-3d-scene { width: 30px; height: 30px; } .cube-face { width: 30px; height: 30px; border-radius: 8px;}
+            .mode-toggle-container { padding: 0 1rem; } .mode-toggle { width: 100%; } .toggle-btn { flex: 1; padding: 0.8rem 0; font-size: 0.9rem; }
+            .fashion-filters-container { padding: 0 1rem; } .f-btn { font-size: 0.85rem; padding: 0.4rem 1rem; }
+            .hero { padding: 1.5rem 0 3rem; text-align: center; } .hero-buttons { justify-content: center; } .hero-visual { margin-top: 2rem; }
+            .control-bar { flex-direction: column; align-items: stretch; } .search-box { width: 100%; } .filters { justify-content: center; width: 100%; }
+            .newsletter-section { padding: 2rem 1.5rem; border-radius: 30px; } .newsletter-form { flex-direction: column; width: 100%; } .newsletter-form button { width: 100%; }
+            #story { min-height: 400px; border-radius: 30px; margin: 3rem 0;} .story-box { padding: 2rem 1.5rem; border-radius: 30px; }
             .floating-wa-btn { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 1.5rem; }
         }
         .page-transition-out { opacity: 0 !important; transition: opacity 0.2s ease; }
@@ -376,6 +326,16 @@
 </head>
 <body>
     
+    <div id="splashScreen" class="splash-screen">
+        <div class="logo-3d-scene" style="width: 80px; height: 80px;">
+            <div class="cube-face face-front" style="width: 80px; height: 80px;"><i class="fas fa-feather-alt" style="font-size: 2.5rem;"></i></div>
+            <div class="cube-face face-right" style="width: 80px; height: 80px;"><i class="fas fa-gem" style="font-size: 2.5rem;"></i></div>
+            <div class="cube-face face-back" style="width: 80px; height: 80px;"><i class="fas fa-feather-alt" style="font-size: 2.5rem;"></i></div>
+            <div class="cube-face face-left" style="width: 80px; height: 80px;"><i class="fas fa-gem" style="font-size: 2.5rem;"></i></div>
+        </div>
+        <div class="splash-text">Artisan</div>
+    </div>
+
     <i class="fas fa-feather-alt cursor-icon" id="cursorIcon"></i>
     
     <div id="toastContainer" class="toast-container"></div>
@@ -386,7 +346,6 @@
     
     <header class="sticky-header" id="mainHeader">
         <div class="header-container">
-            
             <div class="brand-section">
                 <a href="#" class="logo-icon-link" aria-label="Home">
                     <div class="logo-3d-scene">
@@ -399,49 +358,23 @@
                             </svg>
                         </div>
                         <div class="cube-face face-right">
-                            <svg class="icon-handmade" width="20" height="20" viewBox="0 0 100 100" fill="none">
-                                <path d="M30 25C30 25 45 45 30 70C20 85 35 90 50 90C65 90 80 85 70 70C55 45 70 25 70 25H30Z" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M40 10H60" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
-                            </svg>
-                            <svg class="icon-fashion" width="22" height="22" viewBox="0 0 100 100">
-                                <path d="M35 20 Q50 10 65 20 L75 40 L60 40 L65 90 L35 90 L40 40 L25 40 Z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/>
-                            </svg>
+                            <svg class="icon-handmade" width="20" height="20" viewBox="0 0 100 100" fill="none"><path d="M30 25C30 25 45 45 30 70C20 85 35 90 50 90C65 90 80 85 70 70C55 45 70 25 70 25H30Z" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 10H60" stroke="currentColor" stroke-width="8" stroke-linecap="round"/></svg>
+                            <svg class="icon-fashion" width="22" height="22" viewBox="0 0 100 100"><path d="M35 20 Q50 10 65 20 L75 40 L60 40 L65 90 L35 90 L40 40 L25 40 Z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></svg>
                         </div>
                         <div class="cube-face face-back">
-                            <svg class="icon-handmade" width="22" height="22" viewBox="0 0 100 100" fill="none">
-                                <path d="M20 75C55 85 40 20 75 25C95 28 80 70 50 65C20 60 15 35 35 15" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
-                                <circle cx="35" cy="15" r="4" fill="currentColor"/>
-                            </svg>
-                            <svg class="icon-fashion" width="22" height="22" viewBox="0 0 100 100">
-                                <path d="M25 30 L50 15 L75 30 L75 85 L25 85 Z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/>
-                                <polyline points="25,30 10,50 20,60 30,45" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/>
-                                <polyline points="75,30 90,50 80,60 70,45" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/>
-                            </svg>
+                            <svg class="icon-handmade" width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M20 75C55 85 40 20 75 25C95 28 80 70 50 65C20 60 15 35 35 15" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><circle cx="35" cy="15" r="4" fill="currentColor"/></svg>
+                            <svg class="icon-fashion" width="22" height="22" viewBox="0 0 100 100"><path d="M25 30 L50 15 L75 30 L75 85 L25 85 Z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><polyline points="25,30 10,50 20,60 30,45" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><polyline points="75,30 90,50 80,60 70,45" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></svg>
                         </div>
                         <div class="cube-face face-left">
-                            <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8"/>
-                                <path d="M70 30V70C70 82 58 88 50 88C40 88 32 80 32 80" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
-                                <circle cx="50" cy="60" r="16" stroke="currentColor" stroke-width="8"/>
-                            </svg>
+                            <svg width="20" height="20" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8"/><path d="M70 30V70C70 82 58 88 50 88C40 88 32 80 32 80" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="60" r="16" stroke="currentColor" stroke-width="8"/></svg>
                         </div>
                     </div>
                 </a>
                 
                 <a href="#" class="artisan-text-wrapper" aria-label="Home">
-                    <svg class="floral-flourish floral-left" viewBox="0 0 100 100" fill="none">
-                        <path d="M80 80 Q50 80 30 50 T10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                        <path d="M30 50 Q15 55 10 40 Q25 35 30 50" fill="currentColor"/>
-                        <path d="M50 70 Q40 50 55 45 Q65 60 50 70" fill="currentColor"/>
-                        <path d="M20 30 Q10 20 20 10 Q30 20 20 30" fill="currentColor"/>
-                    </svg>
+                    <svg class="floral-flourish floral-left" viewBox="0 0 100 100" fill="none"><path d="M80 80 Q50 80 30 50 T10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M30 50 Q15 55 10 40 Q25 35 30 50" fill="currentColor"/><path d="M50 70 Q40 50 55 45 Q65 60 50 70" fill="currentColor"/><path d="M20 30 Q10 20 20 10 Q30 20 20 30" fill="currentColor"/></svg>
                     <span class="artisan-text" id="mainBrandText">Artisan</span>
-                    <svg class="floral-flourish floral-right" viewBox="0 0 100 100" fill="none">
-                        <path d="M20 20 Q50 20 70 50 T90 90" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-                        <path d="M70 50 Q85 45 90 60 Q75 65 70 50" fill="currentColor"/>
-                        <path d="M50 30 Q60 50 45 55 Q35 40 50 30" fill="currentColor"/>
-                        <path d="M80 70 Q90 80 80 90 Q70 80 80 70" fill="currentColor"/>
-                    </svg>
+                    <svg class="floral-flourish floral-right" viewBox="0 0 100 100" fill="none"><path d="M20 20 Q50 20 70 50 T90 90" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M70 50 Q85 45 90 60 Q75 65 70 50" fill="currentColor"/><path d="M50 30 Q60 50 45 55 Q35 40 50 30" fill="currentColor"/><path d="M80 70 Q90 80 80 90 Q70 80 80 70" fill="currentColor"/></svg>
                 </a>
             </div>
 
@@ -452,18 +385,13 @@
                     <a href="#story" data-target="story">story</a>
                     <a href="#contact" data-target="contact">contact</a>
                 </div>
-                
                 <div class="header-actions">
                     <button class="action-btn-glass cart-btn" id="cartBtn" aria-label="Open Cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count" id="cartCount">0</span>
+                        <i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span>
                     </button>
-                    
                     <button class="action-btn-glass wishlist-btn" id="wishlistBtn" aria-label="Open Wishlist">
-                        <i class="fas fa-heart"></i>
-                        <span class="wishlist-count" id="wishlistCount">0</span>
+                        <i class="fas fa-heart"></i><span class="wishlist-count" id="wishlistCount">0</span>
                     </button>
-                    
                     <button class="action-btn-glass theme-btn" id="themeToggle" aria-label="Toggle Dark Mode">
                         <i class="fas fa-moon" id="themeIcon"></i>
                     </button>
@@ -546,7 +474,13 @@
             </div>
         </section>
 
-        <section id="story" style="margin: 4rem 0;"><div class="story-box"><h2 id="storyTitle">our story</h2><p id="storyText">Artisan was born in a small workshop surrounded by looms and clay. We believe in the beauty of things made slowly.</p><p><i class="fas fa-feather-alt" id="storyIcon"></i> thank you for supporting the craft.</p></div></section>
+        <section id="story">
+            <div class="story-box">
+                <h2 id="storyTitle">our story</h2>
+                <p id="storyText">Artisan was born in a small workshop surrounded by looms and clay. We believe in the beauty of things made slowly.</p>
+                <p style="margin-top:1.5rem;"><i class="fas fa-feather-alt" id="storyIcon"></i> thank you for supporting the craft.</p>
+            </div>
+        </section>
 
         <section id="contact" style="margin: 4rem 0; text-align: center;">
             <h2><span class="badge">📬 get in touch</span></h2>
@@ -586,26 +520,15 @@
                 </div>
                 <div class="footer-col">
                     <h5>explore</h5>
-                    <p>
-                        <a href="#store">new arrivals</a><br>
-                        <a href="#story">our story</a><br>
-                        <a href="#contact">contact</a>
-                    </p>
+                    <p><a href="#store">new arrivals</a><br><a href="#story">our story</a><br><a href="#contact">contact</a></p>
                 </div>
                 <div class="footer-col">
                     <h5>support</h5>
-                    <p>
-                        <a href="#" id="openFaqBtn">faq & shipping</a><br>
-                        <a href="#">returns</a><br>
-                        <a href="#">track order</a>
-                    </p>
+                    <p><a href="#" id="openFaqBtn">faq & shipping</a><br><a href="#">returns</a><br><a href="#">track order</a></p>
                 </div>
                 <div class="footer-col">
                     <h5>contact</h5>
-                    <p>
-                        <a href="mailto:artisan.onlinesales@gmail.com">artisan.onlinesales@gmail.com</a><br>
-                        <a href="tel:+916309645717"><i class="fas fa-phone-alt"></i> +91 6309 645 717</a>
-                    </p>
+                    <p><a href="mailto:artisan.onlinesales@gmail.com">artisan.onlinesales@gmail.com</a><br><a href="tel:+916309645717"><i class="fas fa-phone-alt"></i> +91 6309 645 717</a></p>
                 </div>
             </div>
             <div class="copyright">© 2026 artisan — crafted with intention</div>
@@ -618,20 +541,7 @@
     
     <div id="wishlistModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeWishlist">×</span><h2>Your Wishlist ❤️</h2><div id="wishlistItems"></div></div></div>
     
-    <div id="faqModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" id="closeFaq">×</span>
-            <h2>FAQ & Policies 📜</h2>
-            <div style="margin-top: 1.5rem;">
-                <h4 style="color: var(--accent-color);">How does WhatsApp Checkout work?</h4>
-                <p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;">When you click "Send Order via WhatsApp", your cart details and delivery address are formatted into a secure message. We will review your order and reply with payment instructions. No payment is taken directly on the site.</p>
-                <h4 style="color: var(--accent-color);">Shipping Timelines</h4>
-                <p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;">We use DTDC for reliable delivery. Please allow 2-4 days for crafting and processing before dispatch. You will receive a tracking link on WhatsApp once shipped.</p>
-                <h4 style="color: var(--accent-color);">Returns & Exchanges</h4>
-                <p style="font-size: 0.95rem; opacity: 0.9;">Returns are accepted if the item arrives damaged or incorrectly sized. Please send us a photo on WhatsApp within 48 hours of delivery.</p>
-            </div>
-        </div>
-    </div>
+    <div id="faqModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeFaq">×</span><h2>FAQ & Policies 📜</h2><div style="margin-top: 1.5rem;"><h4 style="color: var(--accent-color);">How does WhatsApp Checkout work?</h4><p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;">When you click "Send Order via WhatsApp", your cart details and delivery address are formatted into a secure message. We will review your order and reply with payment instructions. No payment is taken directly on the site.</p><h4 style="color: var(--accent-color);">Shipping Timelines</h4><p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;">We use DTDC for reliable delivery. Please allow 2-4 days for crafting and processing before dispatch. You will receive a tracking link on WhatsApp once shipped.</p><h4 style="color: var(--accent-color);">Returns & Exchanges</h4><p style="font-size: 0.95rem; opacity: 0.9;">Returns are accepted if the item arrives damaged or incorrectly sized. Please send us a photo on WhatsApp within 48 hours of delivery.</p></div></div></div>
     
     <div id="lightbox"><span class="close-lightbox" id="closeLightboxBtn">×</span><img id="lightboxImg"></div>
     
@@ -639,13 +549,18 @@
 
     <script>
         (function() {
+            // 1. CINEMATIC SPLASH SCREEN REMOVAL
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    const splash = document.getElementById('splashScreen');
+                    if (splash) splash.classList.add('hidden');
+                }, 1500); // 1.5 second showcase
+            });
+
             // --- STATE MANAGEMENT ---
             let currentMode = 'handmade';
             let manualDarkMode = localStorage.getItem('darkMode') === 'true';
-            
-            // FASHION FILTER STATE
-            let fashionCat = 'all'; // 'all', 'clothes', 'jewelry'
-            let fashionGen = 'all'; // 'all', 'men', 'women'
+            let fashionCat = 'all'; let fashionGen = 'all';
 
             // --- CURSOR LOGIC ---
             const cursorIcon = document.getElementById('cursorIcon');
@@ -692,21 +607,18 @@
                 setTimeout(() => { toast.classList.add('hiding'); setTimeout(() => { if(container.contains(toast)) container.removeChild(toast); }, 400); }, 3000); 
             }
 
-            // ---------- UPDATED PRODUCT DATA (Added Genders and Men's items) ----------
             const products = [
-                // Handmade Category
+                // Handmade
                 { id: 1, name: "Ceramic Speckled Mug", category: "handmade", basePrice: 2200, images: ["mug1", "mug2"], stock: 5, variants: null, description: "Hand-thrown stoneware mug with a smooth glaze." },
                 { id: 2, name: "Woven Cotton Scarf", category: "handmade", basePrice: 850, images: ["scarf1", "scarf2"], stock: 10, variants: null, description: "Soft, ethically sourced cotton scarf." },
                 { id: 3, name: "Carved Wood Earrings", category: "handmade", basePrice: 700, images: ["earrings1", "earrings2"], stock: 3, variants: null, description: "Lightweight wooden earrings with a natural finish." },
                 { id: 7, name: "Clay Serving Bowl", category: "handmade", basePrice: 3400, images: ["bowl1"], stock: 2, variants: null, description: "Large terracotta serving bowl with a rustic finish." },
-                
-                // Clothes Category
+                // Clothes
                 { id: 4, name: "Silk Embroidered Dress", category: "clothes", gender: "women", basePrice: 4500, images: ["dress1", "dress2_lifestyle"], stock: 2, variants: { sizes: ["S", "M", "L"], colors: ["Red", "Blue"] }, description: "Elegant silk dress featuring hand-stitched floral details." },
                 { id: 5, name: "Merino Wool Sweater", category: "clothes", gender: "men", basePrice: 5200, images: ["sweater1", "sweater2_lifestyle"], stock: 4, variants: { sizes: ["M", "L", "XL"], colors: ["Gray", "Green"] }, description: "Incredibly soft, warm merino wool sweater." },
                 { id: 6, name: "Linen Wide-Leg Pants", category: "clothes", gender: "women", basePrice: 3100, images: ["pants1", "pants2_lifestyle"], stock: 8, variants: { sizes: ["S", "M", "L"] }, description: "Breathable, stylish linen pants for everyday wear." },
                 { id: 11, name: "Tailored Linen Blazer", category: "clothes", gender: "men", basePrice: 6500, images: ["blazer1", "blazer2_lifestyle"], stock: 3, variants: { sizes: ["M", "L", "XL"] }, description: "Sharp tailored linen blazer for a refined casual look." },
-                
-                // Jewelry Category
+                // Jewelry
                 { id: 8, name: "Gold Plated Chain", category: "jewelry", basePrice: 1500, images: ["chain1", "chain2_lifestyle"], stock: 15, variants: null, description: "Minimalist 18k gold-plated everyday chain." },
                 { id: 9, name: "Silver Pearl Ring", category: "jewelry", basePrice: 2800, images: ["ring1", "ring2_lifestyle"], stock: 4, variants: { sizes: ["6", "7", "8"] }, description: "Sterling silver ring holding a freshwater pearl." },
                 { id: 10, name: "Diamond Drop Pendants", category: "jewelry", basePrice: 8900, images: ["pendant1"], stock: 1, variants: null, description: "Exquisite drop earrings featuring lab-grown diamonds." }
@@ -770,7 +682,6 @@
                         document.body.classList.add('dark-mode');
                         if(themeIcon) themeIcon.className = 'fas fa-sun';
                         if(cursorIcon) { cursorIcon.classList.remove('fa-feather-alt'); cursorIcon.classList.add('fa-gem'); }
-                        
                         btnFashion.classList.add('active'); btnHandmade.classList.remove('active');
                         
                         if(mainBrandText) mainBrandText.textContent = "Artisan Jewelers & Clothes";
@@ -781,22 +692,11 @@
                         document.getElementById('heroBtn1').innerHTML = `shop fashion <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
                         document.getElementById('heroBadge').textContent = "premium quality";
                         document.getElementById('heroTagIcon').className = 'fas fa-gem';
-                        
-                        document.getElementById('storyTitle').textContent = "our philosophy";
-                        document.getElementById('storyText').textContent = "We source the finest materials to bring you apparel and jewelry that stands the test of time. Elegance is in the details.";
-                        document.getElementById('storyIcon').className = 'fas fa-gem';
-                        document.getElementById('footerIcon').className = 'fas fa-gem';
-                        document.getElementById('footerMotto').textContent = "elevated everyday style.";
                     } else {
                         document.body.classList.remove('theme-fashion');
-                        if(!manualDarkMode) {
-                            document.body.classList.remove('dark-mode');
-                            if(themeIcon) themeIcon.className = 'fas fa-moon';
-                        } else {
-                            if(themeIcon) themeIcon.className = 'fas fa-sun';
-                        }
+                        if(!manualDarkMode) { document.body.classList.remove('dark-mode'); if(themeIcon) themeIcon.className = 'fas fa-moon'; }
+                        else { if(themeIcon) themeIcon.className = 'fas fa-sun'; }
                         if(cursorIcon) { cursorIcon.classList.remove('fa-gem'); cursorIcon.classList.add('fa-feather-alt'); }
-                        
                         btnHandmade.classList.add('active'); btnFashion.classList.remove('active');
                         
                         if(mainBrandText) mainBrandText.textContent = "Artisan";
@@ -807,12 +707,6 @@
                         document.getElementById('heroBtn1').innerHTML = `shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
                         document.getElementById('heroBadge').textContent = "ethically made";
                         document.getElementById('heroTagIcon').className = 'fas fa-heart';
-                        
-                        document.getElementById('storyTitle').textContent = "our story";
-                        document.getElementById('storyText').textContent = "Artisan was born in a small workshop surrounded by looms and clay. We believe in the beauty of things made slowly.";
-                        document.getElementById('storyIcon').className = 'fas fa-feather-alt';
-                        document.getElementById('footerIcon').className = 'fas fa-feather-alt';
-                        document.getElementById('footerMotto').textContent = "celebrating true craft.";
                     }
                     renderProducts();
                     if(sections) sections.style.opacity = '1'; 
@@ -829,21 +723,14 @@
                 });
             }
 
-            // --- NEW: FASHION FILTERS LOGIC ---
+            // FASHION FILTERS LOGIC
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    fashionCat = e.target.dataset.cat;
-                    
-                    if(fashionCat === 'clothes') {
-                        document.getElementById('genderFilters').classList.add('active');
-                    } else {
-                        document.getElementById('genderFilters').classList.remove('active');
-                    }
-                    
-                    const sections = document.getElementById('productSections');
-                    sections.style.opacity = '0';
+                    e.target.classList.add('active'); fashionCat = e.target.dataset.cat;
+                    if(fashionCat === 'clothes') document.getElementById('genderFilters').classList.add('active');
+                    else document.getElementById('genderFilters').classList.remove('active');
+                    const sections = document.getElementById('productSections'); sections.style.opacity = '0';
                     setTimeout(() => { renderProducts(); sections.style.opacity = '1'; }, 200);
                 });
             });
@@ -851,11 +738,8 @@
             document.querySelectorAll('.gen-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.gen-btn').forEach(b => b.classList.remove('active'));
-                    e.target.classList.add('active');
-                    fashionGen = e.target.dataset.gen;
-                    
-                    const sections = document.getElementById('productSections');
-                    sections.style.opacity = '0';
+                    e.target.classList.add('active'); fashionGen = e.target.dataset.gen;
+                    const sections = document.getElementById('productSections'); sections.style.opacity = '0';
                     setTimeout(() => { renderProducts(); sections.style.opacity = '1'; }, 200);
                 });
             });
@@ -879,13 +763,51 @@
                 return { charge, service, eta };
             }
 
+            // --- 2. MAGIC FLIGHT CART ANIMATION LOGIC ---
             function addToCart(id, qty, size, color, eventTarget) {
                 let existing = cart.find(i=>i.id===id && i.size===size && i.color===color);
-                if(existing) existing.quantity += qty;
-                else cart.push({ id, quantity:qty, size, color });
+                if(existing) existing.quantity += qty; else cart.push({ id, quantity:qty, size, color });
                 saveCart();
+                
                 const cartIcon = document.getElementById('cartBtn');
-                cartIcon.classList.add('wiggle'); setTimeout(()=>cartIcon.classList.remove('wiggle'), 400);
+                
+                // Magic Flight Animation
+                if(eventTarget) {
+                    const card = eventTarget.closest('.product-card');
+                    if(card) {
+                        const img = card.querySelector('.main-image');
+                        if(img) {
+                            const imgRect = img.getBoundingClientRect();
+                            const cartRect = cartIcon.getBoundingClientRect();
+                            
+                            const flyingImg = img.cloneNode(true);
+                            flyingImg.className = 'cart-flying-img';
+                            flyingImg.style.left = imgRect.left + 'px';
+                            flyingImg.style.top = imgRect.top + 'px';
+                            flyingImg.style.width = imgRect.width + 'px';
+                            flyingImg.style.height = imgRect.height + 'px';
+                            document.body.appendChild(flyingImg);
+                            
+                            // Trigger flight
+                            requestAnimationFrame(() => {
+                                flyingImg.style.left = (cartRect.left + cartRect.width/2 - 25) + 'px';
+                                flyingImg.style.top = (cartRect.top + cartRect.height/2 - 25) + 'px';
+                                flyingImg.style.width = '50px';
+                                flyingImg.style.height = '50px';
+                                flyingImg.style.opacity = '0';
+                                flyingImg.style.transform = 'scale(0.2) rotate(15deg)';
+                            });
+                            
+                            setTimeout(() => {
+                                if(document.body.contains(flyingImg)) document.body.removeChild(flyingImg);
+                                cartIcon.classList.add('wiggle'); setTimeout(()=>cartIcon.classList.remove('wiggle'), 400);
+                            }, 700);
+                        }
+                    }
+                } else {
+                    cartIcon.classList.add('wiggle'); setTimeout(()=>cartIcon.classList.remove('wiggle'), 400);
+                }
+                
                 showToast('Item added to cart!');
             }
 
@@ -932,6 +854,7 @@
                 document.getElementById('productDetailModal').style.display = 'flex';
             }
 
+            // --- 3. PREMIUM GRID STAGGER LOGIC INSTALLED IN RENDER ---
             function renderProducts() {
                 const searchInput = document.getElementById('searchInput');
                 const sortSelect = document.getElementById('sortSelect');
@@ -940,12 +863,9 @@
                 
                 let filtered = products.filter(p => {
                     if (currentMode === 'handmade') return p.category === 'handmade';
-                    
-                    // Fashion Mode Filtering
                     if(p.category !== 'clothes' && p.category !== 'jewelry') return false;
                     if(fashionCat !== 'all' && p.category !== fashionCat) return false;
                     if(fashionCat === 'clothes' && fashionGen !== 'all' && p.gender !== fashionGen) return false;
-                    
                     return true;
                 });
                 
@@ -959,7 +879,6 @@
                 } else {
                     const clothes = filtered.filter(p=>p.category==='clothes');
                     const jewelry = filtered.filter(p=>p.category==='jewelry');
-                    
                     if(fashionCat === 'all' || fashionCat === 'clothes') {
                         if(clothes.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">👗 apparel</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
                     }
@@ -979,7 +898,6 @@
             function renderProductCard(p, idx) {
                 const isWished = wishlist.includes(p.id);
                 const stockBadge = p.stock>0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
-                
                 const mainImg = imageMap[p.images[0]];
                 const hoverImgHtml = p.images.length > 1 ? `<img src="${imageMap[p.images[1]]}" class="hover-image" alt="Lifestyle shot">` : '';
                 
@@ -1042,7 +960,6 @@
             document.getElementById('closeLightboxBtn').addEventListener('click', () => document.getElementById('lightbox').classList.remove('show'));
             document.getElementById('lightbox').addEventListener('click', (e) => { if(e.target === document.getElementById('lightbox')) document.getElementById('lightbox').classList.remove('show'); });
 
-            // Modals Logic
             document.getElementById('cartBtn').addEventListener('click',()=>{ renderCartModal(); document.getElementById('cartModal').style.display='flex'; });
             document.getElementById('wishlistBtn').addEventListener('click',()=>{ renderWishlistModal(); document.getElementById('wishlistModal').style.display='flex'; });
             document.getElementById('openFaqBtn').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('faqModal').style.display='flex'; });
@@ -1133,6 +1050,13 @@
                 requestAnimationFrame(() => {
                     document.getElementById('blob1').style.transform = `translateY(${scrollY*0.05}px)`;
                     document.getElementById('blob2').style.transform = `translateY(${-scrollY*0.05}px)`;
+                    
+                    // Feature 5 Parallax Story Box Effect
+                    const storyBox = document.querySelector('.story-box');
+                    if (storyBox) {
+                        // Creates a gentle float opposing scroll inside the background
+                        storyBox.style.transform = `translateY(${scrollY * 0.03}px)`;
+                    }
                 });
             });
 
