@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     
+    <!-- SEO & OPEN GRAPH META TAGS -->
     <title>Artisan • Handmade Goods & Slow Fashion</title>
     <meta name="description" content="Unique handmade goods, curated apparel, and exquisite jewelry.">
     <meta property="og:title" content="Artisan • Handmade & Curated Fashion">
@@ -12,6 +13,7 @@
     <meta property="og:url" content="https://yourwebsite.com">
     <meta property="og:type" content="website">
     
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -25,6 +27,7 @@
             --accent-color: #c38e7b; --card-bg: #ffffff; --card-border: rgba(255, 235, 220, 0.7); --input-bg: #fffaf5;
             --modal-bg: #ffffff; --badge-bg: #f1e0d6; --shadow-color: rgba(0,0,0,0.05);
             --glass-bg: rgba(195, 142, 123, 0.15); --glass-border: rgba(195, 142, 123, 0.4); --glass-glow: rgba(255,255,255,0.4);
+            --bezier-butter: cubic-bezier(0.16, 1, 0.3, 1);
         }
         body.theme-fashion {
             /* FASHION THEME */
@@ -48,15 +51,15 @@
         html { scroll-behavior: smooth; }
 
         /* --- 1. CINEMATIC SPLASH SCREEN --- */
-        .splash-screen { position: fixed; inset: 0; background: var(--bg-color); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1), opacity 1s ease; }
+        .splash-screen { position: fixed; inset: 0; background: var(--bg-color); z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 1s var(--bezier-butter), opacity 1s ease; }
         .splash-screen.hidden { transform: translateY(-100%); opacity: 0; pointer-events: none; }
         .splash-text { font-family: 'Cinzel Decorative', serif; font-size: 3rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-color); filter: drop-shadow(0px 2px 4px var(--shadow-color)); margin-top: 1.5rem; animation: pulseText 2s infinite alternate; }
         @keyframes pulseText { 0% { opacity: 0.7; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1); } }
 
         /* --- AESTHETIC CUSTOM CURSOR --- */
         @media (pointer: fine) {
-            body, a, button, input, select, textarea, i, img, .product-card, .logo-wrapper, .toggle-btn, .f-btn { cursor: none; }
-            .cursor-icon { position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000; transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease, filter 0.2s ease, font-size 0.5s ease; filter: drop-shadow(0 2px 4px var(--glass-border)); }
+            body, a, button, input, select, textarea, i, img, .product-card, .logo-wrapper, .toggle-btn, .f-btn, .sort-trigger, .sort-option { cursor: none; }
+            .cursor-icon { position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000; transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%; transition: transform 0.2s var(--bezier-butter), color 0.5s ease, filter 0.2s ease, font-size 0.5s ease; filter: drop-shadow(0 2px 4px var(--glass-border)); }
             .cursor-icon.hovering { transform: translate(-15%, -85%) scale(1.2) rotate(10deg); color: var(--text-color); filter: drop-shadow(0 4px 8px var(--shadow-color)); }
             body.theme-fashion .cursor-icon { transform: translate(-50%, -50%) rotate(0deg); transform-origin: center center; font-size: 1.2rem; }
             body.theme-fashion .cursor-icon.hovering { transform: translate(-50%, -50%) scale(1.5) rotate(0deg); color: var(--text-color); }
@@ -65,10 +68,10 @@
         /* --- 2. MAGIC FLIGHT CART ANIMATION --- */
         .cart-flying-img { position: fixed; z-index: 999999; border-radius: 20px; object-fit: cover; pointer-events: none; box-shadow: 0 15px 35px rgba(0,0,0,0.3); transition: all 0.7s cubic-bezier(0.25, 1, 0.3, 1); }
 
-        h1, h2, h4, p { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.5s ease, text-shadow 0.5s ease; }
+        h1, h2, h4, p { transition: transform 0.4s var(--bezier-butter), color 0.5s ease, text-shadow 0.5s ease; }
         h1:hover, h2:hover, h4:hover { transform: translateY(-4px) scale(1.02); color: var(--accent-color); text-shadow: 0 8px 25px var(--glass-border); }
         p:hover { transform: translateY(-2px); color: var(--accent-color); }
-        i { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.5s ease, filter 0.3s ease; display: inline-block; }
+        i { transition: transform 0.3s var(--bezier-butter), color 0.5s ease, filter 0.3s ease; display: inline-block; }
         i:hover { transform: scale(1.3) translateY(-4px); color: var(--accent-color) !important; filter: drop-shadow(0 5px 10px var(--glass-border)); }
 
         .blob, .blob2 { position: fixed; z-index: -2; pointer-events: none; will-change: transform; transition: opacity 0.6s ease, background 0.6s ease;}
@@ -84,20 +87,20 @@
         .logo-icon-link { display: block; perspective: 800px; transition: transform 0.3s ease; }
         .logo-icon-link:hover { transform: scale(1.1); }
         .logo-icon-link:hover .logo-3d-scene { animation-duration: 4s; }
-        .logo-3d-scene { width: 40px; height: 40px; position: relative; transform-style: preserve-3d; animation: spin3DLogo 12s infinite cubic-bezier(0.25, 1, 0.5, 1); }
+        .logo-3d-scene { width: 40px; height: 40px; position: relative; transform-style: preserve-3d; animation: spin3DLogo 12s infinite var(--bezier-butter); }
         .cube-face { position: absolute; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; color: var(--accent-color); backdrop-filter: blur(4px); box-shadow: inset 0 0 10px var(--glass-glow); transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease; }
         .face-front  { transform: rotateY(0deg) translateZ(20px); } .face-right  { transform: rotateY(90deg) translateZ(20px); } .face-back   { transform: rotateY(180deg) translateZ(20px); } .face-left   { transform: rotateY(-90deg) translateZ(20px); }
         @keyframes spin3DLogo { 0%, 20% { transform: rotateX(-15deg) rotateY(0deg); } 25%, 45% { transform: rotateX(-15deg) rotateY(-90deg); } 50%, 70% { transform: rotateX(-15deg) rotateY(-180deg); } 75%, 95% { transform: rotateX(-15deg) rotateY(-270deg); } 100% { transform: rotateX(-15deg) rotateY(-360deg); } }
 
-        .icon-handmade, .icon-fashion { position: absolute; transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .icon-handmade, .icon-fashion { position: absolute; transition: opacity 0.6s ease, transform 0.6s var(--bezier-butter); }
         .icon-fashion { opacity: 0; transform: scale(0.5) rotate(45deg); }
         body.theme-fashion .icon-handmade { opacity: 0; transform: scale(0.5) rotate(-45deg); }
         body.theme-fashion .icon-fashion { opacity: 1; transform: scale(1) rotate(0deg); }
 
         .artisan-text-wrapper { position: relative; display: flex; align-items: center; justify-content: center; padding: 0 10px; text-decoration: none; transition: transform 0.3s ease; }
-        .artisan-text { font-family: 'Cinzel Decorative', serif; font-size: 2.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-color); filter: drop-shadow(0px 2px 4px var(--shadow-color)); position: relative; z-index: 2; line-height: 1; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s ease, font-size 0.5s ease; }
+        .artisan-text { font-family: 'Cinzel Decorative', serif; font-size: 2.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-color); filter: drop-shadow(0px 2px 4px var(--shadow-color)); position: relative; z-index: 2; line-height: 1; transition: transform 0.4s var(--bezier-butter), letter-spacing 0.4s var(--bezier-butter), color 0.6s ease, font-size 0.5s ease; }
         body.theme-fashion .artisan-text { font-size: 1.5rem; letter-spacing: 1px; }
-        .floral-flourish { position: absolute; width: 45px; height: 45px; pointer-events: none; z-index: 1; color: var(--accent-color); filter: drop-shadow(0px 2px 3px var(--shadow-color)); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s ease; }
+        .floral-flourish { position: absolute; width: 45px; height: 45px; pointer-events: none; z-index: 1; color: var(--accent-color); filter: drop-shadow(0px 2px 3px var(--shadow-color)); transition: transform 0.4s var(--bezier-butter), color 0.6s ease; }
         .floral-left { top: -15px; left: -15px; transform: rotate(-10deg); } .floral-right { bottom: -15px; right: -15px; transform: rotate(10deg); }
         .artisan-text-wrapper:hover .artisan-text { letter-spacing: 7px; transform: scale(1.05); text-shadow: 0 5px 15px var(--glass-border); }
         body.theme-fashion .artisan-text-wrapper:hover .artisan-text { letter-spacing: 3px; }
@@ -121,7 +124,7 @@
         .mode-toggle { display: flex; position: relative; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 50px; padding: 5px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); backdrop-filter: blur(8px); transition: background 0.6s ease, border-color 0.6s ease; }
         .toggle-btn { position: relative; z-index: 2; padding: 0.8rem 2rem; border: none; background: transparent; color: var(--text-color); font-weight: 600; font-size: 1rem; border-radius: 40px; cursor: pointer; transition: color 0.4s ease; outline: none; font-family: 'Inter', sans-serif; }
         .toggle-btn.active { color: white; }
-        .toggle-slider { position: absolute; top: 5px; left: 5px; height: calc(100% - 10px); width: 50%; background: var(--accent-color); border-radius: 40px; z-index: 1; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.6s ease; box-shadow: 0 4px 10px var(--glass-border); }
+        .toggle-slider { position: absolute; top: 5px; left: 5px; height: calc(100% - 10px); width: 50%; background: var(--accent-color); border-radius: 40px; z-index: 1; transition: transform 0.4s var(--bezier-butter), background 0.6s ease; box-shadow: 0 4px 10px var(--glass-border); }
         body.theme-fashion .toggle-slider { transform: translateX(calc(100% - 10px)); }
 
         .fashion-filters-container { display: none; flex-direction: column; align-items: center; margin-bottom: 3rem; }
@@ -156,10 +159,33 @@
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes heroFloat { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
 
-        .control-bar { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; margin: 1rem 0 2rem; }
-        .search-box { flex: 2; min-width: 200px; }
-        .search-box input { width: 100%; padding: 0.7rem 1.5rem; border-radius: 40px; border: 1.5px solid var(--card-border); background: var(--input-bg); font-size: 1rem; color: var(--text-color); transition: background 0.6s ease, border-color 0.6s ease, color 0.6s ease; }
-        .filters select { background: var(--modal-bg); color: var(--text-color); border-radius: 40px; padding: 0.4rem 1rem; border: 1px solid var(--card-border); transition: all 0.6s ease; }
+        /* --- NEW BUTTERY SEARCH & SORT UI --- */
+        .control-bar { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; align-items: center; margin: 2rem 0 3rem; position: relative; z-index: 50; }
+        
+        .search-box { position: relative; flex: 1; min-width: 280px; max-width: 450px; }
+        .search-box input { width: 100%; padding: 1.2rem 1.5rem 1.2rem 3.5rem; border-radius: 50px; border: 1.5px solid var(--glass-border); background: var(--glass-bg); font-size: 1rem; color: var(--text-color); transition: all 0.5s var(--bezier-butter); backdrop-filter: blur(8px); }
+        .search-box i { position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%); color: var(--text-color); opacity: 0.5; transition: all 0.5s var(--bezier-butter); pointer-events: none; font-size: 1.1rem; }
+        
+        .search-box input:focus { background: var(--modal-bg); border-color: var(--accent-color); box-shadow: 0 15px 35px var(--shadow-color), 0 0 0 4px var(--glass-bg); transform: scale(1.02); outline: none;}
+        .search-box input:focus + i { color: var(--accent-color); opacity: 1; transform: translateY(-50%) scale(1.1); }
+        
+        .filters { display: flex; align-items: center; justify-content: flex-end; }
+        
+        .custom-sort { position: relative; width: 240px; }
+        .sort-trigger { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.5rem; border-radius: 50px; background: var(--glass-bg); border: 1.5px solid var(--glass-border); color: var(--text-color); cursor: pointer; transition: all 0.5s var(--bezier-butter); backdrop-filter: blur(8px); font-weight: 500; font-size: 0.95rem; }
+        .sort-trigger:hover, .custom-sort.active .sort-trigger { background: var(--modal-bg); border-color: var(--accent-color); transform: translateY(-3px); box-shadow: 0 15px 35px var(--shadow-color); }
+        .sort-trigger i { transition: transform 0.5s var(--bezier-butter); opacity: 0.7;}
+        .custom-sort.active .sort-trigger i { transform: rotate(180deg); opacity: 1; color: var(--accent-color); }
+        
+        .sort-options { position: absolute; top: calc(100% + 15px); right: 0; width: 100%; background: var(--modal-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 0.8rem; box-shadow: 0 20px 50px var(--shadow-color); opacity: 0; visibility: hidden; transform: rotateX(-10deg) translateY(-20px); transform-origin: top center; transition: all 0.5s var(--bezier-butter); perspective: 1000px; }
+        .custom-sort.active .sort-options { opacity: 1; visibility: visible; transform: rotateX(0deg) translateY(0); }
+        
+        .sort-option { padding: 0.8rem 1.2rem; border-radius: 16px; cursor: pointer; transition: all 0.4s var(--bezier-butter); color: var(--text-color); margin-bottom: 4px; font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; }
+        .sort-option:last-child { margin-bottom: 0; }
+        .sort-option:hover { background: var(--glass-bg); transform: translateX(5px); color: var(--accent-color); }
+        .sort-option.active { background: var(--accent-color); color: white; transform: translateX(5px); box-shadow: 0 4px 15px var(--glass-bg); }
+        .sort-option i { opacity: 0; transition: opacity 0.3s; }
+        .sort-option.active i { opacity: 1; }
 
         /* --- 3. PREMIUM GRID STAGGER & MASONRY --- */
         .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; padding: 2rem 0; justify-items: center; align-items: start; transition: all 0.5s ease;}
@@ -173,7 +199,7 @@
         .product-card { 
             background: var(--card-bg); border-radius: 35px; padding: 1.5rem; box-shadow: 0 18px 35px -10px var(--shadow-color); border: 1px solid var(--card-border); position: relative; display: flex; flex-direction: column; width: 100%; max-width: 320px; 
             transition: box-shadow 0.3s ease, background 0.6s ease, border-color 0.6s ease; overflow: hidden; 
-            animation: slideInCard 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation: slideInCard 0.6s var(--bezier-butter) both;
             animation-delay: calc(var(--card-index, 0) * 0.1s);
         }
         @keyframes slideInCard { 0% { opacity: 0; transform: translateY(40px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
@@ -319,7 +345,12 @@
             .fashion-filters-container { padding: 0 1rem; } .f-btn { font-size: 0.85rem; padding: 0.4rem 1rem; }
             
             .hero { padding: 1.5rem 0 3rem; text-align: center; } .hero-buttons { justify-content: center; } .hero-visual { margin-top: 2rem; }
-            .control-bar { flex-direction: column; align-items: stretch; } .search-box { width: 100%; } .filters { justify-content: center; width: 100%; }
+            
+            .control-bar { flex-direction: column; align-items: stretch; gap: 1rem; margin: 1rem 0 2rem;}
+            .search-box { width: 100%; max-width: none; }
+            .custom-sort { width: 100%; }
+            .sort-options { top: calc(100% + 10px); }
+            
             .newsletter-section { padding: 2rem 1.5rem; border-radius: 30px; } .newsletter-form { flex-direction: column; width: 100%; } .newsletter-form button { width: 100%; }
             #story { min-height: 400px; border-radius: 30px; margin: 3rem 0;} .story-box { padding: 2rem 1.5rem; border-radius: 30px; }
             .floating-wa-btn { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 1.5rem; }
@@ -329,6 +360,7 @@
 </head>
 <body>
     
+    <!-- 1. CINEMATIC SPLASH SCREEN -->
     <div id="splashScreen" class="splash-screen">
         <div class="logo-3d-scene" style="width: 80px; height: 80px;">
             <div class="cube-face face-front" style="width: 80px; height: 80px;"><i class="fas fa-feather-alt" style="font-size: 2.5rem;"></i></div>
@@ -339,6 +371,7 @@
         <div class="splash-text">Artisan</div>
     </div>
 
+    <!-- Dynamic Custom Cursor -->
     <i class="fas fa-feather-alt cursor-icon" id="cursorIcon"></i>
     
     <div id="toastContainer" class="toast-container"></div>
@@ -350,6 +383,7 @@
     <header class="sticky-header" id="mainHeader">
         <div class="header-container">
             <div class="brand-section">
+                <!-- The Dynamic 3D Cube Logo -->
                 <a href="#" class="logo-icon-link" aria-label="Home">
                     <div class="logo-3d-scene">
                         <div class="cube-face face-front">
@@ -374,6 +408,7 @@
                     </div>
                 </a>
                 
+                <!-- The Dynamic Text Logo -->
                 <a href="#" class="artisan-text-wrapper" aria-label="Home">
                     <svg class="floral-flourish floral-left" viewBox="0 0 100 100" fill="none"><path d="M80 80 Q50 80 30 50 T10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M30 50 Q15 55 10 40 Q25 35 30 50" fill="currentColor"/><path d="M50 70 Q40 50 55 45 Q65 60 50 70" fill="currentColor"/><path d="M20 30 Q10 20 20 10 Q30 20 20 30" fill="currentColor"/></svg>
                     <span class="artisan-text" id="mainBrandText">Artisan</span>
@@ -381,6 +416,7 @@
                 </a>
             </div>
 
+            <!-- NAVIGATION & GLASS BUTTONS -->
             <div class="nav-container">
                 <div class="nav-links">
                     <a href="#" data-target="home">home</a>
@@ -413,6 +449,7 @@
             </div>
         </div>
         
+        <!-- FASHION MODE SUB-NAVIGATION -->
         <div class="fashion-filters-container" id="fashionFilters">
             <div class="filter-row">
                 <button class="f-btn cat-btn active" data-cat="all">All Fashion</button>
@@ -430,6 +467,7 @@
             <div class="hero-content">
                 <h1 id="heroTitle">handmade with <span id="heroAccent">heart & soul</span></h1>
                 
+                <!-- DYNAMIC RANDOM QUOTE WILL APPEAR HERE -->
                 <p id="heroDesc">Unique dresses, ceramics, and textiles — each piece tells a story. Direct from maker to you.</p>
                 
                 <div class="hero-buttons">
@@ -443,14 +481,23 @@
             </div>
         </section>
 
+        <!-- BUTTERY SEARCH & SORT UI -->
         <div class="control-bar" id="store">
-            <div class="search-box"><input type="text" id="searchInput" placeholder="🔍 Search products..."></div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search for beautiful pieces...">
+                <i class="fas fa-search"></i>
+            </div>
+            
             <div class="filters">
-                <select id="sortSelect" class="sort-select">
-                    <option value="default">Sort by</option>
-                    <option value="priceAsc">Price: Low to High</option>
-                    <option value="priceDesc">Price: High to Low</option>
-                </select>
+                <div class="custom-sort" id="customSort">
+                    <div class="sort-trigger"><span id="sortLabel">Sort: Featured</span> <i class="fas fa-chevron-down"></i></div>
+                    <div class="sort-options">
+                        <div class="sort-option active" data-value="default" data-label="Featured">Featured <i class="fas fa-check"></i></div>
+                        <div class="sort-option" data-value="priceAsc" data-label="Low to High">Price: Low to High <i class="fas fa-check"></i></div>
+                        <div class="sort-option" data-value="priceDesc" data-label="High to Low">Price: High to Low <i class="fas fa-check"></i></div>
+                    </div>
+                </div>
+                <input type="hidden" id="sortSelect" value="default">
             </div>
         </div>
 
@@ -479,6 +526,7 @@
             </div>
         </section>
 
+        <!-- 5. PARALLAX STORY SECTION -->
         <section id="story">
             <div class="story-box">
                 <h2 id="storyTitle">our story</h2>
@@ -540,6 +588,7 @@
         </div>
     </footer>
 
+    <!-- Modals -->
     <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">×</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><br><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Delivery</button></div></div>
     
     <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">×</span><h2>Delivery Details <span class="badge" style="font-size:0.7rem; margin-left:0.5rem; background:var(--accent-color); color:white;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati)" required><button class="btn" id="estimateDelivery">Calculate Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:var(--accent-color);"></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button></div></div></div>
@@ -554,11 +603,6 @@
 
     <script>
         (function() {
-            // --- STATE MANAGEMENT ---
-            let currentMode = 'handmade';
-            let manualDarkMode = localStorage.getItem('darkMode') === 'true';
-            let fashionCat = 'all'; let fashionGen = 'all';
-
             // --- RANDOM QUOTES ENGINE ---
             const handmadeQuotes = [
                 "Unique ceramics, textiles, and woodcrafts — each piece tells a story. Direct from maker to you.",
@@ -590,7 +634,7 @@
                     setTimeout(() => {
                         descEl.textContent = randomQuote;
                         descEl.style.opacity = '0.8';
-                    }, 400); // Wait for CSS fade out
+                    }, 400); 
                 }
             }
 
@@ -601,9 +645,14 @@
                     if (splash) splash.classList.add('hidden');
                 }, 1500);
                 
-                // Initialize the very first random quote
+                let currentMode = document.body.classList.contains('theme-fashion') ? 'fashion' : 'handmade';
                 setRandomQuote(currentMode);
             });
+
+            // --- STATE MANAGEMENT ---
+            let currentMode = 'handmade';
+            let manualDarkMode = localStorage.getItem('darkMode') === 'true';
+            let fashionCat = 'all'; let fashionGen = 'all';
 
             // --- CURSOR LOGIC ---
             const cursorIcon = document.getElementById('cursorIcon');
@@ -614,7 +663,7 @@
                 });
 
                 const addHoverEffects = () => {
-                    document.querySelectorAll('a, button, h1, h2, h4, p, i, img, .product-card, .logo-wrapper, select, input, .toggle-btn, .f-btn').forEach(el => {
+                    document.querySelectorAll('a, button, h1, h2, h4, p, i, img, .product-card, .logo-wrapper, select, input, .toggle-btn, .f-btn, .sort-trigger, .sort-option').forEach(el => {
                         if(el.dataset.cursorBound) return; 
                         el.dataset.cursorBound = "true";
                         el.addEventListener('mouseenter', () => cursorIcon.classList.add('hovering'));
@@ -785,6 +834,39 @@
                 });
             }
 
+            // --- BUTTERY CUSTOM SORT DROPDOWN LOGIC ---
+            const customSort = document.getElementById('customSort');
+            const sortTrigger = document.querySelector('.sort-trigger');
+            const sortOptions = document.querySelectorAll('.sort-option');
+            const sortLabel = document.getElementById('sortLabel');
+            const sortInput = document.getElementById('sortSelect');
+
+            if(sortTrigger) {
+                sortTrigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    customSort.classList.toggle('active');
+                });
+            }
+
+            sortOptions.forEach(opt => {
+                opt.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sortOptions.forEach(o => o.classList.remove('active'));
+                    opt.classList.add('active');
+                    
+                    sortLabel.textContent = "Sort: " + opt.dataset.label;
+                    sortInput.value = opt.dataset.value;
+                    customSort.classList.remove('active');
+                    renderProducts(); 
+                });
+            });
+
+            document.addEventListener('click', () => {
+                if(customSort && customSort.classList.contains('active')) {
+                    customSort.classList.remove('active');
+                }
+            });
+
             // FASHION FILTERS LOGIC
             document.querySelectorAll('.cat-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -916,9 +998,9 @@
 
             function renderProducts() {
                 const searchInput = document.getElementById('searchInput');
-                const sortSelect = document.getElementById('sortSelect');
+                const sortInput = document.getElementById('sortSelect'); // Now hidden input from custom sort
                 const s = searchInput ? searchInput.value.toLowerCase() : '';
-                const sort = sortSelect ? sortSelect.value : 'default';
+                const sort = sortInput ? sortInput.value : 'default';
                 
                 let filtered = products.filter(p => {
                     if (currentMode === 'handmade') return p.category === 'handmade';
@@ -938,6 +1020,7 @@
                 } else {
                     const clothes = filtered.filter(p=>p.category==='clothes');
                     const jewelry = filtered.filter(p=>p.category==='jewelry');
+                    
                     if(fashionCat === 'all' || fashionCat === 'clothes') {
                         if(clothes.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">👗 apparel</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
                     }
@@ -1096,14 +1179,11 @@
             const searchInput = document.getElementById('searchInput');
             if(searchInput) searchInput.addEventListener('input',renderProducts);
             
-            const sortSelect = document.getElementById('sortSelect');
-            if(sortSelect) sortSelect.addEventListener('change',renderProducts);
-            
             document.getElementById('newsletterForm').addEventListener('submit',e=>{ e.preventDefault(); showToast('Successfully Subscribed!', 'fa-envelope-open-text'); document.getElementById('newsletterEmail').value = ''; });
 
             setTimeout(renderProducts, 300);
 
-            // --- 5. PARALLAX SCROLL LISTENER ---
+            // --- FEATURE 5: PARALLAX SCROLL LISTENER ---
             window.addEventListener('scroll', () => {
                 let scrollY = window.scrollY;
                 document.getElementById('mainHeader').classList.toggle('scrolled', scrollY > 50);
@@ -1113,6 +1193,7 @@
                     
                     const storyBox = document.querySelector('.story-box');
                     if (storyBox) {
+                        // Creates a gentle float opposing scroll inside the background
                         storyBox.style.transform = `translateY(${scrollY * 0.03}px)`;
                     }
                 });
