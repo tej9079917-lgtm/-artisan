@@ -4,20 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     
-    <!-- SEO & OPEN GRAPH META TAGS -->
     <title>Artisan • Handmade Goods & Slow Fashion</title>
     <meta name="description" content="Unique handmade goods, curated apparel, and exquisite jewelry.">
-    <meta property="og:title" content="Artisan • Handmade & Curated Fashion">
-    <meta property="og:description" content="Unique handmade goods, curated apparel, and exquisite jewelry.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=1200&auto=format&fit=crop">
-    <meta property="og:url" content="https://yourwebsite.com">
-    <meta property="og:type" content="website">
     
-    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <style>
         /* --- THEME VARIABLES --- */
@@ -159,18 +153,15 @@
         @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes heroFloat { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
 
-        /* --- NEW BUTTERY SEARCH & SORT UI --- */
+        /* --- BUTTERY SEARCH & SORT UI --- */
         .control-bar { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; align-items: center; margin: 2rem 0 3rem; position: relative; z-index: 50; }
-        
         .search-box { position: relative; flex: 1; min-width: 280px; max-width: 450px; }
         .search-box input { width: 100%; padding: 1.2rem 1.5rem 1.2rem 3.5rem; border-radius: 50px; border: 1.5px solid var(--glass-border); background: var(--glass-bg); font-size: 1rem; color: var(--text-color); transition: all 0.5s var(--bezier-butter); backdrop-filter: blur(8px); }
         .search-box i { position: absolute; left: 1.5rem; top: 50%; transform: translateY(-50%); color: var(--text-color); opacity: 0.5; transition: all 0.5s var(--bezier-butter); pointer-events: none; font-size: 1.1rem; }
-        
         .search-box input:focus { background: var(--modal-bg); border-color: var(--accent-color); box-shadow: 0 15px 35px var(--shadow-color), 0 0 0 4px var(--glass-bg); transform: scale(1.02); outline: none;}
         .search-box input:focus + i { color: var(--accent-color); opacity: 1; transform: translateY(-50%) scale(1.1); }
         
         .filters { display: flex; align-items: center; justify-content: flex-end; }
-        
         .custom-sort { position: relative; width: 240px; }
         .sort-trigger { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.5rem; border-radius: 50px; background: var(--glass-bg); border: 1.5px solid var(--glass-border); color: var(--text-color); cursor: pointer; transition: all 0.5s var(--bezier-butter); backdrop-filter: blur(8px); font-weight: 500; font-size: 0.95rem; }
         .sort-trigger:hover, .custom-sort.active .sort-trigger { background: var(--modal-bg); border-color: var(--accent-color); transform: translateY(-3px); box-shadow: 0 15px 35px var(--shadow-color); }
@@ -179,7 +170,6 @@
         
         .sort-options { position: absolute; top: calc(100% + 15px); right: 0; width: 100%; background: var(--modal-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 0.8rem; box-shadow: 0 20px 50px var(--shadow-color); opacity: 0; visibility: hidden; transform: rotateX(-10deg) translateY(-20px); transform-origin: top center; transition: all 0.5s var(--bezier-butter); perspective: 1000px; }
         .custom-sort.active .sort-options { opacity: 1; visibility: visible; transform: rotateX(0deg) translateY(0); }
-        
         .sort-option { padding: 0.8rem 1.2rem; border-radius: 16px; cursor: pointer; transition: all 0.4s var(--bezier-butter); color: var(--text-color); margin-bottom: 4px; font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; }
         .sort-option:last-child { margin-bottom: 0; }
         .sort-option:hover { background: var(--glass-bg); transform: translateX(5px); color: var(--accent-color); }
@@ -360,7 +350,6 @@
 </head>
 <body>
     
-    <!-- 1. CINEMATIC SPLASH SCREEN -->
     <div id="splashScreen" class="splash-screen">
         <div class="logo-3d-scene" style="width: 80px; height: 80px;">
             <div class="cube-face face-front" style="width: 80px; height: 80px;"><i class="fas fa-feather-alt" style="font-size: 2.5rem;"></i></div>
@@ -371,7 +360,6 @@
         <div class="splash-text">Artisan</div>
     </div>
 
-    <!-- Dynamic Custom Cursor -->
     <i class="fas fa-feather-alt cursor-icon" id="cursorIcon"></i>
     
     <div id="toastContainer" class="toast-container"></div>
@@ -383,16 +371,11 @@
     <header class="sticky-header" id="mainHeader">
         <div class="header-container">
             <div class="brand-section">
-                <!-- The Dynamic 3D Cube Logo -->
                 <a href="#" class="logo-icon-link" aria-label="Home">
                     <div class="logo-3d-scene">
                         <div class="cube-face face-front">
                             <i class="fas fa-feather-alt icon-handmade" style="font-size: 1.2rem;"></i>
-                            <svg class="icon-fashion" width="24" height="24" viewBox="0 0 100 100">
-                                <polygon points="50,90 10,40 30,15 70,15 90,40" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/>
-                                <polyline points="30,15 50,40 70,15" fill="none" stroke="currentColor" stroke-width="8"/>
-                                <line x1="10" y1="40" x2="90" y2="40" stroke="currentColor" stroke-width="8"/>
-                            </svg>
+                            <svg class="icon-fashion" width="24" height="24" viewBox="0 0 100 100"><polygon points="50,90 10,40 30,15 70,15 90,40" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><polyline points="30,15 50,40 70,15" fill="none" stroke="currentColor" stroke-width="8"/><line x1="10" y1="40" x2="90" y2="40" stroke="currentColor" stroke-width="8"/></svg>
                         </div>
                         <div class="cube-face face-right">
                             <svg class="icon-handmade" width="20" height="20" viewBox="0 0 100 100" fill="none"><path d="M30 25C30 25 45 45 30 70C20 85 35 90 50 90C65 90 80 85 70 70C55 45 70 25 70 25H30Z" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 10H60" stroke="currentColor" stroke-width="8" stroke-linecap="round"/></svg>
@@ -408,7 +391,6 @@
                     </div>
                 </a>
                 
-                <!-- The Dynamic Text Logo -->
                 <a href="#" class="artisan-text-wrapper" aria-label="Home">
                     <svg class="floral-flourish floral-left" viewBox="0 0 100 100" fill="none"><path d="M80 80 Q50 80 30 50 T10 10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M30 50 Q15 55 10 40 Q25 35 30 50" fill="currentColor"/><path d="M50 70 Q40 50 55 45 Q65 60 50 70" fill="currentColor"/><path d="M20 30 Q10 20 20 10 Q30 20 20 30" fill="currentColor"/></svg>
                     <span class="artisan-text" id="mainBrandText">Artisan</span>
@@ -416,7 +398,6 @@
                 </a>
             </div>
 
-            <!-- NAVIGATION & GLASS BUTTONS -->
             <div class="nav-container">
                 <div class="nav-links">
                     <a href="#" data-target="home">home</a>
@@ -425,15 +406,9 @@
                     <a href="#contact" data-target="contact">contact</a>
                 </div>
                 <div class="header-actions">
-                    <button class="action-btn-glass cart-btn" id="cartBtn" aria-label="Open Cart">
-                        <i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span>
-                    </button>
-                    <button class="action-btn-glass wishlist-btn" id="wishlistBtn" aria-label="Open Wishlist">
-                        <i class="fas fa-heart"></i><span class="wishlist-count" id="wishlistCount">0</span>
-                    </button>
-                    <button class="action-btn-glass theme-btn" id="themeToggle" aria-label="Toggle Dark Mode">
-                        <i class="fas fa-moon" id="themeIcon"></i>
-                    </button>
+                    <button class="action-btn-glass cart-btn" id="cartBtn" aria-label="Open Cart"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></button>
+                    <button class="action-btn-glass wishlist-btn" id="wishlistBtn" aria-label="Open Wishlist"><i class="fas fa-heart"></i><span class="wishlist-count" id="wishlistCount">0</span></button>
+                    <button class="action-btn-glass theme-btn" id="themeToggle" aria-label="Toggle Dark Mode"><i class="fas fa-moon" id="themeIcon"></i></button>
                 </div>
             </div>
         </div>
@@ -449,7 +424,6 @@
             </div>
         </div>
         
-        <!-- FASHION MODE SUB-NAVIGATION -->
         <div class="fashion-filters-container" id="fashionFilters">
             <div class="filter-row">
                 <button class="f-btn cat-btn active" data-cat="all">All Fashion</button>
@@ -467,8 +441,7 @@
             <div class="hero-content">
                 <h1 id="heroTitle">handmade with <span id="heroAccent">heart & soul</span></h1>
                 
-                <!-- DYNAMIC RANDOM QUOTE WILL APPEAR HERE -->
-                <p id="heroDesc">Unique dresses, ceramics, and textiles — each piece tells a story. Direct from maker to you.</p>
+                <p id="heroDesc">Loading your experience...</p>
                 
                 <div class="hero-buttons">
                     <a href="#store" class="btn" id="heroBtn1">shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i></a>
@@ -481,13 +454,11 @@
             </div>
         </section>
 
-        <!-- BUTTERY SEARCH & SORT UI -->
         <div class="control-bar" id="store">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Search for beautiful pieces...">
                 <i class="fas fa-search"></i>
             </div>
-            
             <div class="filters">
                 <div class="custom-sort" id="customSort">
                     <div class="sort-trigger"><span id="sortLabel">Sort: Featured</span> <i class="fas fa-chevron-down"></i></div>
@@ -501,7 +472,8 @@
             </div>
         </div>
 
-        <div id="productSections"></div>
+        <div id="productSections">
+            </div>
 
         <section id="reviews" style="margin: 6rem 0;">
             <div style="text-align:center; margin-bottom: 3rem;">
@@ -526,7 +498,6 @@
             </div>
         </section>
 
-        <!-- 5. PARALLAX STORY SECTION -->
         <section id="story">
             <div class="story-box">
                 <h2 id="storyTitle">our story</h2>
@@ -539,24 +510,16 @@
             <h2><span class="badge">📬 get in touch</span></h2>
             <div class="contact-grid">
                 <div class="contact-card">
-                    <i class="fab fa-whatsapp"></i>
-                    <h4>WhatsApp</h4>
-                    <a href="#" class="btn directChatClass" style="margin-top: 1rem;">chat now</a>
+                    <i class="fab fa-whatsapp"></i><h4>WhatsApp</h4><a href="#" class="btn directChatClass" style="margin-top: 1rem;">chat now</a>
                 </div>
                 <div class="contact-card">
-                    <i class="fas fa-envelope"></i>
-                    <h4>Email</h4>
-                    <a href="mailto:artisan.onlinesales@gmail.com" class="btn btn-outline" style="margin-top: 1rem;">email us</a>
+                    <i class="fas fa-envelope"></i><h4>Email</h4><a href="mailto:artisan.onlinesales@gmail.com" class="btn btn-outline" style="margin-top: 1rem;">email us</a>
                 </div>
                 <div class="contact-card">
-                    <i class="fas fa-phone-alt"></i>
-                    <h4>Phone</h4>
-                    <a href="tel:+916309645717" class="btn btn-outline" style="margin-top: 1rem;">call us</a>
+                    <i class="fas fa-phone-alt"></i><h4>Phone</h4><a href="tel:+916309645717" class="btn btn-outline" style="margin-top: 1rem;">call us</a>
                 </div>
                 <div class="contact-card">
-                    <i class="fas fa-map-pin"></i>
-                    <h4>Studio</h4>
-                    <a href="https://maps.google.com/?q=Tirupati" target="_blank" class="btn btn-outline" style="margin-top: 1rem;">Tirupati</a>
+                    <i class="fas fa-map-pin"></i><h4>Studio</h4><a href="https://maps.google.com/?q=Tirupati" target="_blank" class="btn btn-outline" style="margin-top: 1rem;">Tirupati</a>
                 </div>
             </div>
         </section>
@@ -572,12 +535,10 @@
                     <p id="footerMotto">celebrating true craft.</p>
                 </div>
                 <div class="footer-col">
-                    <h5>explore</h5>
-                    <p><a href="#store">new arrivals</a><br><a href="#story">our story</a><br><a href="#contact">contact</a></p>
+                    <h5>explore</h5><p><a href="#store">new arrivals</a><br><a href="#story">our story</a><br><a href="#contact">contact</a></p>
                 </div>
                 <div class="footer-col">
-                    <h5>support</h5>
-                    <p><a href="#" id="openFaqBtn">faq & shipping</a><br><a href="#">returns</a><br><a href="#">track order</a></p>
+                    <h5>support</h5><p><a href="#" id="openFaqBtn">faq & shipping</a><br><a href="#">returns</a><br><a href="#">track order</a></p>
                 </div>
                 <div class="footer-col">
                     <h5>contact</h5>
@@ -588,7 +549,6 @@
         </div>
     </footer>
 
-    <!-- Modals -->
     <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">×</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><br><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Delivery</button></div></div>
     
     <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">×</span><h2>Delivery Details <span class="badge" style="font-size:0.7rem; margin-left:0.5rem; background:var(--accent-color); color:white;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati)" required><button class="btn" id="estimateDelivery">Calculate Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:var(--accent-color);"></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button></div></div></div>
@@ -603,10 +563,15 @@
 
     <script>
         (function() {
+            // --- GOOGLE SHEETS LIVE INVENTORY INTEGRATION ---
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS53HBapO-hA0zroGCimzXHh3pnX6zJvtkvylNXHXXA1i3REoov8bSQ7QNi-ZjH6uCbho2X_Ew5fs4M/pub?output=csv"; 
+            
+            let products = [];
+            
             // --- RANDOM QUOTES ENGINE ---
             const handmadeQuotes = [
-                "Unique ceramics, textiles, and woodcrafts — each piece tells a story. Direct from maker to you.",
-                "Crafted by hands, inspired by the heart. Discover the beauty of slow, intentional living.",
+                "Unique ceramics, textiles, and woodcrafts — each piece tells a story.",
+                "Crafted by hands, inspired by the heart. Discover slow, intentional living.",
                 "Every imperfection is a mark of authenticity. Embrace the true art of handmade goods.",
                 "Where passion meets craftsmanship. Woven, thrown, and carved uniquely for you.",
                 "Artistry you can feel. Bring the warmth of the maker's studio into your everyday life.",
@@ -628,7 +593,6 @@
                 const quoteArray = mode === 'fashion' ? fashionQuotes : handmadeQuotes;
                 const randomQuote = quoteArray[Math.floor(Math.random() * quoteArray.length)];
                 const descEl = document.getElementById('heroDesc');
-                
                 if(descEl) {
                     descEl.style.opacity = '0';
                     setTimeout(() => {
@@ -638,13 +602,12 @@
                 }
             }
 
-            // 1. CINEMATIC SPLASH SCREEN REMOVAL & INIT QUOTE
+            // 1. CINEMATIC SPLASH SCREEN & INIT
             window.addEventListener('load', () => {
                 setTimeout(() => {
                     const splash = document.getElementById('splashScreen');
                     if (splash) splash.classList.add('hidden');
                 }, 1500);
-                
                 let currentMode = document.body.classList.contains('theme-fashion') ? 'fashion' : 'handmade';
                 setRandomQuote(currentMode);
             });
@@ -653,6 +616,64 @@
             let currentMode = 'handmade';
             let manualDarkMode = localStorage.getItem('darkMode') === 'true';
             let fashionCat = 'all'; let fashionGen = 'all';
+            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // --- FETCH DATA FROM GOOGLE SHEETS ---
+            const container = document.getElementById('productSections');
+            if(container) container.innerHTML = '<p style="text-align:center; padding: 3rem; opacity: 0.5;"><i class="fas fa-circle-notch fa-spin" style="margin-bottom: 1rem; font-size: 2rem;"></i><br>Loading live inventory from Google Sheets...</p>';
+
+            fetch(sheetUrl)
+                .then(response => {
+                    if(!response.ok) throw new Error("Network response was not ok");
+                    return response.text();
+                })
+                .then(csvText => {
+                    Papa.parse(csvText, {
+                        header: true,
+                        dynamicTyping: true,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            products = results.data.map(row => {
+                                let imgArray = [];
+                                if (row.images) {
+                                    imgArray = row.images.toString().split(',').map(url => url.trim());
+                                } else {
+                                    imgArray = ['https://via.placeholder.com/400?text=No+Image'];
+                                }
+
+                                let v = null;
+                                if (row.sizes || row.colors) {
+                                    v = {};
+                                    if (row.sizes) v.sizes = row.sizes.toString().split(',').map(s=>s.trim());
+                                    if (row.colors) v.colors = row.colors.toString().split(',').map(c=>c.trim());
+                                } else if (row.category === 'clothes') {
+                                    v = { sizes: ["S", "M", "L"], colors: ["Standard"] }; 
+                                } else if (row.category === 'jewelry') {
+                                    v = { sizes: ["One Size"] }; 
+                                }
+
+                                return {
+                                    id: row.id || Math.floor(Math.random()*10000),
+                                    name: row.name || 'Unnamed Product',
+                                    category: row.category || 'handmade',
+                                    gender: row.gender || 'all',
+                                    basePrice: row.basePrice || 0,
+                                    stock: row.stock !== undefined ? row.stock : 10,
+                                    images: imgArray,
+                                    description: row.description || '',
+                                    variants: v
+                                };
+                            });
+                            renderProducts();
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error("Error loading sheet:", err);
+                    if(container) container.innerHTML = '<p style="text-align:center; padding: 3rem; color: #e74c3c;">Error loading inventory. Please check the Google Sheet connection.</p>';
+                });
+
 
             // --- CURSOR LOGIC ---
             const cursorIcon = document.getElementById('cursorIcon');
@@ -683,12 +704,8 @@
                 window.open(url, '_blank');
             }
 
-            document.querySelectorAll('.directChatClass').forEach(btn => {
-                btn.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hello! I have a question from your website."); });
-            });
-            document.getElementById('floatingWaBtn').addEventListener('click', (e) => {
-                e.preventDefault(); openWhatsApp("Hi Artisan! I have a question about your products.");
-            });
+            document.querySelectorAll('.directChatClass').forEach(btn => { btn.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hello! I have a question from your website."); }); });
+            document.getElementById('floatingWaBtn').addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hi Artisan! I have a question about your products."); });
 
             function showToast(message, icon = 'fa-check-circle') {
                 const container = document.getElementById('toastContainer');
@@ -699,50 +716,6 @@
                 setTimeout(() => { toast.classList.add('hiding'); setTimeout(() => { if(container.contains(toast)) container.removeChild(toast); }, 400); }, 3000); 
             }
 
-            const products = [
-                // Handmade
-                { id: 1, name: "Ceramic Speckled Mug", category: "handmade", basePrice: 2200, images: ["mug1", "mug2"], stock: 5, variants: null, description: "Hand-thrown stoneware mug with a smooth glaze." },
-                { id: 2, name: "Woven Cotton Scarf", category: "handmade", basePrice: 850, images: ["scarf1", "scarf2"], stock: 10, variants: null, description: "Soft, ethically sourced cotton scarf." },
-                { id: 3, name: "Carved Wood Earrings", category: "handmade", basePrice: 700, images: ["earrings1", "earrings2"], stock: 3, variants: null, description: "Lightweight wooden earrings with a natural finish." },
-                { id: 7, name: "Clay Serving Bowl", category: "handmade", basePrice: 3400, images: ["bowl1"], stock: 2, variants: null, description: "Large terracotta serving bowl with a rustic finish." },
-                // Clothes
-                { id: 4, name: "Silk Embroidered Dress", category: "clothes", gender: "women", basePrice: 4500, images: ["dress1", "dress2_lifestyle"], stock: 2, variants: { sizes: ["S", "M", "L"], colors: ["Red", "Blue"] }, description: "Elegant silk dress featuring hand-stitched floral details." },
-                { id: 5, name: "Merino Wool Sweater", category: "clothes", gender: "men", basePrice: 5200, images: ["sweater1", "sweater2_lifestyle"], stock: 4, variants: { sizes: ["M", "L", "XL"], colors: ["Gray", "Green"] }, description: "Incredibly soft, warm merino wool sweater." },
-                { id: 6, name: "Linen Wide-Leg Pants", category: "clothes", gender: "women", basePrice: 3100, images: ["pants1", "pants2_lifestyle"], stock: 8, variants: { sizes: ["S", "M", "L"] }, description: "Breathable, stylish linen pants for everyday wear." },
-                { id: 11, name: "Tailored Linen Blazer", category: "clothes", gender: "men", basePrice: 6500, images: ["blazer1", "blazer2_lifestyle"], stock: 3, variants: { sizes: ["M", "L", "XL"] }, description: "Sharp tailored linen blazer for a refined casual look." },
-                // Jewelry
-                { id: 8, name: "Gold Plated Chain", category: "jewelry", basePrice: 1500, images: ["chain1", "chain2_lifestyle"], stock: 15, variants: null, description: "Minimalist 18k gold-plated everyday chain." },
-                { id: 9, name: "Silver Pearl Ring", category: "jewelry", basePrice: 2800, images: ["ring1", "ring2_lifestyle"], stock: 4, variants: { sizes: ["6", "7", "8"] }, description: "Sterling silver ring holding a freshwater pearl." },
-                { id: 10, name: "Diamond Drop Pendants", category: "jewelry", basePrice: 8900, images: ["pendant1"], stock: 1, variants: null, description: "Exquisite drop earrings featuring lab-grown diamonds." }
-            ];
-
-            const imageMap = {
-                mug1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23dbb59b'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='20' text-anchor='middle'%3Emug%3C/text%3E%3C/svg%3E",
-                mug2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23c38e7b'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-size='20' text-anchor='middle'%3Emug2%3C/text%3E%3C/svg%3E",
-                scarf1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23aac7b9'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Escarf%3C/text%3E%3C/svg%3E",
-                scarf2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%238bb3a0'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Escarf2%3C/text%3E%3C/svg%3E",
-                earrings1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23e6b89c'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Eearrings%3C/text%3E%3C/svg%3E",
-                earrings2: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23d49c7a'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Eearrings2%3C/text%3E%3C/svg%3E",
-                bowl1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23c2a895'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Ebowl%3C/text%3E%3C/svg%3E",
-                
-                dress1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3E%3Crect width='200' height='300' fill='%238caec0'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Edress%3C/text%3E%3C/svg%3E",
-                dress2_lifestyle: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3E%3Crect width='200' height='300' fill='%236c92a6'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Elifestyle%3C/text%3E%3C/svg%3E",
-                sweater1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 250'%3E%3Crect width='200' height='250' fill='%23a1aeb5'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Esweater%3C/text%3E%3C/svg%3E",
-                sweater2_lifestyle: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 250'%3E%3Crect width='200' height='250' fill='%2383929b'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Elifestyle%3C/text%3E%3C/svg%3E",
-                pants1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%23b5c1c9'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Epants%3C/text%3E%3C/svg%3E",
-                pants2_lifestyle: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%239aa8b1'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Elifestyle%3C/text%3E%3C/svg%3E",
-                blazer1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%2370828d'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Eblazer%3C/text%3E%3C/svg%3E",
-                blazer2_lifestyle: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 280'%3E%3Crect width='200' height='280' fill='%23586a75'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Elifestyle%3C/text%3E%3C/svg%3E",
-                
-                chain1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23e6c27a'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Echain%3C/text%3E%3C/svg%3E",
-                chain2_lifestyle: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23d1a85a'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Elifestyle%3C/text%3E%3C/svg%3E",
-                ring1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23d1d8dc'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Ering%3C/text%3E%3C/svg%3E",
-                ring2_lifestyle: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23a1aab0'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Elifestyle%3C/text%3E%3C/svg%3E",
-                pendant1: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23c8e3f0'/%3E%3Ctext x='50%25' y='50%25' fill='white' text-anchor='middle'%3Ependant%3C/text%3E%3C/svg%3E"
-            };
-
-            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
             let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '' };
             let currentDiscount = 0;
             const cityDistances = { tirupati:0, tirupathi:0, chandragiri:15, renigunta:10, srikalahasti:36, puttur:40, chittoor:65, nellore:130, kadapa:140, chennai:160, bangalore:250, hyderabad:520, vijayawada:360, vizag:620, mumbai:1000, delhi:1800, kolkata:1500 };
@@ -769,7 +742,6 @@
                 if(sections) sections.style.opacity = '0'; 
                 
                 setTimeout(() => {
-                    // Triggers the Random Quote Generator dynamically!
                     setRandomQuote(mode);
 
                     if (mode === 'fashion') {
@@ -842,10 +814,7 @@
             const sortInput = document.getElementById('sortSelect');
 
             if(sortTrigger) {
-                sortTrigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    customSort.classList.toggle('active');
-                });
+                sortTrigger.addEventListener('click', (e) => { e.stopPropagation(); customSort.classList.toggle('active'); });
             }
 
             sortOptions.forEach(opt => {
@@ -853,7 +822,6 @@
                     e.stopPropagation();
                     sortOptions.forEach(o => o.classList.remove('active'));
                     opt.classList.add('active');
-                    
                     sortLabel.textContent = "Sort: " + opt.dataset.label;
                     sortInput.value = opt.dataset.value;
                     customSort.classList.remove('active');
@@ -861,11 +829,7 @@
                 });
             });
 
-            document.addEventListener('click', () => {
-                if(customSort && customSort.classList.contains('active')) {
-                    customSort.classList.remove('active');
-                }
-            });
+            document.addEventListener('click', () => { if(customSort && customSort.classList.contains('active')) customSort.classList.remove('active'); });
 
             // FASHION FILTERS LOGIC
             document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -907,7 +871,7 @@
                 return { charge, service, eta };
             }
 
-            // --- 2. MAGIC FLIGHT CART ANIMATION LOGIC ---
+            // --- MAGIC FLIGHT CART ANIMATION LOGIC ---
             function addToCart(id, qty, size, color, eventTarget) {
                 let existing = cart.find(i=>i.id===id && i.size===size && i.color===color);
                 if(existing) existing.quantity += qty; else cart.push({ id, quantity:qty, size, color });
@@ -956,26 +920,33 @@
             function openProductDetail(productId) {
                 const product = products.find(p => p.id === productId);
                 if (!product) return;
-                document.getElementById('detailMainImage').src = imageMap[product.images[0]];
+                
+                const mainUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/400?text=No+Image';
+                document.getElementById('detailMainImage').src = mainUrl;
                 document.getElementById('detailName').textContent = product.name;
                 document.getElementById('detailPrice').textContent = formatPrice(product.basePrice);
                 document.getElementById('detailTotalPrice').textContent = 'total: ' + formatPrice(product.basePrice);
-                document.getElementById('detailDescription').textContent = product.description || "A beautiful handmade item from our collection.";
+                document.getElementById('detailDescription').textContent = product.description || "A beautiful item from our collection.";
                 document.getElementById('detailStock').innerHTML = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
                 
                 const thumbContainer = document.getElementById('detailThumbnails');
                 thumbContainer.innerHTML = '';
-                product.images.forEach((imgKey, idx) => {
-                    const thumb = document.createElement('img');
-                    thumb.src = imageMap[imgKey]; thumb.classList.add('product-detail-thumb');
-                    if (idx === 0) thumb.classList.add('active');
-                    thumb.addEventListener('click', () => {
-                        document.getElementById('detailMainImage').src = imageMap[imgKey];
-                        document.querySelectorAll('.product-detail-thumb').forEach(t => t.classList.remove('active'));
-                        thumb.classList.add('active');
+                
+                if (product.images) {
+                    product.images.forEach((imgUrl, idx) => {
+                        const thumb = document.createElement('img');
+                        thumb.src = imgUrl; 
+                        thumb.classList.add('product-detail-thumb');
+                        if (idx === 0) thumb.classList.add('active');
+                        thumb.addEventListener('click', () => {
+                            document.getElementById('detailMainImage').src = imgUrl;
+                            document.querySelectorAll('.product-detail-thumb').forEach(t => t.classList.remove('active'));
+                            thumb.classList.add('active');
+                        });
+                        thumbContainer.appendChild(thumb);
                     });
-                    thumbContainer.appendChild(thumb);
-                });
+                }
+
                 const variantsDiv = document.getElementById('detailVariants');
                 if (product.variants) {
                     let html = '';
@@ -998,7 +969,7 @@
 
             function renderProducts() {
                 const searchInput = document.getElementById('searchInput');
-                const sortInput = document.getElementById('sortSelect'); // Now hidden input from custom sort
+                const sortInput = document.getElementById('sortSelect'); 
                 const s = searchInput ? searchInput.value.toLowerCase() : '';
                 const sort = sortInput ? sortInput.value : 'default';
                 
@@ -1040,8 +1011,9 @@
             function renderProductCard(p, idx) {
                 const isWished = wishlist.includes(p.id);
                 const stockBadge = p.stock>0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
-                const mainImg = imageMap[p.images[0]];
-                const hoverImgHtml = p.images.length > 1 ? `<img src="${imageMap[p.images[1]]}" class="hover-image" alt="Lifestyle shot">` : '';
+                
+                const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/400?text=No+Image';
+                const hoverImgHtml = p.images && p.images.length > 1 ? `<img src="${p.images[1]}" class="hover-image" alt="Lifestyle shot">` : '';
                 
                 let variantsHtml = '';
                 if(p.variants) {
@@ -1161,7 +1133,11 @@
                 let cont=document.getElementById('cartItems'); 
                 if(cart.length===0){ cont.innerHTML='<div class="empty-cart">Your cart is empty</div>'; document.getElementById('cartTotal').innerHTML=''; return; } 
                 let html='', total=0; 
-                cart.forEach((item,idx)=>{ let p=products.find(p=>p.id===item.id); if(!p) return; total+=p.basePrice*item.quantity; html+=`<div class="cart-item" data-index="${idx}"><img src="${imageMap[p.images[0]]}"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${idx}" style="width:50px; text-align:center; border-radius:10px; border:1px solid var(--card-border); background:var(--input-bg); color:var(--text-color);"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; }); 
+                cart.forEach((item,idx)=>{ 
+                    let p=products.find(p=>p.id===item.id); if(!p) return; total+=p.basePrice*item.quantity; 
+                    let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
+                    html+=`<div class="cart-item" data-index="${idx}"><img src="${pImg}"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${idx}" style="width:50px; text-align:center; border-radius:10px; border:1px solid var(--card-border); background:var(--input-bg); color:var(--text-color);"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; 
+                }); 
                 cont.innerHTML=html; document.getElementById('cartTotal').innerHTML=`<strong>Total: ${formatPrice(total)}</strong>`; 
                 document.querySelectorAll('.cart-quantity').forEach(inp=>inp.addEventListener('change',function(){ let idx=this.dataset.index, nq=parseInt(this.value); if(nq>0){ cart[idx].quantity=nq; saveCart(); renderCartModal(); } })); 
                 document.querySelectorAll('.cart-item-remove').forEach(btn=>btn.addEventListener('click',function(){ cart.splice(this.dataset.index,1); saveCart(); renderCartModal(); })); 
@@ -1171,7 +1147,12 @@
                 let cont=document.getElementById('wishlistItems'); 
                 if(wishlist.length===0){ cont.innerHTML='<div class="empty-wishlist">Your wishlist is empty 💔</div>'; return; } 
                 let html=''; 
-                wishlist.forEach(id=>{ let p=products.find(p=>p.id===id); if(p) html+=`<div class="wishlist-item" data-id="${p.id}"><img src="${imageMap[p.images[0]]}"><div class="wishlist-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)}</p></div><i class="fas fa-trash remove-wishlist" data-id="${p.id}"></i></div>`; }); 
+                wishlist.forEach(id=>{ 
+                    let p=products.find(p=>p.id===id); if(p) {
+                        let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
+                        html+=`<div class="wishlist-item" data-id="${p.id}"><img src="${pImg}"><div class="wishlist-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)}</p></div><i class="fas fa-trash remove-wishlist" data-id="${p.id}"></i></div>`; 
+                    }
+                }); 
                 cont.innerHTML=html; 
                 document.querySelectorAll('.remove-wishlist').forEach(btn=>btn.addEventListener('click',function(e){ e.stopPropagation(); wishlist=wishlist.filter(i=>i!==parseInt(this.dataset.id)); saveWishlist(); renderWishlistModal(); renderProducts(); })); 
             }
@@ -1181,9 +1162,7 @@
             
             document.getElementById('newsletterForm').addEventListener('submit',e=>{ e.preventDefault(); showToast('Successfully Subscribed!', 'fa-envelope-open-text'); document.getElementById('newsletterEmail').value = ''; });
 
-            setTimeout(renderProducts, 300);
-
-            // --- FEATURE 5: PARALLAX SCROLL LISTENER ---
+            // --- PARALLAX SCROLL LISTENER ---
             window.addEventListener('scroll', () => {
                 let scrollY = window.scrollY;
                 document.getElementById('mainHeader').classList.toggle('scrolled', scrollY > 50);
