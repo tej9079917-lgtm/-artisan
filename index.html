@@ -7,12 +7,11 @@
     <title>Artisan • Handmade Goods & Slow Fashion</title>
     <meta name="description" content="Unique handmade goods, curated apparel, and exquisite jewelry.">
     
-    <!-- Fonts, Icons, and CSV Parser -->
+    <!-- Fonts, Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
     <!-- Firebase SDK (Google + Email/Password Auth) -->
     <script type="module">
@@ -101,7 +100,7 @@
 
         @media (pointer: fine) {
             body, a, button, input, select, textarea, i, img, .product-card, .logo-wrapper, .toggle-btn, .f-btn, .sort-trigger, .sort-option, .auth-tab { cursor: none; }
-            .cursor-icon { position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000; transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%; transition: transform 0.2s var(--bezier-butter), color 0.5s ease, filter 0.2s ease, font-size 0.5s ease; filter: drop-shadow(0 2px 4px var(--glass-border)); }
+            .cursor-icon { position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000; transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%; transition: transform 0.2s var(--bezier-butter), color 0.5s ease, filter 0.2s ease, font-size 0.5s filter: drop-shadow(0 2px 4px var(--glass-border)); }
             .cursor-icon.hovering { transform: translate(-15%, -85%) scale(1.2) rotate(10deg); color: var(--text-color); filter: drop-shadow(0 4px 8px var(--shadow-color)); }
             body.theme-fashion .cursor-icon { transform: translate(-50%, -50%) rotate(0deg); transform-origin: center center; font-size: 1.2rem; }
             body.theme-fashion .cursor-icon.hovering { transform: translate(-50%, -50%) scale(1.5) rotate(0deg); color: var(--text-color); }
@@ -325,6 +324,29 @@
         .auth-btn { background: var(--accent-color); color: white; border: none; padding: 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; }
         .auth-btn:hover { filter: brightness(0.9); }
         .auth-error { color: #e74c3c; font-size: 0.9rem; margin-top: 0.5rem; }
+
+        /* --- ADMIN DASHBOARD STYLES --- */
+        .admin-modal-content { max-width: 1000px; width: 100%; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem; margin-bottom: 1rem; }
+        .admin-header h2 { margin: 0; color: var(--accent-color); }
+        .admin-table-wrapper { overflow-x: auto; width: 100%; }
+        .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .admin-table th, .admin-table td { padding: 1rem 0.5rem; border-bottom: 1px solid var(--card-border); font-size: 0.95rem; }
+        .admin-table th { font-weight: 600; opacity: 0.7; }
+        .admin-table img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .admin-actions-btn { background: transparent; border: none; cursor: pointer; font-size: 1.1rem; padding: 0.5rem; border-radius: 8px; transition: 0.3s; }
+        .admin-actions-btn.edit { color: var(--accent-color); }
+        .admin-actions-btn.edit:hover { background: var(--glass-bg); }
+        .admin-actions-btn.delete { color: #e74c3c; }
+        .admin-actions-btn.delete:hover { background: rgba(231, 76, 60, 0.1); }
+        
+        .admin-form-view { display: none; flex-direction: column; gap: 1.5rem; }
+        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .admin-form-group { display: flex; flex-direction: column; gap: 0.4rem; text-align: left; }
+        .admin-form-group label { font-size: 0.9rem; font-weight: 600; opacity: 0.8; }
+        .admin-form-group input, .admin-form-group select, .admin-form-group textarea { width: 100%; padding: 0.8rem; border-radius: 12px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-color); outline: none; font-family: 'Inter', sans-serif;}
+        .admin-form-group input:focus, .admin-form-group select:focus, .admin-form-group textarea:focus { border-color: var(--accent-color); }
+        .admin-form-buttons { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; }
 
         .contact-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; margin-top: 2rem; }
         .contact-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 40px; padding: 2rem; transition: all 0.6s ease; width: 220px; display: flex; flex-direction: column; align-items: center; }
@@ -604,9 +626,91 @@
             <div id="profileBlock" style="display: none; padding: 1rem 0;">
                 <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--accent-color); margin-bottom: 1rem;"></i>
                 <h2 id="profileEmail" style="margin-bottom: 2rem; font-size: 1.2rem;"></h2>
+                <button id="adminPanelBtn" class="btn" style="width: 100%; margin-bottom: 1rem; display: none;"><i class="fas fa-cog"></i> Admin Dashboard</button>
                 <button id="logoutBtn" class="btn-outline" style="width: 100%; border-radius: 12px; padding: 1rem; cursor: pointer;">Sign Out</button>
             </div>
+        </div>
+    </div>
 
+    <!-- NEW: ADMIN DASHBOARD MODAL -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content admin-modal-content">
+            <div class="admin-header">
+                <h2><i class="fas fa-columns"></i> Product Manager</h2>
+                <span class="close-modal" id="closeAdmin">×</span>
+            </div>
+            
+            <!-- Admin List View -->
+            <div id="adminListView">
+                <button id="addNewProductBtn" class="btn" style="margin-bottom: 1rem;"><i class="fas fa-plus"></i> Add New Product</button>
+                <button id="resetDemoBtn" class="btn-outline" style="margin-bottom: 1rem; font-size: 0.8rem; padding: 0.5rem 1rem;">Reset Demo Data</button>
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Admin Form View (Add/Edit) -->
+            <div id="adminFormView" class="admin-form-view">
+                <h3 id="adminFormTitle">Edit Product</h3>
+                <form id="adminForm">
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="adminName" required>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Category *</label>
+                            <select id="adminCategory">
+                                <option value="handmade">Handmade</option>
+                                <option value="clothes">Clothes</option>
+                                <option value="jewelry">Jewelry</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Gender</label>
+                            <select id="adminGender">
+                                <option value="all">All / Unisex</option>
+                                <option value="men">Men</option>
+                                <option value="women">Women</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" id="adminPrice" required min="0">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Stock Quantity *</label>
+                            <input type="number" id="adminStock" required min="0">
+                        </div>
+                    </div>
+                    <div class="admin-form-group" style="margin-top: 1rem;">
+                        <label>Description</label>
+                        <textarea id="adminDesc" rows="3"></textarea>
+                    </div>
+                    <div class="admin-form-group" style="margin-top: 1rem;">
+                        <label>Images (Google Drive Links or regular URLs)</label>
+                        <textarea id="adminImages" rows="4" placeholder="Paste image links here. Separate multiple images with a comma OR paste one link per line."></textarea>
+                    </div>
+                    <div class="admin-form-buttons">
+                        <button type="button" id="cancelEditBtn" class="btn-outline">Cancel</button>
+                        <button type="submit" class="btn">Save Product</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -624,10 +728,25 @@
 
     <script>
         (function() {
-            // --- GOOGLE SHEETS LIVE INVENTORY INTEGRATION ---
-            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS53HBapO-hA0zroGCimzXHh3pnX6zJvtkvylNXHXXA1i3REoov8bSQ7QNi-ZjH6uCbho2X_Ew5fs4M/pub?gid=0&single=true&output=csv"; 
+            // --- IN-BUILT ADMIN PANEL INVENTORY (Local Storage) ---
             
+            // Default Fallback Products
+            const defaultProducts = [
+                { id: 1, name: "Ceramic Speckled Mug", category: "handmade", gender: "all", basePrice: 2200, stock: 5, description: "Hand-thrown stoneware mug with a smooth glaze.", images: ["https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=600&auto=format&fit=crop"], variants: null },
+                { id: 2, name: "Woven Cotton Scarf", category: "handmade", gender: "all", basePrice: 850, stock: 10, description: "Soft, ethically sourced cotton scarf.", images: ["https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=600&auto=format&fit=crop"], variants: null },
+                { id: 4, name: "Silk Embroidered Dress", category: "clothes", gender: "women", basePrice: 4500, stock: 2, description: "Elegant silk dress featuring hand-stitched floral details.", images: ["https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop"], variants: { sizes: ["S", "M", "L"], colors: ["Red", "Blue"] } },
+                { id: 8, name: "Gold Plated Chain", category: "jewelry", gender: "all", basePrice: 1500, stock: 15, description: "Minimalist 18k gold-plated everyday chain.", images: ["https://images.unsplash.com/photo-1599643478514-4a888e7343e0?q=80&w=600&auto=format&fit=crop"], variants: { sizes: ["One Size"] } }
+            ];
+
+            // Load products from Local Storage or set to defaults
             let products = [];
+            const savedProducts = localStorage.getItem('artisan_products');
+            if (savedProducts) {
+                products = JSON.parse(savedProducts);
+            } else {
+                products = [...defaultProducts];
+                localStorage.setItem('artisan_products', JSON.stringify(products));
+            }
             
             // --- RANDOM QUOTES ENGINE ---
             const handmadeQuotes = [
@@ -671,6 +790,7 @@
                 }, 1500);
                 let currentMode = document.body.classList.contains('theme-fashion') ? 'fashion' : 'handmade';
                 setRandomQuote(currentMode);
+                renderProducts(); // Initial Render
             });
 
             // --- STATE MANAGEMENT ---
@@ -701,119 +821,6 @@
                 }
                 return u;
             }
-
-            // --- FETCH DATA FROM GOOGLE SHEETS ---
-            const container = document.getElementById('productSections');
-            if(container) container.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-circle-notch fa-spin" style="margin-bottom: 1rem; font-size: 2.5rem; color: var(--accent-color);"></i><br><h2>Syncing with Studio...</h2></div>';
-
-            fetch(sheetUrl)
-                .then(response => {
-                    if(!response.ok) throw new Error("Network response was not ok");
-                    return response.text();
-                })
-                .then(csvText => {
-                    Papa.parse(csvText, {
-                        header: true,
-                        dynamicTyping: true,
-                        skipEmptyLines: true,
-                        complete: function(results) {
-                            
-                            const normalizedData = results.data.map(rawRow => {
-                                let cleanRow = {};
-                                for (let key in rawRow) {
-                                    if (key) {
-                                        let safeKey = key.toString().toLowerCase().trim().replace(/[^a-z0-9]/g, '');
-                                        cleanRow[safeKey] = rawRow[key];
-                                    }
-                                }
-                                return cleanRow;
-                            });
-
-                            const validRows = normalizedData.filter(row => row.name || row.title || row.productname);
-                            
-                            if (validRows.length === 0) {
-                                if(container) container.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.7;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-color);"></i><br><h2>Your store is currently empty.</h2><p>Please add products to Row 2 of your Google Sheet.</p></div>';
-                                return;
-                            }
-
-                            products = validRows.map(row => {
-                                const pName = row.name || row.title || row.productname || 'Unnamed Product';
-
-                                let rawImage = row.images || row.image || row.picture || row.pictures || row.photo || row.imageurl || row.img || '';
-                                let imgArray = [];
-                                
-                                if (rawImage) {
-                                    imgArray = String(rawImage).split(',').map(getDirectImageUrl).filter(url => url !== '');
-                                }
-                                
-                                for(let i=1; i<=5; i++) {
-                                    let extraImg = row['image'+i] || row['images'+i] || row['img'+i] || row['picture'+i] || row['photo'+i];
-                                    if(extraImg) imgArray.push(getDirectImageUrl(String(extraImg).trim()));
-                                }
-
-                                if (imgArray.length === 0) {
-                                    imgArray = ['https://via.placeholder.com/400x500?text=No+Image'];
-                                }
-
-                                let rawPrice = row.baseprice || row.price || row.cost || 0;
-                                let pPrice = Number(String(rawPrice).replace(/[^0-9.-]+/g,"")) || 0;
-
-                                let rawStock = row.stock !== undefined ? row.stock : (row.quantity !== undefined ? row.quantity : (row.qty !== undefined ? row.qty : null));
-                                let pStock = 10; 
-                                if (rawStock !== null && rawStock !== '') {
-                                    let sStr = String(rawStock).toLowerCase().trim();
-                                    if (sStr === 'in stock' || sStr === 'in' || sStr === 'yes' || sStr === 'true') {
-                                        pStock = 10;
-                                    } else if (sStr === 'out of stock' || sStr === 'out' || sStr === 'no' || sStr === 'false' || sStr === '0') {
-                                        pStock = 0;
-                                    } else {
-                                        let parsed = parseInt(sStr.replace(/[^0-9-]/g, ''));
-                                        pStock = isNaN(parsed) ? 10 : parsed;
-                                    }
-                                }
-
-                                const cleanCategory = row.category || row.type ? String(row.category || row.type).toLowerCase().trim() : 'handmade';
-                                const cleanGender = row.gender ? String(row.gender).toLowerCase().trim() : 'all';
-
-                                let rawDesc = row.description || row.desc || row.details || row.about || row.info || '';
-                                let finalDesc = rawDesc ? String(rawDesc).trim() : '';
-                                if (finalDesc.toLowerCase() === 'undefined') finalDesc = '';
-
-                                let v = null;
-                                let rawSizes = row.sizes || row.size || '';
-                                let rawColors = row.colors || row.color || '';
-                                
-                                if (rawSizes || rawColors) {
-                                    v = {};
-                                    if (rawSizes) v.sizes = String(rawSizes).split(',').map(s=>s.trim()).filter(s=>s!=='');
-                                    if (rawColors) v.colors = String(rawColors).split(',').map(c=>c.trim()).filter(c=>c!=='');
-                                } else if (cleanCategory === 'clothes') {
-                                    v = { sizes: ["S", "M", "L"], colors: ["Standard"] }; 
-                                } else if (cleanCategory === 'jewelry') {
-                                    v = { sizes: ["One Size"] }; 
-                                }
-
-                                return {
-                                    id: row.id || Math.floor(Math.random()*1000000),
-                                    name: String(pName).trim(),
-                                    category: cleanCategory,
-                                    gender: cleanGender,
-                                    basePrice: pPrice,
-                                    stock: pStock,
-                                    images: imgArray,
-                                    description: finalDesc,
-                                    variants: v
-                                };
-                            });
-                            
-                            renderProducts();
-                        }
-                    });
-                })
-                .catch(err => {
-                    console.error("Error loading sheet:", err);
-                    if(container) container.innerHTML = '<div style="text-align:center; padding: 4rem; color: #e74c3c;"><i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i><br><h2>Connection Error</h2><p>Could not connect to Google Sheets. Please ensure your sheet is Published to the Web as a CSV.</p></div>';
-                });
 
             // --- CURSOR LOGIC ---
             const cursorIcon = document.getElementById('cursorIcon');
@@ -861,10 +868,21 @@
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
 
+            // --- ADMIN AUTHORIZATION LOGIC ---
+            const adminEmails = ['tej9079917@gmail.com', 'artisan.onlinsales@gmail.com', 'artisan.onlinesales@gmail.com'];
+
             openAuthModalBtn.addEventListener('click', () => {
                 if(window.firebaseAuth && window.firebaseAuth.currentUser) {
                     const user = window.firebaseAuth.currentUser;
                     document.getElementById('profileEmail').textContent = user.displayName || user.email || "Authenticated User";
+                    
+                    // Admin restriction logic
+                    if (user.email && adminEmails.includes(user.email.toLowerCase())) {
+                        document.getElementById('adminPanelBtn').style.display = 'block';
+                    } else {
+                        document.getElementById('adminPanelBtn').style.display = 'none';
+                    }
+
                     authContentBlock.style.display = 'none';
                     profileBlock.style.display = 'block';
                 } else {
@@ -965,6 +983,170 @@
                         authModal.style.display = 'none';
                         window.showToast("Signed out successfully", "fa-sign-out-alt");
                     });
+                }
+            });
+
+            // --- ADMIN PANEL LOGIC ---
+            const adminPanelBtn = document.getElementById('adminPanelBtn');
+            const adminModal = document.getElementById('adminModal');
+            const closeAdmin = document.getElementById('closeAdmin');
+            const adminListView = document.getElementById('adminListView');
+            const adminFormView = document.getElementById('adminFormView');
+            const adminTableBody = document.getElementById('adminTableBody');
+            const adminForm = document.getElementById('adminForm');
+            const addNewProductBtn = document.getElementById('addNewProductBtn');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const resetDemoBtn = document.getElementById('resetDemoBtn');
+            
+            let editingProductId = null;
+
+            // Open Admin Panel
+            adminPanelBtn.addEventListener('click', () => {
+                const user = window.firebaseAuth?.currentUser;
+                if (!user || !user.email || !adminEmails.includes(user.email.toLowerCase())) {
+                    window.showToast("Unauthorized access", "fa-exclamation-triangle");
+                    return;
+                }
+                authModal.style.display = 'none'; // Close auth modal
+                adminModal.style.display = 'flex';
+                adminListView.style.display = 'block';
+                adminFormView.style.display = 'none';
+                renderAdminTable();
+            });
+
+            closeAdmin.addEventListener('click', () => adminModal.style.display = 'none');
+
+            // Render Table
+            function renderAdminTable() {
+                adminTableBody.innerHTML = '';
+                products.forEach(p => {
+                    const tr = document.createElement('tr');
+                    const imgUrl = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/50';
+                    tr.innerHTML = `
+                        <td><img src="${imgUrl}" alt="${p.name}"></td>
+                        <td>${p.name}</td>
+                        <td style="text-transform: capitalize;">${p.category}</td>
+                        <td>₹${p.basePrice}</td>
+                        <td>${p.stock}</td>
+                        <td>
+                            <button class="admin-actions-btn edit" data-id="${p.id}" title="Edit"><i class="fas fa-edit"></i></button>
+                            <button class="admin-actions-btn delete" data-id="${p.id}" title="Delete"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    adminTableBody.appendChild(tr);
+                });
+
+                // Attach Event Listeners to Buttons
+                document.querySelectorAll('.admin-actions-btn.edit').forEach(btn => {
+                    btn.addEventListener('click', () => editProduct(parseInt(btn.dataset.id)));
+                });
+                document.querySelectorAll('.admin-actions-btn.delete').forEach(btn => {
+                    btn.addEventListener('click', () => deleteProduct(parseInt(btn.dataset.id)));
+                });
+            }
+
+            // Show Form to Add New
+            addNewProductBtn.addEventListener('click', () => {
+                editingProductId = null;
+                document.getElementById('adminFormTitle').textContent = "Add New Product";
+                adminForm.reset();
+                adminListView.style.display = 'none';
+                adminFormView.style.display = 'flex';
+            });
+
+            // Cancel Edit
+            cancelEditBtn.addEventListener('click', () => {
+                adminFormView.style.display = 'none';
+                adminListView.style.display = 'block';
+            });
+
+            // Edit Product
+            function editProduct(id) {
+                const p = products.find(prod => prod.id === id);
+                if(!p) return;
+                
+                editingProductId = id;
+                document.getElementById('adminFormTitle').textContent = "Edit Product";
+                
+                document.getElementById('adminName').value = p.name;
+                document.getElementById('adminCategory').value = p.category;
+                document.getElementById('adminGender').value = p.gender || 'all';
+                document.getElementById('adminPrice').value = p.basePrice;
+                document.getElementById('adminStock').value = p.stock;
+                document.getElementById('adminDesc').value = p.description || '';
+                
+                // Re-join array for text area display
+                document.getElementById('adminImages').value = p.images ? p.images.join('\n') : '';
+
+                adminListView.style.display = 'none';
+                adminFormView.style.display = 'flex';
+            }
+
+            // Save Product
+            adminForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const name = document.getElementById('adminName').value.trim();
+                const category = document.getElementById('adminCategory').value;
+                const gender = document.getElementById('adminGender').value;
+                const basePrice = parseInt(document.getElementById('adminPrice').value) || 0;
+                const stock = parseInt(document.getElementById('adminStock').value) || 0;
+                const description = document.getElementById('adminDesc').value.trim();
+                
+                // Process multiple images from textarea
+                const rawImages = document.getElementById('adminImages').value;
+                let imgArray = [];
+                if(rawImages) {
+                    // Split by new line or comma
+                    imgArray = rawImages.split(/[\n,]+/).map(u => getDirectImageUrl(u.trim())).filter(u => u !== '');
+                }
+                if(imgArray.length === 0) imgArray = ['https://via.placeholder.com/400x500?text=No+Image'];
+
+                // Standard Variants
+                let variants = null;
+                if (category === 'clothes') variants = { sizes: ["S", "M", "L"], colors: ["Standard"] };
+                else if (category === 'jewelry') variants = { sizes: ["One Size"] };
+
+                if (editingProductId) {
+                    // Update Existing
+                    const idx = products.findIndex(p => p.id === editingProductId);
+                    if(idx !== -1) {
+                        products[idx] = { id: editingProductId, name, category, gender, basePrice, stock, description, images: imgArray, variants };
+                    }
+                } else {
+                    // Create New
+                    const newId = Date.now(); // Simple unique ID
+                    products.push({ id: newId, name, category, gender, basePrice, stock, description, images: imgArray, variants });
+                }
+
+                // Save and Refresh
+                localStorage.setItem('artisan_products', JSON.stringify(products));
+                window.showToast("Product saved!", "fa-check");
+                renderAdminTable();
+                renderProducts();
+                adminFormView.style.display = 'none';
+                adminListView.style.display = 'block';
+            });
+
+            // Delete Product
+            function deleteProduct(id) {
+                if(confirm("Are you sure you want to delete this product?")) {
+                    products = products.filter(p => p.id !== id);
+                    localStorage.setItem('artisan_products', JSON.stringify(products));
+                    renderAdminTable();
+                    renderProducts();
+                    window.showToast("Product deleted.", "fa-trash");
+                }
+            }
+
+            // Reset Demo Data
+            resetDemoBtn.addEventListener('click', () => {
+                if(confirm("Warning: This will delete your custom products and restore the demo data. Continue?")) {
+                    products = [...defaultProducts];
+                    localStorage.setItem('artisan_products', JSON.stringify(products));
+                    renderAdminTable();
+                    renderProducts();
+                    window.showToast("Reset to demo data.", "fa-undo");
                 }
             });
 
@@ -1225,7 +1407,11 @@
             }
 
             function renderProducts() {
-                if(products.length === 0) return;
+                if(products.length === 0) {
+                    const sections = document.getElementById('productSections');
+                    if(sections) sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>Your store is currently empty.</h2><p>Please login to the Admin Dashboard to add products.</p></div>';
+                    return;
+                }
 
                 const searchInput = document.getElementById('searchInput');
                 const sortInput = document.getElementById('sortSelect'); 
