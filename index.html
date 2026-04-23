@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     
+    <!-- SEO & OPEN GRAPH META TAGS -->
     <title>Artisan • Handmade Goods & Slow Fashion</title>
     <meta name="description" content="Unique handmade goods, curated apparel, and exquisite jewelry.">
+    <meta property="og:title" content="Artisan • Handmade & Curated Fashion">
+    <meta property="og:description" content="Unique handmade goods, curated apparel, and exquisite jewelry.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=1200&auto=format&fit=crop">
+    <meta property="og:url" content="https://yourwebsite.com">
+    <meta property="og:type" content="website">
     
+    <!-- Fonts, Icons, and CSV Parser -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -200,7 +207,7 @@
         @keyframes shimmerEffect { 0% { left: -150%; } 100% { left: 250%; } }
 
         .product-images { position: relative; overflow: hidden; border-radius: 20px; cursor: pointer; }
-        .product-images img { transition: transform 0.6s ease, opacity 0.5s ease; width: 100%; border-radius: 20px; object-fit: cover; }
+        .product-images img { transition: transform 0.6s ease, opacity 0.5s ease; width: 100%; border-radius: 20px; object-fit: cover; aspect-ratio: 4/5; }
         .main-image { position: relative; z-index: 1; }
         .hover-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; z-index: 2; transition: opacity 0.6s ease, transform 0.6s ease; }
         body.theme-fashion .product-images:hover .hover-image { opacity: 1; transform: scale(1.05); }
@@ -208,6 +215,8 @@
         body:not(.theme-fashion) .product-images::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 70%); transform: translateX(-100%); transition: transform 0.6s; pointer-events: none; z-index:3;}
         body:not(.theme-fashion) .product-images:hover::after { transform: translateX(100%); }
         body:not(.theme-fashion) .product-images:hover img { transform: scale(1.03); }
+
+        .card-description { font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; }
 
         .thumbnail-strip { display: flex; gap: 0.5rem; margin-top: 0.5rem; justify-content: center; }
         .thumbnail { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; opacity: 0.7; transition: 0.2s; border: 2px solid transparent;}
@@ -220,11 +229,11 @@
         .variant-row { display: flex; align-items: center; gap: 0.5rem; }
         .variant-row select, .quantity-input { padding: 0.3rem; border-radius: 30px; border: 1.5px solid var(--card-border); background: var(--input-bg); color: var(--text-color); transition: all 0.6s ease;}
         .variant-row select:hover, .quantity-input:hover { border-color: var(--accent-color); }
-        .stock-badge { font-size: 0.8rem; padding: 0.2rem 0.8rem; border-radius: 40px; display: inline-block; margin-bottom: 0.5rem; width: fit-content; transition: background 0.6s ease, color 0.6s ease;}
+        .stock-badge { font-size: 0.8rem; padding: 0.2rem 0.8rem; border-radius: 40px; display: inline-block; margin-top: 0.5rem; width: fit-content; transition: background 0.6s ease, color 0.6s ease;}
         .in-stock { background: rgba(37, 211, 102, 0.15); color: #1e8745; }
         body.dark-mode .in-stock { color: #25D366; }
         .price-info { display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0; flex-wrap: wrap; }
-        .base-price { font-weight: 500; }
+        .base-price { font-weight: 500; font-size: 1.1rem; }
         .quantity-input { width: 70px; text-align: center; z-index: 4; position: relative;}
 
         .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 2rem; }
@@ -350,6 +359,7 @@
 </head>
 <body>
     
+    <!-- 1. CINEMATIC SPLASH SCREEN -->
     <div id="splashScreen" class="splash-screen">
         <div class="logo-3d-scene" style="width: 80px; height: 80px;">
             <div class="cube-face face-front" style="width: 80px; height: 80px;"><i class="fas fa-feather-alt" style="font-size: 2.5rem;"></i></div>
@@ -360,6 +370,7 @@
         <div class="splash-text">Artisan</div>
     </div>
 
+    <!-- Dynamic Custom Cursor -->
     <i class="fas fa-feather-alt cursor-icon" id="cursorIcon"></i>
     
     <div id="toastContainer" class="toast-container"></div>
@@ -371,6 +382,7 @@
     <header class="sticky-header" id="mainHeader">
         <div class="header-container">
             <div class="brand-section">
+                <!-- The Dynamic 3D Cube Logo -->
                 <a href="#" class="logo-icon-link" aria-label="Home">
                     <div class="logo-3d-scene">
                         <div class="cube-face face-front">
@@ -424,6 +436,7 @@
             </div>
         </div>
         
+        <!-- FASHION MODE SUB-NAVIGATION -->
         <div class="fashion-filters-container" id="fashionFilters">
             <div class="filter-row">
                 <button class="f-btn cat-btn active" data-cat="all">All Fashion</button>
@@ -441,6 +454,7 @@
             <div class="hero-content">
                 <h1 id="heroTitle">handmade with <span id="heroAccent">heart & soul</span></h1>
                 
+                <!-- DYNAMIC RANDOM QUOTE -->
                 <p id="heroDesc">Loading your experience...</p>
                 
                 <div class="hero-buttons">
@@ -454,6 +468,7 @@
             </div>
         </section>
 
+        <!-- BUTTERY SEARCH & SORT UI -->
         <div class="control-bar" id="store">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Search for beautiful pieces...">
@@ -472,8 +487,8 @@
             </div>
         </div>
 
-        <div id="productSections">
-            </div>
+        <!-- PRODUCTS WILL INJECT HERE -->
+        <div id="productSections"></div>
 
         <section id="reviews" style="margin: 6rem 0;">
             <div style="text-align:center; margin-bottom: 3rem;">
@@ -498,6 +513,7 @@
             </div>
         </section>
 
+        <!-- PARALLAX STORY SECTION -->
         <section id="story">
             <div class="story-box">
                 <h2 id="storyTitle">our story</h2>
@@ -549,6 +565,7 @@
         </div>
     </footer>
 
+    <!-- Modals -->
     <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">×</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><br><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Delivery</button></div></div>
     
     <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">×</span><h2>Delivery Details <span class="badge" style="font-size:0.7rem; margin-left:0.5rem; background:var(--accent-color); color:white;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati)" required><button class="btn" id="estimateDelivery">Calculate Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:var(--accent-color);"></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button></div></div></div>
@@ -564,7 +581,7 @@
     <script>
         (function() {
             // --- GOOGLE SHEETS LIVE INVENTORY INTEGRATION ---
-            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS53HBapO-hA0zroGCimzXHh3pnX6zJvtkvylNXHXXA1i3REoov8bSQ7QNi-ZjH6uCbho2X_Ew5fs4M/pub?output=csv"; 
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS53HBapO-hA0zroGCimzXHh3pnX6zJvtkvylNXHXXA1i3REoov8bSQ7QNi-ZjH6uCbho2X_Ew5fs4M/pub?gid=0&single=true&output=csv"; 
             
             let products = [];
             
@@ -619,9 +636,33 @@
             let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+            // --- GOOGLE DRIVE IMAGE CONVERTER ---
+            function getDirectImageUrl(url) {
+                if (!url) return url;
+                let u = String(url).trim();
+                let id = null;
+                
+                // Extract the File ID from various Google Drive link formats
+                if (u.includes('drive.google.com/file/d/')) {
+                    const match = u.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    if (match && match[1]) id = match[1];
+                } else if (u.includes('drive.google.com/open?id=')) {
+                    id = u.split('id=')[1].split('&')[0];
+                } else if (u.includes('drive.google.com/uc?')) {
+                    const match = u.match(/id=([a-zA-Z0-9_-]+)/);
+                    if (match && match[1]) id = match[1];
+                }
+                
+                // Use the Google Drive thumbnail endpoint to bypass standard image blocking
+                if (id) {
+                    return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+                }
+                return u;
+            }
+
             // --- FETCH DATA FROM GOOGLE SHEETS ---
             const container = document.getElementById('productSections');
-            if(container) container.innerHTML = '<p style="text-align:center; padding: 3rem; opacity: 0.5;"><i class="fas fa-circle-notch fa-spin" style="margin-bottom: 1rem; font-size: 2rem;"></i><br>Loading live inventory from Google Sheets...</p>';
+            if(container) container.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-circle-notch fa-spin" style="margin-bottom: 1rem; font-size: 2.5rem; color: var(--accent-color);"></i><br><h2>Syncing with Studio...</h2></div>';
 
             fetch(sheetUrl)
                 .then(response => {
@@ -634,46 +675,101 @@
                         dynamicTyping: true,
                         skipEmptyLines: true,
                         complete: function(results) {
-                            products = results.data.map(row => {
+                            
+                            // 1. NORMALIZE HEADERS (Fixes accidental spaces or capitalization in Google Sheets)
+                            const normalizedData = results.data.map(rawRow => {
+                                let cleanRow = {};
+                                for (let key in rawRow) {
+                                    if (key) {
+                                        let safeKey = key.toString().toLowerCase().trim().replace(/[^a-z0-9]/g, '');
+                                        cleanRow[safeKey] = rawRow[key];
+                                    }
+                                }
+                                return cleanRow;
+                            });
+
+                            // 2. Filter out completely blank rows
+                            const validRows = normalizedData.filter(row => row.name || row.title || row.productname);
+                            
+                            if (validRows.length === 0) {
+                                if(container) container.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.7;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent-color);"></i><br><h2>Your store is currently empty.</h2><p>Please add products to Row 2 of your Google Sheet.</p></div>';
+                                return;
+                            }
+
+                            products = validRows.map(row => {
+                                const pName = row.name || row.title || row.productname || 'Unnamed Product';
+
+                                // Bulletproof Image Parsing & Google Drive Fix
+                                let rawImage = row.images || row.image || row.picture || row.pictures || row.photo || row.imageurl || row.img || '';
                                 let imgArray = [];
-                                if (row.images) {
-                                    imgArray = row.images.toString().split(',').map(url => url.trim());
-                                } else {
-                                    imgArray = ['https://via.placeholder.com/400?text=No+Image'];
+                                
+                                if (rawImage) {
+                                    imgArray = String(rawImage).split(',').map(getDirectImageUrl).filter(url => url !== '');
+                                }
+                                
+                                // Catch 'image1', 'image2' if they used separate columns instead of commas
+                                for(let i=1; i<=5; i++) {
+                                    let extraImg = row['image'+i] || row['images'+i] || row['img'+i] || row['picture'+i] || row['photo'+i];
+                                    if(extraImg) imgArray.push(getDirectImageUrl(String(extraImg).trim()));
                                 }
 
+                                if (imgArray.length === 0) {
+                                    imgArray = ['https://via.placeholder.com/400x500?text=No+Image'];
+                                }
+
+                                // Bulletproof Pricing
+                                let rawPrice = row.baseprice || row.price || row.cost || 0;
+                                let pPrice = Number(String(rawPrice).replace(/[^0-9.-]+/g,"")) || 0;
+
+                                // Bulletproof Stock
+                                let rawStock = row.stock || row.quantity || row.qty;
+                                let pStock = rawStock !== undefined && rawStock !== null && rawStock !== '' ? Number(String(rawStock).replace(/[^0-9.-]+/g,"")) : 10;
+
+                                // Bulletproof Category & Gender
+                                const cleanCategory = row.category || row.type ? String(row.category || row.type).toLowerCase().trim() : 'handmade';
+                                const cleanGender = row.gender ? String(row.gender).toLowerCase().trim() : 'all';
+
+                                // Bulletproof Description
+                                let rawDesc = row.description || row.desc || row.details || row.about || row.info || '';
+                                let finalDesc = rawDesc ? String(rawDesc).trim() : '';
+                                if (finalDesc.toLowerCase() === 'undefined') finalDesc = '';
+
+                                // Bulletproof Variants
                                 let v = null;
-                                if (row.sizes || row.colors) {
+                                let rawSizes = row.sizes || row.size || '';
+                                let rawColors = row.colors || row.color || '';
+                                
+                                if (rawSizes || rawColors) {
                                     v = {};
-                                    if (row.sizes) v.sizes = row.sizes.toString().split(',').map(s=>s.trim());
-                                    if (row.colors) v.colors = row.colors.toString().split(',').map(c=>c.trim());
-                                } else if (row.category === 'clothes') {
+                                    if (rawSizes) v.sizes = String(rawSizes).split(',').map(s=>s.trim()).filter(s=>s!=='');
+                                    if (rawColors) v.colors = String(rawColors).split(',').map(c=>c.trim()).filter(c=>c!=='');
+                                } else if (cleanCategory === 'clothes') {
                                     v = { sizes: ["S", "M", "L"], colors: ["Standard"] }; 
-                                } else if (row.category === 'jewelry') {
+                                } else if (cleanCategory === 'jewelry') {
                                     v = { sizes: ["One Size"] }; 
                                 }
 
                                 return {
-                                    id: row.id || Math.floor(Math.random()*10000),
-                                    name: row.name || 'Unnamed Product',
-                                    category: row.category || 'handmade',
-                                    gender: row.gender || 'all',
-                                    basePrice: row.basePrice || 0,
-                                    stock: row.stock !== undefined ? row.stock : 10,
+                                    id: row.id || Math.floor(Math.random()*1000000),
+                                    name: String(pName).trim(),
+                                    category: cleanCategory,
+                                    gender: cleanGender,
+                                    basePrice: pPrice,
+                                    stock: pStock,
                                     images: imgArray,
-                                    description: row.description || '',
+                                    description: finalDesc,
                                     variants: v
                                 };
                             });
+                            
                             renderProducts();
                         }
                     });
                 })
                 .catch(err => {
                     console.error("Error loading sheet:", err);
-                    if(container) container.innerHTML = '<p style="text-align:center; padding: 3rem; color: #e74c3c;">Error loading inventory. Please check the Google Sheet connection.</p>';
+                    if(container) container.innerHTML = '<div style="text-align:center; padding: 4rem; color: #e74c3c;"><i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i><br><h2>Connection Error</h2><p>Could not connect to Google Sheets. Please ensure your sheet is Published to the Web as a CSV.</p></div>';
                 });
-
 
             // --- CURSOR LOGIC ---
             const cursorIcon = document.getElementById('cursorIcon');
@@ -838,8 +934,8 @@
                     e.target.classList.add('active'); fashionCat = e.target.dataset.cat;
                     if(fashionCat === 'clothes') document.getElementById('genderFilters').classList.add('active');
                     else document.getElementById('genderFilters').classList.remove('active');
-                    const sections = document.getElementById('productSections'); sections.style.opacity = '0';
-                    setTimeout(() => { renderProducts(); sections.style.opacity = '1'; }, 200);
+                    const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0';
+                    setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200);
                 });
             });
 
@@ -847,8 +943,8 @@
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.gen-btn').forEach(b => b.classList.remove('active'));
                     e.target.classList.add('active'); fashionGen = e.target.dataset.gen;
-                    const sections = document.getElementById('productSections'); sections.style.opacity = '0';
-                    setTimeout(() => { renderProducts(); sections.style.opacity = '1'; }, 200);
+                    const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0';
+                    setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200);
                 });
             });
 
@@ -921,12 +1017,16 @@
                 const product = products.find(p => p.id === productId);
                 if (!product) return;
                 
-                const mainUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/400?text=No+Image';
-                document.getElementById('detailMainImage').src = mainUrl;
+                const mainUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
+                
+                const mainImgEl = document.getElementById('detailMainImage');
+                mainImgEl.src = mainUrl;
+                mainImgEl.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/400x500?text=Image+Unavailable'; };
+                
                 document.getElementById('detailName').textContent = product.name;
                 document.getElementById('detailPrice').textContent = formatPrice(product.basePrice);
                 document.getElementById('detailTotalPrice').textContent = 'total: ' + formatPrice(product.basePrice);
-                document.getElementById('detailDescription').textContent = product.description || "A beautiful item from our collection.";
+                document.getElementById('detailDescription').textContent = product.description || "";
                 document.getElementById('detailStock').innerHTML = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
                 
                 const thumbContainer = document.getElementById('detailThumbnails');
@@ -936,6 +1036,7 @@
                     product.images.forEach((imgUrl, idx) => {
                         const thumb = document.createElement('img');
                         thumb.src = imgUrl; 
+                        thumb.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/60?text=N/A'; };
                         thumb.classList.add('product-detail-thumb');
                         if (idx === 0) thumb.classList.add('active');
                         thumb.addEventListener('click', () => {
@@ -950,8 +1051,8 @@
                 const variantsDiv = document.getElementById('detailVariants');
                 if (product.variants) {
                     let html = '';
-                    if (product.variants.sizes) html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
-                    if (product.variants.colors) html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
+                    if (product.variants.sizes && product.variants.sizes.length > 0) html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
+                    if (product.variants.colors && product.variants.colors.length > 0) html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
                     variantsDiv.innerHTML = html;
                 } else variantsDiv.innerHTML = '';
                 
@@ -968,6 +1069,8 @@
             }
 
             function renderProducts() {
+                if(products.length === 0) return;
+
                 const searchInput = document.getElementById('searchInput');
                 const sortInput = document.getElementById('sortSelect'); 
                 const s = searchInput ? searchInput.value.toLowerCase() : '';
@@ -1002,9 +1105,13 @@
                 
                 const sections = document.getElementById('productSections');
                 if(sections) {
-                    sections.innerHTML = html || '<p style="padding:2rem; text-align:center;">No products match your filters.</p>';
-                    attachProductEvents();
-                    setTimeout(() => { document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible')); }, 50);
+                    if (!html) {
+                        sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>No products found</h2><p>Try adjusting your search or filters.</p></div>';
+                    } else {
+                        sections.innerHTML = html;
+                        attachProductEvents();
+                        setTimeout(() => { document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible')); }, 50);
+                    }
                 }
             }
 
@@ -1012,23 +1119,26 @@
                 const isWished = wishlist.includes(p.id);
                 const stockBadge = p.stock>0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
                 
-                const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/400?text=No+Image';
-                const hoverImgHtml = p.images && p.images.length > 1 ? `<img src="${p.images[1]}" class="hover-image" alt="Lifestyle shot">` : '';
+                const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
+                const hoverImgHtml = p.images && p.images.length > 1 ? `<img src="${p.images[1]}" class="hover-image" alt="Lifestyle shot" onerror="this.style.display='none';">` : '';
+                const shortDesc = p.description ? `<p class="card-description">${p.description}</p>` : '';
                 
                 let variantsHtml = '';
                 if(p.variants) {
                     variantsHtml = '<div class="product-variants">';
-                    if(p.variants.sizes) variantsHtml += `<div class="variant-row"><label>Size:</label> <select class="size-select">${p.variants.sizes.map(s=>`<option>${s}</option>`).join('')}</select></div>`;
-                    if(p.variants.colors) variantsHtml += `<div class="variant-row"><label>Color:</label> <select class="color-select">${p.variants.colors.map(c=>`<option>${c}</option>`).join('')}</select></div>`;
+                    if(p.variants.sizes && p.variants.sizes.length > 0) variantsHtml += `<div class="variant-row"><label>Size:</label> <select class="size-select">${p.variants.sizes.map(s=>`<option>${s}</option>`).join('')}</select></div>`;
+                    if(p.variants.colors && p.variants.colors.length > 0) variantsHtml += `<div class="variant-row"><label>Color:</label> <select class="color-select">${p.variants.colors.map(c=>`<option>${c}</option>`).join('')}</select></div>`;
                     variantsHtml += '</div>';
                 }
                 return `<div class="product-card" data-id="${p.id}" data-base-price="${p.basePrice}" style="--card-index:${idx}">
                     <div class="wishlist-heart ${isWished?'active':''}" data-id="${p.id}"><i class="${isWished?'fas':'far'} fa-heart"></i></div>
                     <div class="product-images">
-                        <img src="${mainImg}" class="main-image" alt="${p.name}">
+                        <img src="${mainImg}" class="main-image" alt="${p.name}" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x500?text=Image+Unavailable';">
                         ${hoverImgHtml}
                     </div>
-                    <h4 style="margin-top:1rem;">${p.name}</h4>${stockBadge}${variantsHtml}
+                    <h4 style="margin-top:1rem;">${p.name}</h4>
+                    ${shortDesc}
+                    ${stockBadge}${variantsHtml}
                     <div class="price-info"><span class="base-price">${formatPrice(p.basePrice)}</span></div>
                     <div class="order-row" style="display:flex; gap:0.5rem; margin-top:auto; padding-top:1rem;"><input type="number" min="1" value="1" class="quantity-input"><button class="btn-cart add-to-cart" data-id="${p.id}" style="flex:1; justify-content:center;"><i class="fas fa-cart-plus"></i> Add</button></div>
                 </div>`;
@@ -1136,7 +1246,7 @@
                 cart.forEach((item,idx)=>{ 
                     let p=products.find(p=>p.id===item.id); if(!p) return; total+=p.basePrice*item.quantity; 
                     let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
-                    html+=`<div class="cart-item" data-index="${idx}"><img src="${pImg}"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${idx}" style="width:50px; text-align:center; border-radius:10px; border:1px solid var(--card-border); background:var(--input-bg); color:var(--text-color);"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; 
+                    html+=`<div class="cart-item" data-index="${idx}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${idx}" style="width:50px; text-align:center; border-radius:10px; border:1px solid var(--card-border); background:var(--input-bg); color:var(--text-color);"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; 
                 }); 
                 cont.innerHTML=html; document.getElementById('cartTotal').innerHTML=`<strong>Total: ${formatPrice(total)}</strong>`; 
                 document.querySelectorAll('.cart-quantity').forEach(inp=>inp.addEventListener('change',function(){ let idx=this.dataset.index, nq=parseInt(this.value); if(nq>0){ cart[idx].quantity=nq; saveCart(); renderCartModal(); } })); 
@@ -1150,7 +1260,7 @@
                 wishlist.forEach(id=>{ 
                     let p=products.find(p=>p.id===id); if(p) {
                         let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
-                        html+=`<div class="wishlist-item" data-id="${p.id}"><img src="${pImg}"><div class="wishlist-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)}</p></div><i class="fas fa-trash remove-wishlist" data-id="${p.id}"></i></div>`; 
+                        html+=`<div class="wishlist-item" data-id="${p.id}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="wishlist-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)}</p></div><i class="fas fa-trash remove-wishlist" data-id="${p.id}"></i></div>`; 
                     }
                 }); 
                 cont.innerHTML=html; 
@@ -1172,7 +1282,6 @@
                     
                     const storyBox = document.querySelector('.story-box');
                     if (storyBox) {
-                        // Creates a gentle float opposing scroll inside the background
                         storyBox.style.transform = `translateY(${scrollY * 0.03}px)`;
                     }
                 });
