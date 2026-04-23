@@ -231,7 +231,10 @@
         .variant-row select:hover, .quantity-input:hover { border-color: var(--accent-color); }
         .stock-badge { font-size: 0.8rem; padding: 0.2rem 0.8rem; border-radius: 40px; display: inline-block; margin-top: 0.5rem; width: fit-content; transition: background 0.6s ease, color 0.6s ease;}
         .in-stock { background: rgba(37, 211, 102, 0.15); color: #1e8745; }
+        .out-of-stock { background: #f8d7da; color: #721c24; }
         body.dark-mode .in-stock { color: #25D366; }
+        body.dark-mode .out-of-stock { color: #ff6b6b; background: rgba(255, 107, 107, 0.15); }
+        
         .price-info { display: flex; justify-content: space-between; align-items: center; margin: 0.5rem 0; flex-wrap: wrap; }
         .base-price { font-weight: 500; font-size: 1.1rem; }
         .quantity-input { width: 70px; text-align: center; z-index: 4; position: relative;}
@@ -721,9 +724,20 @@
                                 let rawPrice = row.baseprice || row.price || row.cost || 0;
                                 let pPrice = Number(String(rawPrice).replace(/[^0-9.-]+/g,"")) || 0;
 
-                                // Bulletproof Stock
-                                let rawStock = row.stock || row.quantity || row.qty;
-                                let pStock = rawStock !== undefined && rawStock !== null && rawStock !== '' ? Number(String(rawStock).replace(/[^0-9.-]+/g,"")) : 10;
+                                // Bulletproof Stock (Handles text like "in stock" and numbers safely)
+                                let rawStock = row.stock !== undefined ? row.stock : (row.quantity !== undefined ? row.quantity : (row.qty !== undefined ? row.qty : null));
+                                let pStock = 10; // Default
+                                if (rawStock !== null && rawStock !== '') {
+                                    let sStr = String(rawStock).toLowerCase().trim();
+                                    if (sStr === 'in stock' || sStr === 'in' || sStr === 'yes' || sStr === 'true') {
+                                        pStock = 10;
+                                    } else if (sStr === 'out of stock' || sStr === 'out' || sStr === 'no' || sStr === 'false' || sStr === '0') {
+                                        pStock = 0;
+                                    } else {
+                                        let parsed = parseInt(sStr.replace(/[^0-9-]/g, ''));
+                                        pStock = isNaN(parsed) ? 10 : parsed;
+                                    }
+                                }
 
                                 // Bulletproof Category & Gender
                                 const cleanCategory = row.category || row.type ? String(row.category || row.type).toLowerCase().trim() : 'handmade';
