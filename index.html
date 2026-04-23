@@ -14,12 +14,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     
-    <!-- Firebase SDK (Added for Secure Authentication) -->
+    <!-- Firebase SDK (Google + Email/Password Auth) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-        // 👉 STEP 1: PASTE YOUR FIREBASE CONFIGURATION HERE 👈
+        // Your Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyA7LPp0kMnYtiQeN3xxjIAPtqZwoo9KHdo",
             authDomain: "artisan-e4123.firebaseapp.com",
@@ -30,38 +30,30 @@
             measurementId: "G-0WB9M64CVG"
         };
 
-        // Initialize Firebase ONLY if config is provided
-        let auth = null;
-        if(firebaseConfig.apiKey !== "YOUR_API_KEY") {
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            
-            // Listen for user login state
-            onAuthStateChanged(auth, (user) => {
-                const loginBtn = document.getElementById('loginBtnText');
-                if (user) {
-                    // User is signed in
-                    loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Account';
-                    document.getElementById('authModal').style.display = 'none';
-                    showToast('Welcome back!', 'fa-hand-sparkles');
-                } else {
-                    // User is signed out
-                    loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
-                }
-            });
-        } else {
-            console.log("Firebase not configured yet. Setup Firebase to enable Login features.");
-        }
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Listen for user login state
+        onAuthStateChanged(auth, (user) => {
+            const loginBtn = document.getElementById('loginBtnText');
+            if (user) {
+                loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Account';
+                document.getElementById('authModal').style.display = 'none';
+            } else {
+                loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+            }
+        });
 
         // Make Auth functions globally available
         window.firebaseAuth = auth;
         window.GoogleAuthProvider = GoogleAuthProvider;
         window.signInWithPopup = signInWithPopup;
-        window.RecaptchaVerifier = RecaptchaVerifier;
-        window.signInWithPhoneNumber = signInWithPhoneNumber;
+        window.firebaseCreateUser = createUserWithEmailAndPassword;
+        window.firebaseSignIn = signInWithEmailAndPassword;
         window.firebaseSignOut = signOut;
 
-        // Custom global Toast function for module access
+        // Custom global Toast function
         window.showToast = function(message, icon = 'fa-check-circle') {
             const container = document.getElementById('toastContainer');
             if(!container) return;
@@ -163,7 +155,6 @@
         .header-actions { display: flex; align-items: center; gap: 1rem; }
         .action-btn-glass { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--accent-color); font-size: 1.2rem; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 4px 10px var(--shadow-color), inset 0 2px 5px var(--glass-glow); transition: all 0.6s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; cursor: pointer; }
         
-        /* New Login Pill Button */
         .login-pill { width: auto; padding: 0 1.2rem; font-size: 0.95rem; font-weight: 600; font-family: 'Inter', sans-serif;}
         .login-pill i { font-size: 1rem; margin-right: 0.4rem; }
         
@@ -322,9 +313,9 @@
         .close-modal:hover { color: var(--accent-color); transform: scale(1.2); }
         .badge { background: var(--badge-bg); padding: 0.2rem 1rem; border-radius: 60px; display: inline-block; transition: background 0.6s ease;}
         
-        /* NEW: Auth Modal Styles */
+        /* --- AUTH MODAL STYLES (Email + Google) --- */
         .auth-container { max-width: 400px; margin: 0 auto; text-align: center; }
-        .auth-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--card-border); padding-bottom: 1rem;}
+        .auth-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--card-border); padding-bottom: 1rem;}
         .auth-tab { background: transparent; border: none; font-size: 1.1rem; font-weight: 600; color: var(--text-color); opacity: 0.5; transition: all 0.3s; }
         .auth-tab.active { opacity: 1; color: var(--accent-color); }
         .auth-form { display: none; flex-direction: column; gap: 1rem; }
@@ -456,7 +447,7 @@
                     <a href="#story" data-target="story">story</a>
                 </div>
                 <div class="header-actions">
-                    <!-- NEW: Authentication Login Pill -->
+                    <!-- Authentication Login Pill -->
                     <button class="action-btn-glass login-pill" id="openAuthModalBtn" aria-label="Login">
                         <span id="loginBtnText"><i class="fas fa-user"></i> Login</span>
                     </button>
@@ -566,7 +557,7 @@
 
     <!-- MODALS -->
     
-    <!-- NEW: FIREBASE AUTHENTICATION MODAL -->
+    <!-- FIREBASE AUTHENTICATION MODAL (Email + Google) -->
     <div id="authModal" class="modal">
         <div class="modal-content auth-container">
             <span class="close-modal" id="closeAuth">×</span>
@@ -586,22 +577,27 @@
                     <hr style="flex: 1; border: none; border-top: 1px solid var(--card-border);">
                 </div>
 
-                <!-- Phone Auth Form -->
-                <div id="phoneInputSection" class="auth-form active">
-                    <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">Sign in with your phone number</p>
-                    <input type="tel" id="phoneNumber" placeholder="e.g. +91 9876543210" required>
-                    <div id="recaptcha-container" style="margin: 0 auto;"></div>
-                    <div class="auth-error" id="phoneError"></div>
-                    <button id="sendCodeBtn" class="auth-btn">Send SMS Code</button>
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tabLogin">Login</button>
+                    <button class="auth-tab" id="tabRegister">Sign Up</button>
                 </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active">
+                    <input type="email" id="loginEmail" placeholder="Email Address" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <div class="auth-error" id="loginError"></div>
+                    <button type="submit" class="auth-btn">Log In</button>
+                </form>
 
-                <!-- OTP Verification Form -->
-                <div id="otpInputSection" class="auth-form" style="display: none;">
-                    <p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">Enter the 6-digit code sent to your phone</p>
-                    <input type="text" id="otpCode" placeholder="123456" required>
-                    <div class="auth-error" id="otpError"></div>
-                    <button id="verifyCodeBtn" class="auth-btn">Verify & Sign In</button>
-                </div>
+                <!-- Register Form -->
+                <form id="registerForm" class="auth-form">
+                    <input type="text" id="regName" placeholder="Full Name" required>
+                    <input type="email" id="regEmail" placeholder="Email Address" required>
+                    <input type="password" id="regPassword" placeholder="Create Password (min 6 chars)" required>
+                    <div class="auth-error" id="regError"></div>
+                    <button type="submit" class="auth-btn">Create Account</button>
+                </form>
             </div>
 
             <!-- Profile Block (Shown when logged in) -->
@@ -851,7 +847,7 @@
             document.querySelectorAll('.directChatClass').forEach(btn => { btn.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hello! I have a question from your website."); }); });
             document.getElementById('floatingWaBtn').addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hi Artisan! I have a question about your products."); });
 
-            // --- FIREBASE AUTH UI LOGIC ---
+            // --- FIREBASE AUTH UI LOGIC (Email + Google) ---
             const authModal = document.getElementById('authModal');
             const openAuthModalBtn = document.getElementById('openAuthModalBtn');
             const closeAuth = document.getElementById('closeAuth');
@@ -860,38 +856,44 @@
             const authContentBlock = document.getElementById('authContentBlock');
             
             const googleLoginBtn = document.getElementById('googleLoginBtn');
-            const phoneInputSection = document.getElementById('phoneInputSection');
-            const otpInputSection = document.getElementById('otpInputSection');
-            const sendCodeBtn = document.getElementById('sendCodeBtn');
-            const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+            const tabLogin = document.getElementById('tabLogin');
+            const tabRegister = document.getElementById('tabRegister');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
 
             openAuthModalBtn.addEventListener('click', () => {
                 if(window.firebaseAuth && window.firebaseAuth.currentUser) {
-                    // Show Profile
                     const user = window.firebaseAuth.currentUser;
-                    document.getElementById('profileEmail').textContent = user.displayName || user.email || user.phoneNumber || "Authenticated User";
+                    document.getElementById('profileEmail').textContent = user.displayName || user.email || "Authenticated User";
                     authContentBlock.style.display = 'none';
                     profileBlock.style.display = 'block';
                 } else {
-                    // Show Login Options
                     authContentBlock.style.display = 'block';
                     profileBlock.style.display = 'none';
-                    phoneInputSection.style.display = 'flex';
-                    otpInputSection.style.display = 'none';
-                    document.getElementById('phoneError').textContent = '';
-                    document.getElementById('otpError').textContent = '';
                     
-                    // Initialize Recaptcha if not done yet
-                    if(window.firebaseAuth && !window.recaptchaVerifier) {
-                        window.recaptchaVerifier = new window.RecaptchaVerifier(window.firebaseAuth, 'recaptcha-container', {
-                            'size': 'invisible'
-                        });
-                    }
+                    // Reset to login tab
+                    tabLogin.classList.add('active'); tabRegister.classList.remove('active');
+                    loginForm.classList.add('active'); registerForm.classList.remove('active');
+                    document.getElementById('loginError').textContent = '';
+                    document.getElementById('regError').textContent = '';
                 }
                 authModal.style.display = 'flex';
             });
 
             closeAuth.addEventListener('click', () => authModal.style.display = 'none');
+
+            // Tab Switching
+            tabLogin.addEventListener('click', () => {
+                tabLogin.classList.add('active'); tabRegister.classList.remove('active');
+                loginForm.classList.add('active'); registerForm.classList.remove('active');
+                document.getElementById('loginError').textContent = '';
+            });
+
+            tabRegister.addEventListener('click', () => {
+                tabRegister.classList.add('active'); tabLogin.classList.remove('active');
+                registerForm.classList.add('active'); loginForm.classList.remove('active');
+                document.getElementById('regError').textContent = '';
+            });
 
             // GOOGLE LOGIN
             googleLoginBtn.addEventListener('click', () => {
@@ -903,78 +905,56 @@
                             window.showToast("Logged in with Google!", "fa-star");
                         })
                         .catch((error) => {
-                            document.getElementById('phoneError').textContent = error.message.replace("Firebase: ", "");
+                            document.getElementById('loginError').textContent = error.message.replace("Firebase: ", "");
                         });
                 } else {
-                    document.getElementById('phoneError').textContent = "Firebase is not configured.";
+                    document.getElementById('loginError').textContent = "Firebase is not configured.";
                 }
             });
 
-            // PHONE AUTH: SEND SMS
-            sendCodeBtn.addEventListener('click', () => {
-                const phoneNumber = document.getElementById('phoneNumber').value.trim();
-                const errorDiv = document.getElementById('phoneError');
+            // EMAIL LOGIN
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value.trim();
+                const pass = document.getElementById('loginPassword').value;
+                const errorDiv = document.getElementById('loginError');
                 errorDiv.textContent = '';
 
-                if(!phoneNumber || !phoneNumber.startsWith('+')) {
-                    errorDiv.textContent = "Please include country code (e.g. +91...)";
-                    return;
-                }
-
-                if(window.firebaseAuth && window.signInWithPhoneNumber && window.recaptchaVerifier) {
-                    sendCodeBtn.textContent = "Sending...";
-                    sendCodeBtn.disabled = true;
-
-                    window.signInWithPhoneNumber(window.firebaseAuth, phoneNumber, window.recaptchaVerifier)
-                        .then((confirmationResult) => {
-                            window.confirmationResult = confirmationResult;
-                            phoneInputSection.style.display = 'none';
-                            otpInputSection.style.display = 'flex';
-                            sendCodeBtn.textContent = "Send SMS Code";
-                            sendCodeBtn.disabled = false;
+                if(window.firebaseSignIn) {
+                    window.firebaseSignIn(window.firebaseAuth, email, pass)
+                        .then(() => {
+                            authModal.style.display = 'none';
+                            loginForm.reset();
+                            window.showToast("Logged in successfully!", "fa-check");
                         })
                         .catch((error) => {
                             errorDiv.textContent = error.message.replace("Firebase: ", "");
-                            sendCodeBtn.textContent = "Send SMS Code";
-                            sendCodeBtn.disabled = false;
-                            
-                            // Reset recaptcha on error
-                            if(window.recaptchaVerifier) window.recaptchaVerifier.render().then(widgetId => window.grecaptcha.reset(widgetId));
                         });
                 } else {
                     errorDiv.textContent = "Firebase is not configured.";
                 }
             });
 
-            // PHONE AUTH: VERIFY OTP
-            verifyCodeBtn.addEventListener('click', () => {
-                const code = document.getElementById('otpCode').value.trim();
-                const errorDiv = document.getElementById('otpError');
+            // EMAIL REGISTER
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('regEmail').value.trim();
+                const pass = document.getElementById('regPassword').value;
+                const errorDiv = document.getElementById('regError');
                 errorDiv.textContent = '';
 
-                if(!code) {
-                    errorDiv.textContent = "Please enter the code.";
-                    return;
-                }
-
-                if(window.confirmationResult) {
-                    verifyCodeBtn.textContent = "Verifying...";
-                    verifyCodeBtn.disabled = true;
-
-                    window.confirmationResult.confirm(code)
-                        .then((result) => {
+                if(window.firebaseCreateUser) {
+                    window.firebaseCreateUser(window.firebaseAuth, email, pass)
+                        .then(() => {
                             authModal.style.display = 'none';
-                            verifyCodeBtn.textContent = "Verify & Sign In";
-                            verifyCodeBtn.disabled = false;
-                            window.showToast("Logged in successfully!", "fa-check");
-                            document.getElementById('phoneNumber').value = '';
-                            document.getElementById('otpCode').value = '';
+                            registerForm.reset();
+                            window.showToast("Account created successfully!", "fa-star");
                         })
                         .catch((error) => {
-                            errorDiv.textContent = "Invalid code. Please try again.";
-                            verifyCodeBtn.textContent = "Verify & Sign In";
-                            verifyCodeBtn.disabled = false;
+                            errorDiv.textContent = error.message.replace("Firebase: ", "");
                         });
+                } else {
+                    errorDiv.textContent = "Firebase is not configured.";
                 }
             });
 
