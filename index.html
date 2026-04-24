@@ -100,7 +100,7 @@
 
         @media (pointer: fine) {
             body, a, button, input, select, textarea, i, img, .product-card, .logo-wrapper, .toggle-btn, .f-btn, .sort-trigger, .sort-option, .auth-tab { cursor: none; }
-            .cursor-icon { position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000; transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%; transition: transform 0.2s var(--bezier-butter), color 0.5s ease, filter 0.2s ease, font-size 0.5s filter: drop-shadow(0 2px 4px var(--glass-border)); }
+            .cursor-icon { position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000; transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%; transition: transform 0.2s var(--bezier-butter), color 0.5s ease, filter 0.2s ease, font-size 0.5s ease; filter: drop-shadow(0 2px 4px var(--glass-border)); }
             .cursor-icon.hovering { transform: translate(-15%, -85%) scale(1.2) rotate(10deg); color: var(--text-color); filter: drop-shadow(0 4px 8px var(--shadow-color)); }
             body.theme-fashion .cursor-icon { transform: translate(-50%, -50%) rotate(0deg); transform-origin: center center; font-size: 1.2rem; }
             body.theme-fashion .cursor-icon.hovering { transform: translate(-50%, -50%) scale(1.5) rotate(0deg); color: var(--text-color); }
@@ -164,6 +164,14 @@
 
         .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; transition: opacity 0.2s ease; }
         
+        /* Public Dashboard Stats Styling */
+        .store-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 3rem 0; animation: fadeUp 0.8s ease-out; }
+        .store-stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 30px; display: flex; align-items: center; gap: 1.5rem; backdrop-filter: blur(8px); box-shadow: 0 10px 30px var(--shadow-color); transition: transform 0.3s var(--bezier-butter), box-shadow 0.3s; }
+        .store-stat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px var(--accent-color); }
+        .store-stat-card i { font-size: 2rem; color: var(--accent-color); background: var(--card-bg); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .store-stat-card h4 { font-size: 0.85rem; opacity: 0.8; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+        .store-stat-card .stat-value { font-size: 1.8rem; font-weight: 700; margin: 0; line-height: 1.2; color: var(--text-color); }
+
         .mode-toggle-container { display: flex; justify-content: center; margin: 1rem 0 2rem; }
         .mode-toggle { display: flex; position: relative; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 50px; padding: 5px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); backdrop-filter: blur(8px); transition: background 0.6s ease, border-color 0.6s ease; }
         .toggle-btn { position: relative; z-index: 2; padding: 0.8rem 2rem; border: none; background: transparent; color: var(--text-color); font-weight: 600; font-size: 1rem; border-radius: 40px; cursor: pointer; transition: color 0.4s ease; outline: none; font-family: 'Inter', sans-serif; }
@@ -226,7 +234,7 @@
         .sort-option i { opacity: 0; transition: opacity 0.3s; }
         .sort-option.active i { opacity: 1; }
 
-        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; padding: 2rem 0; justify-items: center; align-items: start; transition: all 0.5s ease;}
+        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; padding: 1rem 0 2rem; justify-items: center; align-items: start; transition: all 0.5s ease;}
         body.theme-fashion .product-grid { display: block; column-count: 4; column-gap: 1.5rem; }
         body.theme-fashion .product-card { display: inline-block; width: 100%; margin-bottom: 1.5rem; break-inside: avoid; }
         
@@ -329,6 +337,14 @@
         .admin-modal-content { max-width: 1000px; width: 100%; }
         .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem; margin-bottom: 1rem; }
         .admin-header h2 { margin: 0; color: var(--accent-color); }
+        
+        /* Admin Tabs */
+        .admin-tabs { display: flex; gap: 1rem; border-bottom: 2px solid var(--card-border); margin-bottom: 1.5rem; }
+        .admin-tab { background: transparent; border: none; padding: 0.5rem 1rem; font-size: 1.1rem; font-weight: 600; color: var(--text-color); opacity: 0.5; cursor: pointer; transition: 0.3s; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+        .admin-tab.active { opacity: 1; color: var(--accent-color); border-bottom-color: var(--accent-color); }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; animation: fadeUp 0.4s ease; }
+
         .admin-table-wrapper { overflow-x: auto; width: 100%; }
         .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
         .admin-table th, .admin-table td { padding: 1rem 0.5rem; border-bottom: 1px solid var(--card-border); font-size: 0.95rem; }
@@ -387,6 +403,19 @@
         @keyframes slideInToast { from { transform: translateX(-120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOutToast { to { opacity: 0; transform: translateY(10px); } }
 
+        /* --- ANNOUNCEMENT BOT --- */
+        .announcement-bot { position: fixed; bottom: 30px; left: 30px; z-index: 990; display: flex; align-items: flex-end; gap: 10px; animation: bounceIn 0.5s var(--bezier-butter); }
+        .bot-character { width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent-color), #a27160); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.3s; animation: floatBot 3s ease-in-out infinite; border: 3px solid var(--glass-bg); }
+        .bot-character:hover { transform: scale(1.1); }
+        .speech-bubble { background: var(--modal-bg); border: 2px solid var(--accent-color); border-radius: 20px 20px 20px 0; padding: 15px 20px; max-width: 250px; box-shadow: 0 10px 25px var(--shadow-color); position: relative; display: flex; align-items: center; gap: 10px; opacity: 0; transform: scale(0); transform-origin: bottom left; transition: all 0.4s var(--bezier-butter); pointer-events: none; }
+        .speech-bubble.active { opacity: 1; transform: scale(1); pointer-events: auto; }
+        .bubble-nav { background: var(--glass-bg); border: none; color: var(--accent-color); cursor: pointer; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0;}
+        .bubble-nav:hover { background: var(--accent-color); color: white; }
+        .ann-text-container { flex: 1; font-size: 0.9rem; font-weight: 600; line-height: 1.4; color: var(--text-color); text-align: center; }
+        
+        @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes bounceIn { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
         .floating-wa-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #25D366; color: white; font-size: 2rem; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); z-index: 990; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: floatPulse 2s infinite; }
         .floating-wa-btn:hover { transform: scale(1.15); }
         @keyframes floatPulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
@@ -419,6 +448,8 @@
             .search-box { width: 100%; max-width: none; }
             .custom-sort { width: 100%; }
             .sort-options { top: calc(100% + 10px); }
+            .announcement-bot { bottom: 20px; left: 20px; }
+            .floating-wa-btn { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 1.5rem; }
         }
         .page-transition-out { opacity: 0 !important; transition: opacity 0.2s ease; }
     </style>
@@ -520,6 +551,31 @@
                 <div class="floating-tag"><i class="fas fa-heart" id="heroTagIcon"></i> <span id="heroBadge">ethically made</span></div>
             </div>
         </section>
+
+        <!-- PUBLIC STORE STATS (DASHBOARD FOR REGULAR USERS) -->
+        <div class="store-stats-grid">
+            <div class="store-stat-card">
+                <i class="fas fa-chart-line"></i>
+                <div>
+                    <h4>Views / Month</h4>
+                    <p class="stat-value" id="publicViewsStat">Loading...</p>
+                </div>
+            </div>
+            <div class="store-stat-card">
+                <i class="fas fa-box-open"></i>
+                <div>
+                    <h4>Orders Delivered</h4>
+                    <p class="stat-value" id="publicOrdersStat">Loading...</p>
+                </div>
+            </div>
+            <div class="store-stat-card">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h4>Happy Customers</h4>
+                    <p class="stat-value" id="publicCustomersStat">Loading...</p>
+                </div>
+            </div>
+        </div>
 
         <!-- SEARCH & SORT UI -->
         <div class="control-bar" id="store">
@@ -632,18 +688,27 @@
         </div>
     </div>
 
-    <!-- NEW: ADMIN DASHBOARD MODAL -->
+    <!-- ADMIN DASHBOARD MODAL -->
     <div id="adminModal" class="modal">
         <div class="modal-content admin-modal-content">
             <div class="admin-header">
-                <h2><i class="fas fa-columns"></i> Product Manager</h2>
+                <h2><i class="fas fa-cogs"></i> Admin Dashboard</h2>
                 <span class="close-modal" id="closeAdmin">×</span>
             </div>
             
-            <!-- Admin List View -->
-            <div id="adminListView">
-                <button id="addNewProductBtn" class="btn" style="margin-bottom: 1rem;"><i class="fas fa-plus"></i> Add New Product</button>
-                <button id="resetDemoBtn" class="btn-outline" style="margin-bottom: 1rem; font-size: 0.8rem; padding: 0.5rem 1rem;">Reset Demo Data</button>
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-target="adminProductsView">Products</button>
+                <button class="admin-tab" data-target="adminCouponsView">Coupons</button>
+                <button class="admin-tab" data-target="adminAnnouncementsView">Announcements</button>
+            </div>
+
+            <!-- Products Section -->
+            <div id="adminProductsView" class="admin-section active">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <button id="addNewProductBtn" class="btn"><i class="fas fa-plus"></i> Add New Product</button>
+                    <button id="resetDemoBtn" class="btn-outline" style="font-size: 0.8rem; padding: 0.5rem 1rem;">Reset Demo Data</button>
+                </div>
+                
                 <div class="admin-table-wrapper">
                     <table class="admin-table">
                         <thead>
@@ -663,8 +728,8 @@
                 </div>
             </div>
 
-            <!-- Admin Form View (Add/Edit) -->
-            <div id="adminFormView" class="admin-form-view">
+            <!-- Admin Form View (Add/Edit Product) -->
+            <div id="adminFormView" class="admin-form-view" style="display:none; background: var(--glass-bg); padding: 1.5rem; border-radius: 20px;">
                 <h3 id="adminFormTitle">Edit Product</h3>
                 <form id="adminForm">
                     <div class="admin-form-grid">
@@ -711,34 +776,153 @@
                     </div>
                 </form>
             </div>
+
+            <!-- Coupons Section -->
+            <div id="adminCouponsView" class="admin-section">
+                <form id="couponForm" style="background: var(--glass-bg); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Create New Coupon</h3>
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group">
+                            <label>Coupon Code *</label>
+                            <input type="text" id="couponCodeInput" placeholder="e.g. SUMMER20" required style="text-transform: uppercase;">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Discount Type *</label>
+                            <select id="couponType">
+                                <option value="percent">Percentage (%)</option>
+                                <option value="fixed">Fixed Amount (₹)</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Discount Value *</label>
+                            <input type="number" id="couponValue" placeholder="e.g. 20" required min="1">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Minimum Cart Value (₹)</label>
+                            <input type="number" id="couponMinAmount" placeholder="e.g. 1000" min="0" value="0">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Minimum Product Quantity</label>
+                            <input type="number" id="couponMinProducts" placeholder="e.g. 2" min="0" value="0">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn" style="margin-top: 1rem;"><i class="fas fa-save"></i> Save Coupon</button>
+                </form>
+
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Conditions</th><th>Action</th></tr></thead>
+                        <tbody id="couponsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Announcements Section -->
+            <div id="adminAnnouncementsView" class="admin-section">
+                <form id="announcementForm" style="background: var(--glass-bg); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Add Announcement</h3>
+                    <div class="admin-form-group">
+                        <label>Announcement Text *</label>
+                        <input type="text" id="announcementText" placeholder="e.g. 🎁 Festive Sale: Flat 20% off on all jewelry!" required maxlength="100">
+                    </div>
+                    <button type="submit" class="btn" style="margin-top: 1rem;"><i class="fas fa-bullhorn"></i> Post Announcement</button>
+                </form>
+
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead><tr><th>Message</th><th>Action</th></tr></thead>
+                        <tbody id="announcementsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="cartModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeCart">×</span><h2>Your Cart 🛒</h2><div id="cartItems"></div><div class="cart-total" id="cartTotal"></div><br><button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Checkout</button></div></div>
+    <!-- Cart & Delivery Modals -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin:0;">Your Cart 🛒</h2>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button class="btn-outline" id="viewOrderHistoryBtn" style="padding: 0.4rem 1rem; font-size: 0.9rem;"><i class="fas fa-history"></i> Order History</button>
+                    <span class="close-modal" id="closeCart" style="position: static; margin:0;">×</span>
+                </div>
+            </div>
+            <div id="cartItems"></div>
+            <div class="cart-total" id="cartTotal"></div><br>
+            <button class="btn-cart" id="proceedToDelivery" style="width:100%;">Proceed to Checkout</button>
+        </div>
+    </div>
     
-    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">×</span><h2>Delivery Details <span class="badge" style="font-size:0.7rem; margin-left:0.5rem; background:var(--accent-color); color:white;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (incl. city)" required><input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati)" required><button class="btn" id="estimateDelivery">Calculate Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. DTDC10)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:var(--accent-color);"></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button></div></div></div>
+    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">×</span><h2>Delivery Details <span class="badge" style="font-size:0.7rem; margin-left:0.5rem; background:var(--accent-color); color:white;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (House/Street)" required>
+        <!-- NEW FIELDS: Landmark and Pincode -->
+        <div class="city-row">
+            <input type="text" id="deliveryLandmark" placeholder="📍 Landmark (Optional)">
+            <input type="text" id="deliveryPincode" placeholder="*️⃣ Pincode" required>
+        </div>
+        <input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati)" required><button class="btn" id="estimateDelivery">Calculate Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. SUMMER20)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:var(--accent-color);"></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button></div></div></div>
     
     <div id="wishlistModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeWishlist">×</span><h2>Your Wishlist ❤️</h2><div id="wishlistItems"></div></div></div>
     
     <div id="faqModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeFaq">×</span><h2>FAQ & Policies 📜</h2><div style="margin-top: 1.5rem;"><h4 style="color: var(--accent-color);">How does WhatsApp Checkout work?</h4><p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;">When you click "Send Order via WhatsApp", your cart details and delivery address are formatted into a secure message. We will review your order and reply with payment instructions. No payment is taken directly on the site.</p><h4 style="color: var(--accent-color);">Shipping Timelines</h4><p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;">We use DTDC for reliable delivery. Please allow 2-4 days for crafting and processing before dispatch. You will receive a tracking link on WhatsApp once shipped.</p><h4 style="color: var(--accent-color);">Returns & Exchanges</h4><p style="font-size: 0.95rem; opacity: 0.9;">Returns are accepted if the item arrives damaged or incorrectly sized. Please send us a photo on WhatsApp within 48 hours of delivery.</p></div></div></div>
     
+    <!-- NEW: ORDER HISTORY MODAL -->
+    <div id="orderHistoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeOrderHistory">×</span>
+            <h2><i class="fas fa-history"></i> Past Orders</h2>
+            <div id="orderHistoryList" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
     <div id="lightbox"><span class="close-lightbox" id="closeLightboxBtn">×</span><img id="lightboxImg"></div>
     
     <div id="productDetailModal" class="modal product-detail-modal"><div class="modal-content"><span class="close-modal" id="closeProductDetail">×</span><div class="product-detail-images"><img id="detailMainImage" class="main-image-detail" src="" alt="Product Image"><div id="detailThumbnails" class="product-detail-thumbnails"></div></div><div class="product-detail-info"><h2 id="detailName"></h2><div id="detailStock" class="stock-badge"></div><div class="price-info"><span id="detailPrice" class="base-price"></span><span id="detailTotalPrice" class="badge"></span></div><div id="detailVariants" class="product-variants"></div><div class="order-row" style="margin-top:1rem;"><input type="number" id="detailQuantity" min="1" value="1" class="quantity-input"><button id="detailAddToCart" class="btn-cart" style="margin-left:1rem;"><i class="fas fa-cart-plus"></i> Add to Cart</button></div><p id="detailDescription" style="margin-top:1rem; color:var(--text-color); opacity: 0.8;"></p></div></div></div>
 
+    <!-- NEW: CUTE ANNOUNCEMENT BOT -->
+    <div id="announcementBot" class="announcement-bot" style="display: none;">
+        <div class="speech-bubble" id="speechBubble">
+            <button id="prevAnn" class="bubble-nav"><i class="fas fa-chevron-left"></i></button>
+            <div class="ann-text-container"><span id="annText"></span></div>
+            <button id="nextAnn" class="bubble-nav"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="bot-character" id="botChar" title="Click to view announcements">
+            <i class="fas fa-robot"></i>
+        </div>
+    </div>
+
     <script>
         (function() {
-            // --- IN-BUILT ADMIN PANEL INVENTORY (Local Storage) ---
+            // --- REAL-TIME STATS TRACKING (Simulated via LocalStorage) ---
+            let siteViews = parseInt(localStorage.getItem('artisan_views') || 12402);
+            siteViews++; // Increment on each load
+            localStorage.setItem('artisan_views', siteViews);
+            
+            let globalOrders = parseInt(localStorage.getItem('artisan_global_orders') || 3402);
+            let globalCustomers = Math.floor(globalOrders * 0.85); // Roughly 85% unique customers
+
+            const viewEl = document.getElementById('publicViewsStat');
+            const orderEl = document.getElementById('publicOrdersStat');
+            const custEl = document.getElementById('publicCustomersStat');
+            
+            if(viewEl) viewEl.textContent = (siteViews / 1000).toFixed(1) + 'K';
+            if(orderEl) orderEl.textContent = globalOrders.toLocaleString();
+            if(custEl) custEl.textContent = globalCustomers.toLocaleString();
+
+            // --- IN-BUILT ADMIN PANEL INVENTORY & DATA (Local Storage) ---
             
             // Default Fallback Products
             const defaultProducts = [
                 { id: 1, name: "Ceramic Speckled Mug", category: "handmade", gender: "all", basePrice: 2200, stock: 5, description: "Hand-thrown stoneware mug with a smooth glaze.", images: ["https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=600&auto=format&fit=crop"], variants: null },
                 { id: 2, name: "Woven Cotton Scarf", category: "handmade", gender: "all", basePrice: 850, stock: 10, description: "Soft, ethically sourced cotton scarf.", images: ["https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=600&auto=format&fit=crop"], variants: null },
                 { id: 4, name: "Silk Embroidered Dress", category: "clothes", gender: "women", basePrice: 4500, stock: 2, description: "Elegant silk dress featuring hand-stitched floral details.", images: ["https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop"], variants: { sizes: ["S", "M", "L"], colors: ["Red", "Blue"] } },
-                { id: 8, name: "Gold Plated Chain", category: "jewelry", gender: "all", basePrice: 1500, stock: 15, description: "Minimalist 18k gold-plated everyday chain.", images: ["https://images.unsplash.com/photo-1599643478514-4a888e7343e0?q=80&w=600&auto=format&fit=crop"], variants: { sizes: ["One Size"] } }
+                { id: 8, name: "Gold Plated Chain", category: "jewelry", gender: "all", basePrice: 1500, stock: 15, description: "Minimalist 18k gold-plated everyday chain.", images: ["https://images.unsplash.com/photo-1599643478514-4a888e7343e0?q=80&w=600&auto=format&fit=crop"], variants: { sizes: ["One Size"] } },
+                { id: 5, name: "Terracotta Vase", category: "handmade", gender: "all", basePrice: 3100, stock: 1, description: "Hand-sculpted terracotta vase for dried flowers.", images: ["https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?q=80&w=600&auto=format&fit=crop"], variants: null },
+                { id: 6, name: "Linen Lounge Pants", category: "clothes", gender: "men", basePrice: 2800, stock: 20, description: "Breathable, lightweight linen trousers.", images: ["https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=600&auto=format&fit=crop"], variants: { sizes: ["M", "L", "XL"] } }
             ];
 
-            // Load products from Local Storage or set to defaults
             let products = [];
             const savedProducts = localStorage.getItem('artisan_products');
             if (savedProducts) {
@@ -747,6 +931,16 @@
                 products = [...defaultProducts];
                 localStorage.setItem('artisan_products', JSON.stringify(products));
             }
+
+            // Custom Coupons
+            let adminCoupons = JSON.parse(localStorage.getItem('artisan_coupons')) || [];
+
+            // Announcements
+            let announcements = JSON.parse(localStorage.getItem('artisan_announcements')) || [];
+            let currentAnnIndex = 0;
+            
+            // Orders History
+            let orderHistory = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
             
             // --- RANDOM QUOTES ENGINE ---
             const handmadeQuotes = [
@@ -787,10 +981,53 @@
                 setTimeout(() => {
                     const splash = document.getElementById('splashScreen');
                     if (splash) splash.classList.add('hidden');
+                    
+                    // Initialize Bot if announcements exist
+                    if (announcements.length > 0) {
+                        document.getElementById('announcementBot').style.display = 'flex';
+                        updateBotBubble();
+                        // Auto hide after 6 seconds
+                        setTimeout(() => {
+                            document.getElementById('speechBubble').classList.remove('active');
+                        }, 6000);
+                    }
                 }, 1500);
                 let currentMode = document.body.classList.contains('theme-fashion') ? 'fashion' : 'handmade';
                 setRandomQuote(currentMode);
                 renderProducts(); // Initial Render
+            });
+
+            // --- ANNOUNCEMENT BOT LOGIC ---
+            const botChar = document.getElementById('botChar');
+            const speechBubble = document.getElementById('speechBubble');
+            const prevAnn = document.getElementById('prevAnn');
+            const nextAnn = document.getElementById('nextAnn');
+            const annText = document.getElementById('annText');
+
+            function updateBotBubble() {
+                if(announcements.length === 0) return;
+                annText.textContent = announcements[currentAnnIndex];
+                prevAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
+                nextAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
+                speechBubble.classList.add('active');
+            }
+
+            botChar.addEventListener('click', () => {
+                if (announcements.length > 0) {
+                    speechBubble.classList.toggle('active');
+                }
+            });
+
+            nextAnn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentAnnIndex = (currentAnnIndex + 1) % announcements.length;
+                updateBotBubble();
+            });
+
+            prevAnn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentAnnIndex = (currentAnnIndex - 1 + announcements.length) % announcements.length;
+                updateBotBubble();
             });
 
             // --- STATE MANAGEMENT ---
@@ -990,15 +1227,25 @@
             const adminPanelBtn = document.getElementById('adminPanelBtn');
             const adminModal = document.getElementById('adminModal');
             const closeAdmin = document.getElementById('closeAdmin');
-            const adminListView = document.getElementById('adminListView');
-            const adminFormView = document.getElementById('adminFormView');
-            const adminTableBody = document.getElementById('adminTableBody');
             const adminForm = document.getElementById('adminForm');
             const addNewProductBtn = document.getElementById('addNewProductBtn');
             const cancelEditBtn = document.getElementById('cancelEditBtn');
             const resetDemoBtn = document.getElementById('resetDemoBtn');
             
+            const adminTabs = document.querySelectorAll('.admin-tab');
+            const adminSections = document.querySelectorAll('.admin-section');
+            
             let editingProductId = null;
+
+            // Admin Tab Switching
+            adminTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    adminTabs.forEach(t => t.classList.remove('active'));
+                    adminSections.forEach(s => s.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.target).classList.add('active');
+                });
+            });
 
             // Open Admin Panel
             adminPanelBtn.addEventListener('click', () => {
@@ -1007,16 +1254,21 @@
                     window.showToast("Unauthorized access", "fa-exclamation-triangle");
                     return;
                 }
-                authModal.style.display = 'none'; // Close auth modal
+                authModal.style.display = 'none';
                 adminModal.style.display = 'flex';
-                adminListView.style.display = 'block';
-                adminFormView.style.display = 'none';
+                
+                document.getElementById('adminProductsView').classList.add('active');
+                document.getElementById('adminFormView').style.display = 'none';
+                
                 renderAdminTable();
+                renderCouponsTable();
+                renderAnnouncementsTable();
             });
 
             closeAdmin.addEventListener('click', () => adminModal.style.display = 'none');
 
-            // Render Table
+            // Render Products Table
+            const adminTableBody = document.getElementById('adminTableBody');
             function renderAdminTable() {
                 adminTableBody.innerHTML = '';
                 products.forEach(p => {
@@ -1036,7 +1288,6 @@
                     adminTableBody.appendChild(tr);
                 });
 
-                // Attach Event Listeners to Buttons
                 document.querySelectorAll('.admin-actions-btn.edit').forEach(btn => {
                     btn.addEventListener('click', () => editProduct(parseInt(btn.dataset.id)));
                 });
@@ -1045,22 +1296,6 @@
                 });
             }
 
-            // Show Form to Add New
-            addNewProductBtn.addEventListener('click', () => {
-                editingProductId = null;
-                document.getElementById('adminFormTitle').textContent = "Add New Product";
-                adminForm.reset();
-                adminListView.style.display = 'none';
-                adminFormView.style.display = 'flex';
-            });
-
-            // Cancel Edit
-            cancelEditBtn.addEventListener('click', () => {
-                adminFormView.style.display = 'none';
-                adminListView.style.display = 'block';
-            });
-
-            // Edit Product
             function editProduct(id) {
                 const p = products.find(prod => prod.id === id);
                 if(!p) return;
@@ -1074,15 +1309,31 @@
                 document.getElementById('adminPrice').value = p.basePrice;
                 document.getElementById('adminStock').value = p.stock;
                 document.getElementById('adminDesc').value = p.description || '';
-                
-                // Re-join array for text area display
                 document.getElementById('adminImages').value = p.images ? p.images.join('\n') : '';
 
-                adminListView.style.display = 'none';
-                adminFormView.style.display = 'flex';
+                document.getElementById('adminProductsView').querySelector('.admin-table-wrapper').style.display = 'none';
+                document.getElementById('addNewProductBtn').style.display = 'none';
+                document.getElementById('resetDemoBtn').style.display = 'none';
+                document.getElementById('adminFormView').style.display = 'flex';
             }
 
-            // Save Product
+            cancelEditBtn.addEventListener('click', () => {
+                document.getElementById('adminFormView').style.display = 'none';
+                document.getElementById('adminProductsView').querySelector('.admin-table-wrapper').style.display = 'block';
+                document.getElementById('addNewProductBtn').style.display = 'inline-block';
+                document.getElementById('resetDemoBtn').style.display = 'inline-block';
+            });
+
+            addNewProductBtn.addEventListener('click', () => {
+                editingProductId = null;
+                document.getElementById('adminFormTitle').textContent = "Add New Product";
+                adminForm.reset();
+                document.getElementById('adminProductsView').querySelector('.admin-table-wrapper').style.display = 'none';
+                document.getElementById('addNewProductBtn').style.display = 'none';
+                document.getElementById('resetDemoBtn').style.display = 'none';
+                document.getElementById('adminFormView').style.display = 'flex';
+            });
+
             adminForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 
@@ -1093,42 +1344,31 @@
                 const stock = parseInt(document.getElementById('adminStock').value) || 0;
                 const description = document.getElementById('adminDesc').value.trim();
                 
-                // Process multiple images from textarea
                 const rawImages = document.getElementById('adminImages').value;
                 let imgArray = [];
                 if(rawImages) {
-                    // Split by new line or comma
                     imgArray = rawImages.split(/[\n,]+/).map(u => getDirectImageUrl(u.trim())).filter(u => u !== '');
                 }
                 if(imgArray.length === 0) imgArray = ['https://via.placeholder.com/400x500?text=No+Image'];
 
-                // Standard Variants
                 let variants = null;
                 if (category === 'clothes') variants = { sizes: ["S", "M", "L"], colors: ["Standard"] };
                 else if (category === 'jewelry') variants = { sizes: ["One Size"] };
 
                 if (editingProductId) {
-                    // Update Existing
                     const idx = products.findIndex(p => p.id === editingProductId);
-                    if(idx !== -1) {
-                        products[idx] = { id: editingProductId, name, category, gender, basePrice, stock, description, images: imgArray, variants };
-                    }
+                    if(idx !== -1) products[idx] = { id: editingProductId, name, category, gender, basePrice, stock, description, images: imgArray, variants };
                 } else {
-                    // Create New
-                    const newId = Date.now(); // Simple unique ID
-                    products.push({ id: newId, name, category, gender, basePrice, stock, description, images: imgArray, variants });
+                    products.push({ id: Date.now(), name, category, gender, basePrice, stock, description, images: imgArray, variants });
                 }
 
-                // Save and Refresh
                 localStorage.setItem('artisan_products', JSON.stringify(products));
                 window.showToast("Product saved!", "fa-check");
                 renderAdminTable();
                 renderProducts();
-                adminFormView.style.display = 'none';
-                adminListView.style.display = 'block';
+                cancelEditBtn.click();
             });
 
-            // Delete Product
             function deleteProduct(id) {
                 if(confirm("Are you sure you want to delete this product?")) {
                     products = products.filter(p => p.id !== id);
@@ -1139,7 +1379,6 @@
                 }
             }
 
-            // Reset Demo Data
             resetDemoBtn.addEventListener('click', () => {
                 if(confirm("Warning: This will delete your custom products and restore the demo data. Continue?")) {
                     products = [...defaultProducts];
@@ -1150,10 +1389,103 @@
                 }
             });
 
+            // --- ADMIN COUPONS LOGIC ---
+            const couponForm = document.getElementById('couponForm');
+            const couponsTableBody = document.getElementById('couponsTableBody');
+
+            function renderCouponsTable() {
+                couponsTableBody.innerHTML = '';
+                adminCoupons.forEach((c, idx) => {
+                    const tr = document.createElement('tr');
+                    const typeLabel = c.type === 'percent' ? c.value + '%' : '₹' + c.value;
+                    tr.innerHTML = `
+                        <td><strong>${c.code}</strong></td>
+                        <td style="text-transform:capitalize;">${c.type}</td>
+                        <td>${typeLabel}</td>
+                        <td>Min: ₹${c.minAmount} | Qty: ${c.minProducts}</td>
+                        <td><button class="admin-actions-btn delete" onclick="deleteCoupon(${idx})"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    couponsTableBody.appendChild(tr);
+                });
+            }
+
+            window.deleteCoupon = function(idx) {
+                if(confirm("Delete this coupon?")) {
+                    adminCoupons.splice(idx, 1);
+                    localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
+                    renderCouponsTable();
+                    window.showToast("Coupon deleted");
+                }
+            };
+
+            couponForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const code = document.getElementById('couponCodeInput').value.trim().toUpperCase();
+                const type = document.getElementById('couponType').value;
+                const value = parseInt(document.getElementById('couponValue').value);
+                const minAmount = parseInt(document.getElementById('couponMinAmount').value) || 0;
+                const minProducts = parseInt(document.getElementById('couponMinProducts').value) || 0;
+
+                const exists = adminCoupons.find(c => c.code === code);
+                if (exists) {
+                    window.showToast("Code already exists!", "fa-exclamation-triangle");
+                    return;
+                }
+
+                adminCoupons.push({ code, type, value, minAmount, minProducts });
+                localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
+                window.showToast("Coupon added!", "fa-tag");
+                renderCouponsTable();
+                couponForm.reset();
+            });
+
+            // --- ADMIN ANNOUNCEMENTS LOGIC ---
+            const announcementForm = document.getElementById('announcementForm');
+            const announcementsTableBody = document.getElementById('announcementsTableBody');
+
+            function renderAnnouncementsTable() {
+                announcementsTableBody.innerHTML = '';
+                announcements.forEach((text, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${text}</td>
+                        <td style="width: 60px;"><button class="admin-actions-btn delete" onclick="deleteAnnouncement(${idx})"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    announcementsTableBody.appendChild(tr);
+                });
+            }
+
+            window.deleteAnnouncement = function(idx) {
+                if(confirm("Delete this announcement?")) {
+                    announcements.splice(idx, 1);
+                    localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
+                    renderAnnouncementsTable();
+                    if(announcements.length === 0) {
+                        document.getElementById('announcementBot').style.display = 'none';
+                    } else {
+                        currentAnnIndex = 0;
+                        updateBotBubble();
+                    }
+                }
+            };
+
+            announcementForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = document.getElementById('announcementText').value.trim();
+                announcements.push(text);
+                localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
+                window.showToast("Announcement posted!", "fa-bullhorn");
+                renderAnnouncementsTable();
+                announcementForm.reset();
+                
+                document.getElementById('announcementBot').style.display = 'flex';
+                currentAnnIndex = announcements.length - 1;
+                updateBotBubble();
+            });
+
             let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '' };
             let currentDiscount = 0;
             const cityDistances = { tirupati:0, tirupathi:0, chandragiri:15, renigunta:10, srikalahasti:36, puttur:40, chittoor:65, nellore:130, kadapa:140, chennai:160, bangalore:250, hyderabad:520, vijayawada:360, vizag:620, mumbai:1000, delhi:1800, kolkata:1500 };
-            const coupons = { 'DTDC10': { type: 'percent', value: 10 }, 'WELCOME': { type: 'fixed', value: 100 }, 'FREESHIP': { type: 'fixed', value: 0 } };
 
             // --- MODE TOGGLE & BRAND TEXT SWITCHING ---
             const btnHandmade = document.getElementById('btnHandmade');
@@ -1407,9 +1739,11 @@
             }
 
             function renderProducts() {
+                const sections = document.getElementById('productSections');
+                if(!sections) return;
+
                 if(products.length === 0) {
-                    const sections = document.getElementById('productSections');
-                    if(sections) sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>Your store is currently empty.</h2><p>Please login to the Admin Dashboard to add products.</p></div>';
+                    sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>Your store is currently empty.</h2><p>Please login to the Admin Dashboard to add products.</p></div>';
                     return;
                 }
 
@@ -1425,35 +1759,67 @@
                     if(fashionCat === 'clothes' && fashionGen !== 'all' && p.gender !== fashionGen) return false;
                     return true;
                 });
+
+                const isSearchingOrSorting = (s !== '' || sort !== 'default');
                 
                 if(s) filtered = filtered.filter(p => p.name.toLowerCase().includes(s));
                 if(sort==='priceAsc') filtered.sort((a,b)=>a.basePrice-b.basePrice);
                 else if(sort==='priceDesc') filtered.sort((a,b)=>b.basePrice-a.basePrice);
                 
                 let html = '';
-                if (currentMode === 'handmade') {
-                    if(filtered.length) html += '<div class="product-grid">'+filtered.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
-                } else {
-                    const clothes = filtered.filter(p=>p.category==='clothes');
-                    const jewelry = filtered.filter(p=>p.category==='jewelry');
+
+                // NEW: Dynamic Multi-Tier Layout for Standard Browsing
+                if (!isSearchingOrSorting && filtered.length >= 4) {
                     
-                    if(fashionCat === 'all' || fashionCat === 'clothes') {
-                        if(clothes.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">👗 apparel</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
+                    // Create logic-based segments
+                    let sortedById = [...filtered].sort((a,b) => b.id - a.id);
+                    let newArrivals = sortedById.slice(0, 4); 
+                    
+                    let sortedByStock = [...filtered].sort((a,b) => a.stock - b.stock);
+                    let mostOrdered = sortedByStock.slice(0, 4); 
+                    
+                    // Pseudo-random selection for Trending
+                    let trending = [...filtered].sort((a,b) => (b.id * 7 % 10) - (a.id * 7 % 10)).slice(0, 4);
+
+                    if(newArrivals.length) {
+                        html += `<h2 style="margin-top:1rem; margin-bottom: 1.5rem; text-align:center;"><span class="badge">✨ New Arrivals</span></h2>`;
+                        html += `<div class="product-grid" style="margin-bottom: 3rem;">${newArrivals.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
                     }
-                    if(fashionCat === 'all' || fashionCat === 'jewelry') {
-                        if(jewelry.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">💎 fine jewelry</span></h2><div class="product-grid">'+jewelry.map((p,i)=>renderProductCard(p,i+clothes.length)).join('')+'</div>';
+                    if(trending.length) {
+                        html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">🔥 Trending Now</span></h2>`;
+                        html += `<div class="product-grid" style="margin-bottom: 3rem;">${trending.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
+                    }
+                    if(mostOrdered.length) {
+                        html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">📦 Most Ordered</span></h2>`;
+                        html += `<div class="product-grid" style="margin-bottom: 3rem;">${mostOrdered.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
+                    }
+
+                    html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">🛍️ View All Catalog</span></h2>`;
+                    html += `<div class="product-grid">${filtered.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
+                
+                } else {
+                    // Standard Grid for Searching / Filtering / Small Inventories
+                    if (currentMode === 'handmade') {
+                        if(filtered.length) html += '<div class="product-grid">'+filtered.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
+                    } else {
+                        const clothes = filtered.filter(p=>p.category==='clothes');
+                        const jewelry = filtered.filter(p=>p.category==='jewelry');
+                        
+                        if(fashionCat === 'all' || fashionCat === 'clothes') {
+                            if(clothes.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">👗 apparel</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
+                        }
+                        if(fashionCat === 'all' || fashionCat === 'jewelry') {
+                            if(jewelry.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">💎 fine jewelry</span></h2><div class="product-grid">'+jewelry.map((p,i)=>renderProductCard(p,i+clothes.length)).join('')+'</div>';
+                        }
                     }
                 }
                 
-                const sections = document.getElementById('productSections');
-                if(sections) {
-                    if (!html) {
-                        sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>No products found</h2><p>Try adjusting your search or filters.</p></div>';
-                    } else {
-                        sections.innerHTML = html;
-                        attachProductEvents();
-                        setTimeout(() => { document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible')); }, 50);
-                    }
+                if (!html) {
+                    sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>No products found</h2><p>Try adjusting your search or filters.</p></div>';
+                } else {
+                    sections.innerHTML = html;
+                    attachProductEvents();
+                    setTimeout(() => { document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible')); }, 50);
                 }
             }
 
@@ -1527,6 +1893,40 @@
             document.getElementById('lightbox').addEventListener('click', (e) => { if(e.target === document.getElementById('lightbox')) document.getElementById('lightbox').classList.remove('show'); });
 
             document.getElementById('cartBtn').addEventListener('click',()=>{ renderCartModal(); document.getElementById('cartModal').style.display='flex'; });
+            
+            // ORDER HISTORY LOGIC
+            const orderHistoryModal = document.getElementById('orderHistoryModal');
+            document.getElementById('viewOrderHistoryBtn').addEventListener('click', () => {
+                document.getElementById('cartModal').style.display = 'none';
+                orderHistoryModal.style.display = 'flex';
+                renderOrderHistory();
+            });
+            document.getElementById('closeOrderHistory').addEventListener('click', () => orderHistoryModal.style.display = 'none');
+
+            function renderOrderHistory() {
+                const list = document.getElementById('orderHistoryList');
+                if (orderHistory.length === 0) {
+                    list.innerHTML = '<p style="text-align: center; opacity: 0.7;">No past orders found.</p>';
+                    return;
+                }
+                let html = '';
+                orderHistory.slice().reverse().forEach(order => {
+                    html += `
+                        <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 15px;">
+                            <div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <strong style="color: var(--accent-color);">${order.date}</strong>
+                                <span class="badge">₹${order.total}</span>
+                            </div>
+                            <div style="font-size: 0.85rem; opacity: 0.8;">
+                                <p><strong>Items:</strong> ${order.items}</p>
+                                <p><strong>Delivery:</strong> ${order.address} (${order.pincode})</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            }
+
             document.getElementById('wishlistBtn').addEventListener('click',()=>{ renderWishlistModal(); document.getElementById('wishlistModal').style.display='flex'; });
             document.getElementById('openFaqBtn').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('faqModal').style.display='flex'; });
             document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ this.closest('.modal').style.display='none'; }));
@@ -1562,9 +1962,30 @@
             });
 
             document.getElementById('applyCouponBtn').addEventListener('click',()=>{
-                let code = document.getElementById('couponCode').value.trim().toUpperCase(); let coupon = coupons[code];
+                let code = document.getElementById('couponCode').value.trim().toUpperCase(); 
+                
+                // Merge static coupons and dynamic admin coupons
+                const allCoupons = [
+                    { code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 },
+                    { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 },
+                    ...adminCoupons 
+                ];
+
+                let coupon = allCoupons.find(c => c.code === code);
                 if(!coupon){ document.getElementById('couponMessage').innerText='Invalid code'; return; }
+                
                 let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
+                let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
+
+                if (subtotal < coupon.minAmount) {
+                    document.getElementById('couponMessage').innerText = `Minimum order amount of ₹${coupon.minAmount} required.`;
+                    return;
+                }
+                if (itemCount < coupon.minProducts) {
+                    document.getElementById('couponMessage').innerText = `Minimum ${coupon.minProducts} items required.`;
+                    return;
+                }
+
                 currentDiscount = coupon.type==='percent' ? Math.round(subtotal*coupon.value/100) : coupon.value;
                 if(currentDiscount>subtotal) currentDiscount=subtotal;
                 document.getElementById('couponMessage').innerHTML = `Discount applied: -${formatPrice(currentDiscount)}`;
@@ -1572,13 +1993,52 @@
             });
 
             document.getElementById('sendOrder').addEventListener('click',()=>{
-                let name=document.getElementById('deliveryName').value.trim(), addr=document.getElementById('deliveryAddress').value.trim(), phone=document.getElementById('deliveryPhone').value.trim(), city=document.getElementById('deliveryCity').value.trim();
-                if(!name||!addr||!phone||!city) return window.showToast('Please fill all required fields.', 'fa-exclamation-circle');
-                let subtotal=0, msg=`Hello! I'd like to place an order:\n\n`;
-                cart.forEach(i=>{ let p=products.find(p=>p.id===i.id); if(p){ let t=p.basePrice*i.quantity; subtotal+=t; msg+=`- *${p.name}* x${i.quantity} ${i.size||i.color?`(${i.size||''}${i.size&&i.color?', ':''}${i.color||''})`:''} — ${formatPrice(t)}\n`; } });
-                msg += `\n👤 Name: ${name}\n📮 Address: ${addr}, ${city}\n📞 Phone: ${phone}\n\n*Grand Total: ${formatPrice(subtotal - currentDiscount)}* (excluding dynamic shipping)\n\nThank you! 💛`;
+                let name=document.getElementById('deliveryName').value.trim();
+                let addr=document.getElementById('deliveryAddress').value.trim();
+                let landmark=document.getElementById('deliveryLandmark').value.trim();
+                let pincode=document.getElementById('deliveryPincode').value.trim();
+                let phone=document.getElementById('deliveryPhone').value.trim();
+                let city=document.getElementById('deliveryCity').value.trim();
+
+                if(!name||!addr||!pincode||!phone||!city) return window.showToast('Please fill all required fields.', 'fa-exclamation-circle');
+                
+                let subtotal=0;
+                let itemsSummary = '';
+                let msg=`Hello! I'd like to place an order:\n\n`;
+                
+                cart.forEach(i=>{ 
+                    let p=products.find(p=>p.id===i.id); 
+                    if(p){ 
+                        let t=p.basePrice*i.quantity; 
+                        subtotal+=t; 
+                        let itemStr = `${p.name} x${i.quantity} ${i.size||i.color?`(${i.size||''}${i.size&&i.color?', ':''}${i.color||''})`:''}`;
+                        msg+=`- *${itemStr}* — ${formatPrice(t)}\n`; 
+                        itemsSummary += itemStr + ", ";
+                    } 
+                });
+
+                let grandTotal = subtotal - currentDiscount;
+                msg += `\n👤 Name: ${name}\n📮 Address: ${addr}, ${landmark ? landmark+', ' : ''}${city} - ${pincode}\n📞 Phone: ${phone}\n\n*Grand Total: ${formatPrice(grandTotal)}* (excluding dynamic shipping)\n\nThank you! 💛`;
+                
+                // Track Order in Local History & Update Stats
+                const today = new Date().toLocaleDateString();
+                orderHistory.push({
+                    date: today,
+                    items: itemsSummary.slice(0, -2), // remove last comma
+                    total: grandTotal,
+                    address: `${city}`,
+                    pincode: pincode
+                });
+                localStorage.setItem('artisan_order_history', JSON.stringify(orderHistory));
+                
+                // Update Global Stats Simulation
+                globalOrders++;
+                localStorage.setItem('artisan_global_orders', globalOrders);
+                if(document.getElementById('publicOrdersStat')) document.getElementById('publicOrdersStat').textContent = globalOrders.toLocaleString();
+
                 openWhatsApp(msg);
-                document.getElementById('deliveryModal').style.display='none'; cart=[]; saveCart(); renderCartModal();
+                document.getElementById('deliveryModal').style.display='none'; 
+                cart=[]; saveCart(); renderCartModal();
             });
 
             function renderCartModal(){ 
