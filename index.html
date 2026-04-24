@@ -450,8 +450,14 @@
             .custom-sort { width: 100%; }
             .sort-options { top: calc(100% + 10px); }
             
-            .floating-wa-btn { bottom: 20px; right: 20px; left: auto; width: 50px; height: 50px; font-size: 1.5rem; }
-            .announcement-bot { bottom: 85px; right: 20px; left: auto; }
+            /* Fixed Mobile Newsletter Alignment */
+            .newsletter-section { padding: 2rem 1.5rem; border-radius: 30px; } 
+            .newsletter-form { flex-direction: column; width: 100%; align-items: stretch; gap: 1rem; } 
+            .newsletter-form input, .newsletter-form button { width: 100%; margin: 0; box-sizing: border-box; }
+            
+            /* Fixed Floating Buttons Alignment */
+            .floating-wa-btn { bottom: 25px; right: 20px; left: auto; width: 55px; height: 55px; font-size: 1.8rem; z-index: 999; }
+            .announcement-bot { bottom: 95px; right: 20px; left: auto; z-index: 998; }
             .bot-character { width: 55px; height: 75px; }
             .speech-bubble { max-width: calc(100vw - 120px); }
         }
@@ -462,11 +468,11 @@
     
     <!-- SPLASH SCREEN -->
     <div id="splashScreen" class="splash-screen">
-        <div class="logo-3d-scene" style="width: 80px; height: 80px;">
-            <div class="cube-face face-front" style="width: 80px; height: 80px;"><i class="fas fa-feather-alt" style="font-size: 2.5rem;"></i></div>
-            <div class="cube-face face-right" style="width: 80px; height: 80px;"><i class="fas fa-gem" style="font-size: 2.5rem;"></i></div>
-            <div class="cube-face face-back" style="width: 80px; height: 80px;"><i class="fas fa-feather-alt" style="font-size: 2.5rem;"></i></div>
-            <div class="cube-face face-left" style="width: 80px; height: 80px;"><i class="fas fa-gem" style="font-size: 2.5rem;"></i></div>
+        <div class="logo-3d-scene" style="transform: scale(2); margin-bottom: 1rem;">
+            <div class="cube-face face-front"><i class="fas fa-feather-alt" style="font-size: 1.2rem;"></i></div>
+            <div class="cube-face face-right"><i class="fas fa-gem" style="font-size: 1.2rem;"></i></div>
+            <div class="cube-face face-back"><i class="fas fa-feather-alt" style="font-size: 1.2rem;"></i></div>
+            <div class="cube-face face-left"><i class="fas fa-gem" style="font-size: 1.2rem;"></i></div>
         </div>
         <div class="splash-text">Artisan</div>
     </div>
