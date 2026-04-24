@@ -403,11 +403,16 @@
         @keyframes slideInToast { from { transform: translateX(-120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOutToast { to { opacity: 0; transform: translateY(10px); } }
 
-        /* --- ANNOUNCEMENT BOT --- */
-        .announcement-bot { position: fixed; bottom: 30px; left: 30px; z-index: 990; display: flex; align-items: flex-end; gap: 10px; animation: bounceIn 0.5s var(--bezier-butter); }
-        .bot-character { width: 60px; height: 60px; background: linear-gradient(135deg, var(--accent-color), #a27160); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.3s; animation: floatBot 3s ease-in-out infinite; border: 3px solid var(--glass-bg); }
+        /* --- ANNOUNCEMENT BOT & WA BUTTON --- */
+        .floating-wa-btn { position: fixed; bottom: 30px; right: 30px; left: auto; width: 60px; height: 60px; border-radius: 50%; background: #25D366; color: white; font-size: 2rem; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); z-index: 990; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: floatPulse 2s infinite; }
+        .floating-wa-btn:hover { transform: scale(1.15); }
+        @keyframes floatPulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
+
+        .announcement-bot { position: fixed; bottom: 110px; right: 30px; left: auto; z-index: 990; display: flex; align-items: flex-end; flex-direction: row-reverse; gap: 15px; animation: bounceIn 0.5s var(--bezier-butter); }
+        .bot-character { width: 70px; height: 90px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s; animation: floatBot 3s ease-in-out infinite; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
         .bot-character:hover { transform: scale(1.1); }
-        .speech-bubble { background: var(--modal-bg); border: 2px solid var(--accent-color); border-radius: 20px 20px 20px 0; padding: 15px 20px; max-width: 250px; box-shadow: 0 10px 25px var(--shadow-color); position: relative; display: flex; align-items: center; gap: 10px; opacity: 0; transform: scale(0); transform-origin: bottom left; transition: all 0.4s var(--bezier-butter); pointer-events: none; }
+        
+        .speech-bubble { background: var(--modal-bg); border: 2px solid var(--accent-color); border-radius: 20px 20px 0 20px; padding: 15px 20px; max-width: 250px; box-shadow: 0 10px 25px var(--shadow-color); position: relative; display: flex; align-items: center; gap: 10px; opacity: 0; transform: scale(0); transform-origin: bottom right; transition: all 0.4s var(--bezier-butter); pointer-events: none; }
         .speech-bubble.active { opacity: 1; transform: scale(1); pointer-events: auto; }
         .bubble-nav { background: var(--glass-bg); border: none; color: var(--accent-color); cursor: pointer; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0;}
         .bubble-nav:hover { background: var(--accent-color); color: white; }
@@ -415,10 +420,6 @@
         
         @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes bounceIn { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
-        .floating-wa-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #25D366; color: white; font-size: 2rem; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); z-index: 990; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: floatPulse 2s infinite; }
-        .floating-wa-btn:hover { transform: scale(1.15); }
-        @keyframes floatPulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
 
         .newsletter-section { background: linear-gradient(145deg, var(--badge-bg), var(--card-bg)); border-radius: 50px; padding: 3rem; margin: 3rem 0; text-align: center; border: 1px solid var(--card-border); transition: all 0.6s ease;}
         .newsletter-form { display: flex; gap: 1rem; max-width: 500px; margin: 2rem auto 0; }
@@ -448,8 +449,11 @@
             .search-box { width: 100%; max-width: none; }
             .custom-sort { width: 100%; }
             .sort-options { top: calc(100% + 10px); }
-            .announcement-bot { bottom: 20px; left: 20px; }
-            .floating-wa-btn { bottom: 20px; right: 20px; width: 50px; height: 50px; font-size: 1.5rem; }
+            
+            .floating-wa-btn { bottom: 20px; right: 20px; left: auto; width: 50px; height: 50px; font-size: 1.5rem; }
+            .announcement-bot { bottom: 85px; right: 20px; left: auto; }
+            .bot-character { width: 55px; height: 75px; }
+            .speech-bubble { max-width: calc(100vw - 120px); }
         }
         .page-transition-out { opacity: 0 !important; transition: opacity 0.2s ease; }
     </style>
@@ -482,7 +486,7 @@
                     <div class="logo-3d-scene">
                         <div class="cube-face face-front"><i class="fas fa-feather-alt icon-handmade" style="font-size: 1.2rem;"></i><svg class="icon-fashion" width="24" height="24" viewBox="0 0 100 100"><polygon points="50,90 10,40 30,15 70,15 90,40" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><polyline points="30,15 50,40 70,15" fill="none" stroke="currentColor" stroke-width="8"/><line x1="10" y1="40" x2="90" y2="40" stroke="currentColor" stroke-width="8"/></svg></div>
                         <div class="cube-face face-right"><svg class="icon-handmade" width="20" height="20" viewBox="0 0 100 100" fill="none"><path d="M30 25C30 25 45 45 30 70C20 85 35 90 50 90C65 90 80 85 70 70C55 45 70 25 70 25H30Z" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 10H60" stroke="currentColor" stroke-width="8" stroke-linecap="round"/></svg><svg class="icon-fashion" width="22" height="22" viewBox="0 0 100 100"><path d="M35 20 Q50 10 65 20 L75 40 L60 40 L65 90 L35 90 L40 40 L25 40 Z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></svg></div>
-                        <div class="cube-face face-back"><svg class="icon-handmade" width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M20 75C55 85 40 20 75 25C95 28 80 70 50 65C20 60 15 35 35 15" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><circle cx="35" cy="15" r="4" fill="currentColor"/></svg><svg class="icon-fashion" width="22" height="22" viewBox="0 0 100 100"><path d="M25 30 L50 15 L75 30 L75 85 L25 85 Z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><polyline points="25,30 10,50 20,60 30,45" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><polyline points="75,30 90,50 80,60 70,45" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></svg></div>
+                        <div class="cube-face face-back"><svg class="icon-handmade" width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M20 75C55 85 40 20 75 25C95 28 80 70 50 65C20 60 15 35 35 15" stroke currentColor stroke-width="8" stroke-linecap="round"/><circle cx="35" cy="15" r="4" fill="currentColor"/></svg><svg class="icon-fashion" width="22" height="22" viewBox="0 0 100 100"><path d="M25 30 L50 15 L75 30 L75 85 L25 85 Z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><polyline points="25,30 10,50 20,60 30,45" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/><polyline points="75,30 90,50 80,60 70,45" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></svg></div>
                         <div class="cube-face face-left"><svg width="20" height="20" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="8"/><path d="M70 30V70C70 82 58 88 50 88C40 88 32 80 32 80" stroke="currentColor" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="60" r="16" stroke="currentColor" stroke-width="8"/></svg></div>
                     </div>
                 </a>
@@ -838,7 +842,7 @@
         </div>
     </div>
 
-    <!-- Cart & Delivery Modals -->
+    <!-- Cart Modal with Order History Button -->
     <div id="cartModal" class="modal">
         <div class="modal-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -854,19 +858,50 @@
         </div>
     </div>
     
-    <div id="deliveryModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeDelivery">×</span><h2>Delivery Details <span class="badge" style="font-size:0.7rem; margin-left:0.5rem; background:var(--accent-color); color:white;">DTDC</span></h2><div class="delivery-form"><input type="text" id="deliveryName" placeholder="Full Name" required><input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (House/Street)" required>
-        <!-- NEW FIELDS: Landmark and Pincode -->
-        <div class="city-row">
-            <input type="text" id="deliveryLandmark" placeholder="📍 Landmark (Optional)">
-            <input type="text" id="deliveryPincode" placeholder="*️⃣ Pincode" required>
+    <!-- Delivery Modal with Landmark, Pincode, and Suggested Coupons -->
+    <div id="deliveryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeDelivery">×</span>
+            <h2>Delivery Details <span class="badge" style="font-size:0.7rem; margin-left:0.5rem; background:var(--accent-color); color:white;">DTDC</span></h2>
+            <div class="delivery-form">
+                <input type="text" id="deliveryName" placeholder="Full Name" required>
+                <input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (House/Street)" required>
+                <!-- NEW FIELDS: Landmark and Pincode -->
+                <div class="city-row">
+                    <input type="text" id="deliveryLandmark" placeholder="📍 Landmark (Optional)">
+                    <input type="text" id="deliveryPincode" placeholder="*️⃣ Pincode" required>
+                </div>
+                <input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required>
+                <textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea>
+                <div class="city-row">
+                    <input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati)" required>
+                    <button class="btn" id="estimateDelivery">Calculate Rate</button>
+                </div>
+                <div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;">
+                    <i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br>
+                    <strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br>
+                    <small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small>
+                </div>
+                <div class="coupon-row">
+                    <input type="text" id="couponCode" placeholder="Coupon code (e.g. SUMMER20)">
+                    <button class="btn" id="applyCouponBtn">Apply</button>
+                </div>
+                
+                <!-- NEW: Suggested Coupons Area -->
+                <div id="suggestedCouponsArea" style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+                
+                <div id="couponMessage" style="font-size:0.9rem; color:var(--accent-color);"></div>
+                <div class="order-summary" id="deliveryOrderSummary"></div>
+                <button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button>
+            </div>
         </div>
-        <input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required><textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea><div class="city-row"><input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati)" required><button class="btn" id="estimateDelivery">Calculate Rate</button></div><div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;"><i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br><strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br><small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small></div><div class="coupon-row"><input type="text" id="couponCode" placeholder="Coupon code (e.g. SUMMER20)"><button class="btn" id="applyCouponBtn">Apply</button></div><div id="couponMessage" style="font-size:0.9rem; color:var(--accent-color);"></div><div class="order-summary" id="deliveryOrderSummary"></div><button id="sendOrder" style="width:100%; background:#25D366; color:white; border:none; padding:1rem; border-radius:40px; font-weight:600; font-size:1.1rem; cursor:pointer;"><i class="fab fa-whatsapp"></i> Send Order via WhatsApp</button></div></div></div>
+    </div>
     
     <div id="wishlistModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeWishlist">×</span><h2>Your Wishlist ❤️</h2><div id="wishlistItems"></div></div></div>
     
     <div id="faqModal" class="modal"><div class="modal-content"><span class="close-modal" id="closeFaq">×</span><h2>FAQ & Policies 📜</h2><div style="margin-top: 1.5rem;"><h4 style="color: var(--accent-color);">How does WhatsApp Checkout work?</h4><p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;">When you click "Send Order via WhatsApp", your cart details and delivery address are formatted into a secure message. We will review your order and reply with payment instructions. No payment is taken directly on the site.</p><h4 style="color: var(--accent-color);">Shipping Timelines</h4><p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;">We use DTDC for reliable delivery. Please allow 2-4 days for crafting and processing before dispatch. You will receive a tracking link on WhatsApp once shipped.</p><h4 style="color: var(--accent-color);">Returns & Exchanges</h4><p style="font-size: 0.95rem; opacity: 0.9;">Returns are accepted if the item arrives damaged or incorrectly sized. Please send us a photo on WhatsApp within 48 hours of delivery.</p></div></div></div>
     
-    <!-- NEW: ORDER HISTORY MODAL -->
+    <!-- ORDER HISTORY MODAL -->
     <div id="orderHistoryModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="closeOrderHistory">×</span>
@@ -881,15 +916,68 @@
     
     <div id="productDetailModal" class="modal product-detail-modal"><div class="modal-content"><span class="close-modal" id="closeProductDetail">×</span><div class="product-detail-images"><img id="detailMainImage" class="main-image-detail" src="" alt="Product Image"><div id="detailThumbnails" class="product-detail-thumbnails"></div></div><div class="product-detail-info"><h2 id="detailName"></h2><div id="detailStock" class="stock-badge"></div><div class="price-info"><span id="detailPrice" class="base-price"></span><span id="detailTotalPrice" class="badge"></span></div><div id="detailVariants" class="product-variants"></div><div class="order-row" style="margin-top:1rem;"><input type="number" id="detailQuantity" min="1" value="1" class="quantity-input"><button id="detailAddToCart" class="btn-cart" style="margin-left:1rem;"><i class="fas fa-cart-plus"></i> Add to Cart</button></div><p id="detailDescription" style="margin-top:1rem; color:var(--text-color); opacity: 0.8;"></p></div></div></div>
 
-    <!-- NEW: CUTE ANNOUNCEMENT BOT -->
+    <!-- CUTE 3D ANNOUNCEMENT BOT -->
     <div id="announcementBot" class="announcement-bot" style="display: none;">
+        <div class="bot-character" id="botChar" title="Click to view announcements">
+            <svg viewBox="0 0 100 120" width="100%" height="100%">
+                <defs>
+                    <linearGradient id="roboGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ffffff"/>
+                        <stop offset="100%" stop-color="#b0c4de"/>
+                    </linearGradient>
+                    <linearGradient id="darkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="var(--accent-color)"/>
+                        <stop offset="100%" stop-color="#2c3e50"/>
+                    </linearGradient>
+                    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#00ffff" stop-opacity="1"/>
+                        <stop offset="100%" stop-color="#00ffff" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <!-- Antenna -->
+                <rect x="48" y="5" width="4" height="15" fill="url(#darkGrad)"/>
+                <circle cx="50" cy="5" r="5" fill="url(#glow)"/>
+                <circle cx="50" cy="5" r="3" fill="#ffffff"/>
+                
+                <!-- Arms -->
+                <!-- Left Arm -->
+                <rect x="15" y="45" width="10" height="30" rx="5" fill="url(#darkGrad)" transform="rotate(15 20 45)"/>
+                <circle cx="15" cy="70" r="6" fill="url(#roboGrad)"/>
+                <!-- Right Arm -->
+                <rect x="75" y="45" width="10" height="30" rx="5" fill="url(#darkGrad)" transform="rotate(-15 80 45)"/>
+                <circle cx="85" cy="70" r="6" fill="url(#roboGrad)"/>
+
+                <!-- Legs -->
+                <rect x="35" y="85" width="8" height="25" rx="4" fill="url(#darkGrad)"/>
+                <rect x="57" y="85" width="8" height="25" rx="4" fill="url(#darkGrad)"/>
+                <!-- Feet -->
+                <path d="M 30 110 Q 39 105 45 110 L 45 115 L 30 115 Z" fill="url(#roboGrad)"/>
+                <path d="M 55 110 Q 61 105 70 110 L 70 115 L 55 115 Z" fill="url(#roboGrad)"/>
+
+                <!-- Head -->
+                <rect x="25" y="20" width="50" height="40" rx="12" fill="url(#roboGrad)"/>
+                <!-- Face/Screen -->
+                <rect x="30" y="25" width="40" height="25" rx="6" fill="#1e2a2f"/>
+                <!-- Eyes -->
+                <circle cx="40" cy="35" r="4" fill="#00ffff"/>
+                <circle cx="60" cy="35" r="4" fill="#00ffff"/>
+                <!-- Mouth -->
+                <path d="M 45 45 Q 50 48 55 45" stroke="#00ffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+                
+                <!-- Body -->
+                <rect x="28" y="55" width="44" height="35" rx="10" fill="url(#roboGrad)"/>
+                <!-- Chest Plate -->
+                <rect x="35" y="62" width="30" height="15" rx="4" fill="url(#darkGrad)"/>
+                <!-- Buttons/Lights -->
+                <circle cx="42" cy="70" r="3" fill="#e74c3c"/>
+                <circle cx="50" cy="70" r="3" fill="#f1c40f"/>
+                <circle cx="58" cy="70" r="3" fill="#2ecc71"/>
+            </svg>
+        </div>
         <div class="speech-bubble" id="speechBubble">
             <button id="prevAnn" class="bubble-nav"><i class="fas fa-chevron-left"></i></button>
             <div class="ann-text-container"><span id="annText"></span></div>
             <button id="nextAnn" class="bubble-nav"><i class="fas fa-chevron-right"></i></button>
-        </div>
-        <div class="bot-character" id="botChar" title="Click to view announcements">
-            <i class="fas fa-robot"></i>
         </div>
     </div>
 
@@ -1952,6 +2040,38 @@
                 let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
                 let total = subtotal + deliveryCharge - currentDiscount;
                 document.getElementById('deliveryOrderSummary').innerHTML = `<strong>Subtotal:</strong> ${formatPrice(subtotal)}<br>${deliveryCharge>0?`<strong>DTDC Delivery:</strong> ${formatPrice(deliveryCharge)}<br>`:''}${currentDiscount>0?`<strong>Discount:</strong> -${formatPrice(currentDiscount)}<br>`:''}<strong style="font-size:1.2rem;">Total: ${formatPrice(total)}</strong>`;
+                
+                // Re-evaluate suggested coupons when subtotal updates
+                renderSuggestedCoupons();
+            }
+
+            // --- SMART COUPON SUGGESTION ENGINE ---
+            function renderSuggestedCoupons() {
+                let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
+                let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
+                
+                const allCoupons = [
+                    { code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 },
+                    { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 },
+                    ...adminCoupons 
+                ];
+                
+                // Filter coupons based on cart thresholds
+                const eligible = allCoupons.filter(c => subtotal >= c.minAmount && itemCount >= c.minProducts);
+                const container = document.getElementById('suggestedCouponsArea');
+                if(!container) return;
+                
+                if(eligible.length > 0) {
+                    let html = '<span style="font-size:0.85rem; opacity:0.8; width:100%; display:block;">🎉 Suggested for you:</span>';
+                    eligible.forEach(c => {
+                        const desc = c.type === 'percent' ? `${c.value}% off` : `₹${c.value} off`;
+                        // Clickable badge that automatically applies the code
+                        html += `<span class="badge" style="cursor:pointer; background: var(--badge-bg); color: var(--accent-color); border: 1px dashed var(--accent-color); padding: 0.3rem 0.8rem; transition: 0.2s;" onmouseover="this.style.background='var(--accent-color)'; this.style.color='#fff';" onmouseout="this.style.background='var(--badge-bg)'; this.style.color='var(--accent-color)';" onclick="document.getElementById('couponCode').value='${c.code}'; document.getElementById('applyCouponBtn').click();"><i class="fas fa-tag"></i> ${c.code} (${desc})</span>`;
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '';
+                }
             }
 
             document.getElementById('proceedToDelivery').addEventListener('click',()=>{
@@ -1959,6 +2079,7 @@
                 document.getElementById('cartModal').style.display='none'; document.getElementById('deliveryModal').style.display='flex';
                 document.getElementById('deliveryCity').value=''; document.getElementById('couponCode').value=''; document.getElementById('deliveryEstimateArea').style.display='none'; document.getElementById('couponMessage').innerHTML=''; 
                 currentDiscount=0; updateDeliverySummary(0);
+                renderSuggestedCoupons();
             });
 
             document.getElementById('applyCouponBtn').addEventListener('click',()=>{
