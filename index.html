@@ -339,7 +339,7 @@
         .admin-header h2 { margin: 0; color: var(--accent-color); }
         
         /* Admin Tabs */
-        .admin-tabs { display: flex; gap: 1rem; border-bottom: 2px solid var(--card-border); margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .admin-tabs { display: flex; gap: 1rem; border-bottom: 2px solid var(--card-border); margin-bottom: 1.5rem; }
         .admin-tab { background: transparent; border: none; padding: 0.5rem 1rem; font-size: 1.1rem; font-weight: 600; color: var(--text-color); opacity: 0.5; cursor: pointer; transition: 0.3s; border-bottom: 2px solid transparent; margin-bottom: -2px; }
         .admin-tab.active { opacity: 1; color: var(--accent-color); border-bottom-color: var(--accent-color); }
         .admin-section { display: none; }
@@ -375,11 +375,10 @@
         .cart-item-remove, .remove-wishlist { color: var(--accent-color); transition: transform 0.2s, color 0.6s ease; cursor: pointer;}
         .cart-item-remove:hover, .remove-wishlist:hover { transform: scale(1.2); }
         .delivery-form { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
-        .delivery-form input, .delivery-form textarea, .delivery-form select { width: 100%; padding: 0.8rem 1.2rem; border: 1.5px solid var(--card-border); border-radius: 40px; background: var(--input-bg); color: var(--text-color); transition: all 0.6s ease;}
-        .delivery-form input:hover, .delivery-form textarea:hover, .delivery-form select:hover { border-color: var(--accent-color); }
-        .city-row, .coupon-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-        .city-row input, .city-row select, .coupon-row input { flex: 2; min-width: 120px; }
-        .city-row button { flex: 1; min-width: 120px; }
+        .delivery-form input, .delivery-form textarea { width: 100%; padding: 0.8rem 1.2rem; border: 1.5px solid var(--card-border); border-radius: 40px; background: var(--input-bg); color: var(--text-color); transition: all 0.6s ease;}
+        .delivery-form input:hover, .delivery-form textarea:hover { border-color: var(--accent-color); }
+        .city-row, .coupon-row { display: flex; gap: 0.5rem; align-items: center; }
+        .city-row input, .coupon-row input { flex: 2; }
         .delivery-estimate { background: var(--badge-bg); border-radius: 30px; padding: 0.8rem; margin: 0.5rem 0; font-size: 0.9rem; transition: background 0.6s ease;}
         .order-summary { background: var(--input-bg); border-radius: 20px; padding: 1rem; margin: 1rem 0; border: 1px solid var(--card-border); transition: all 0.6s ease;}
         .product-detail-modal .modal-content { max-width: 1000px; display: flex; gap: 2rem; flex-wrap: wrap; }
@@ -711,7 +710,7 @@
                 <button class="admin-tab active" data-target="adminProductsView">Products</button>
                 <button class="admin-tab" data-target="adminCouponsView">Coupons</button>
                 <button class="admin-tab" data-target="adminAnnouncementsView">Announcements</button>
-                <button class="admin-tab" data-target="adminStatsView">Stats</button>
+                <button class="admin-tab" data-target="adminStatsView">Stats Control</button>
             </div>
 
             <!-- Products Section -->
@@ -847,7 +846,7 @@
                 </div>
             </div>
             
-            <!-- Dashboard Stats Controller -->
+            <!-- NEW: Analytics Control Section (Restored) -->
             <div id="adminStatsView" class="admin-section">
                 <form id="statsConfigForm" style="background: var(--glass-bg); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
                     <h3 style="margin-bottom: 1rem;"><i class="fas fa-chart-line"></i> Dashboard Stats Controller</h3>
@@ -899,7 +898,7 @@
         </div>
     </div>
     
-    <!-- Delivery Modal with Landmark, Pincode, State and Suggested Coupons -->
+    <!-- Delivery Modal with Landmark, Pincode, and Suggested Coupons -->
     <div id="deliveryModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="closeDelivery">×</span>
@@ -907,6 +906,7 @@
             <div class="delivery-form">
                 <input type="text" id="deliveryName" placeholder="Full Name" required>
                 <input type="text" id="deliveryAddress" placeholder="📮 Delivery Address (House/Street)" required>
+                <!-- NEW FIELDS: Landmark and Pincode -->
                 <div class="city-row">
                     <input type="text" id="deliveryLandmark" placeholder="📍 Landmark (Optional)">
                     <input type="text" id="deliveryPincode" placeholder="*️⃣ Pincode" required>
@@ -914,22 +914,13 @@
                 <input type="tel" id="deliveryPhone" placeholder="📞 Phone Number" required>
                 <textarea id="deliveryNotes" placeholder="Additional notes (optional)" rows="2"></textarea>
                 <div class="city-row">
-                    <input type="text" id="deliveryCity" placeholder="City" required style="flex: 2;">
-                    <!-- NEW FIELD: State Selection -->
-                    <select id="deliveryState" required style="flex: 2;">
-                        <option value="">Select State *</option>
-                        <option value="AP">Andhra Pradesh</option>
-                        <option value="TS">Telangana</option>
-                        <option value="KA">Karnataka</option>
-                        <option value="TN">Tamil Nadu</option>
-                        <option value="OTHER">Other States / Rest of India</option>
-                    </select>
-                    <button class="btn" id="estimateDelivery" style="flex: 1;">Calculate Rate</button>
+                    <input type="text" id="deliveryCity" placeholder="Enter City (e.g., Tirupati)" required>
+                    <button class="btn" id="estimateDelivery">Calculate Rate</button>
                 </div>
                 <div id="deliveryEstimateArea" class="delivery-estimate" style="display: none;">
                     <i class="fas fa-truck"></i> <span id="deliveryProvider">DTDC</span><br>
                     <strong><span id="deliveryChargeUI"></span></strong> • <span id="deliveryEta"></span><br>
-                    <small>State/Zone: <span id="deliveryDistance"></span> | Service: <span id="deliveryService"></span></small>
+                    <small>Distance: <span id="deliveryDistance"></span> km | Service: <span id="deliveryService"></span></small>
                 </div>
                 <div class="coupon-row">
                     <input type="text" id="couponCode" placeholder="Coupon code (e.g. SUMMER20)">
@@ -1065,7 +1056,7 @@
                 const orderEl = document.getElementById('publicOrdersStat');
                 const custEl = document.getElementById('publicCustomersStat');
                 
-                if(viewEl) viewEl.textContent = finalViews.toLocaleString();
+                if(viewEl) viewEl.textContent = finalViews >= 1000 ? (finalViews / 1000).toFixed(1) + 'K' : finalViews.toLocaleString();
                 if(orderEl) orderEl.textContent = finalOrders.toLocaleString();
                 if(custEl) custEl.textContent = finalCustomers.toLocaleString();
             }
@@ -1129,11 +1120,13 @@
                     
                     // Initialize Bot if announcements exist
                     if (announcements.length > 0) {
-                        document.getElementById('announcementBot').style.display = 'flex';
+                        const bot = document.getElementById('announcementBot');
+                        if(bot) bot.style.display = 'flex';
                         updateBotBubble();
                         // Auto hide after 6 seconds
                         setTimeout(() => {
-                            document.getElementById('speechBubble').classList.remove('active');
+                            const bubble = document.getElementById('speechBubble');
+                            if(bubble) bubble.classList.remove('active');
                         }, 6000);
                     }
                 }, 1500);
@@ -1152,25 +1145,25 @@
 
             function updateBotBubble() {
                 if(announcements.length === 0) return;
-                annText.textContent = announcements[currentAnnIndex];
-                prevAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
-                nextAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
-                speechBubble.classList.add('active');
+                if(annText) annText.textContent = announcements[currentAnnIndex];
+                if(prevAnn) prevAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
+                if(nextAnn) nextAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
+                if(speechBubble) speechBubble.classList.add('active');
             }
 
-            botChar.addEventListener('click', () => {
-                if (announcements.length > 0) {
+            botChar?.addEventListener('click', () => {
+                if (announcements.length > 0 && speechBubble) {
                     speechBubble.classList.toggle('active');
                 }
             });
 
-            nextAnn.addEventListener('click', (e) => {
+            nextAnn?.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentAnnIndex = (currentAnnIndex + 1) % announcements.length;
                 updateBotBubble();
             });
 
-            prevAnn.addEventListener('click', (e) => {
+            prevAnn?.addEventListener('click', (e) => {
                 e.stopPropagation();
                 currentAnnIndex = (currentAnnIndex - 1 + announcements.length) % announcements.length;
                 updateBotBubble();
@@ -1234,8 +1227,8 @@
                 window.open(url, '_blank');
             }
 
-            document.querySelectorAll('.directChatClass').forEach(btn => { btn.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hello! I have a question from your website."); }); });
-            document.getElementById('floatingWaBtn').addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hi Artisan! I have a question about your products."); });
+            document.querySelectorAll('.directChatClass').forEach(btn => { btn?.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hello! I have a question from your website."); }); });
+            document.getElementById('floatingWaBtn')?.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hi Artisan! I have a question about your products."); });
 
             // --- FIREBASE AUTH UI LOGIC (Email + Google) ---
             const authModal = document.getElementById('authModal');
@@ -1254,116 +1247,128 @@
             // --- ADMIN AUTHORIZATION LOGIC ---
             const adminEmails = ['tej9079917@gmail.com', 'artisan.onlinsales@gmail.com', 'artisan.onlinesales@gmail.com'];
 
-            openAuthModalBtn.addEventListener('click', () => {
+            openAuthModalBtn?.addEventListener('click', () => {
                 if(window.firebaseAuth && window.firebaseAuth.currentUser) {
                     const user = window.firebaseAuth.currentUser;
-                    document.getElementById('profileEmail').textContent = user.displayName || user.email || "Authenticated User";
+                    const profileEmailEl = document.getElementById('profileEmail');
+                    if(profileEmailEl) profileEmailEl.textContent = user.displayName || user.email || "Authenticated User";
                     
                     // Admin restriction logic
-                    if (user.email && adminEmails.includes(user.email.toLowerCase())) {
-                        document.getElementById('adminPanelBtn').style.display = 'block';
-                    } else {
-                        document.getElementById('adminPanelBtn').style.display = 'none';
+                    const adminPanelBtn = document.getElementById('adminPanelBtn');
+                    if(adminPanelBtn) {
+                        if (user.email && adminEmails.includes(user.email.toLowerCase())) {
+                            adminPanelBtn.style.display = 'block';
+                        } else {
+                            adminPanelBtn.style.display = 'none';
+                        }
                     }
 
-                    authContentBlock.style.display = 'none';
-                    profileBlock.style.display = 'block';
+                    if(authContentBlock) authContentBlock.style.display = 'none';
+                    if(profileBlock) profileBlock.style.display = 'block';
                 } else {
-                    authContentBlock.style.display = 'block';
-                    profileBlock.style.display = 'none';
+                    if(authContentBlock) authContentBlock.style.display = 'block';
+                    if(profileBlock) profileBlock.style.display = 'none';
                     
                     // Reset to login tab
-                    tabLogin.classList.add('active'); tabRegister.classList.remove('active');
-                    loginForm.classList.add('active'); registerForm.classList.remove('active');
-                    document.getElementById('loginError').textContent = '';
-                    document.getElementById('regError').textContent = '';
+                    if(tabLogin) tabLogin.classList.add('active'); 
+                    if(tabRegister) tabRegister.classList.remove('active');
+                    if(loginForm) loginForm.classList.add('active'); 
+                    if(registerForm) registerForm.classList.remove('active');
+                    const loginErr = document.getElementById('loginError');
+                    if(loginErr) loginErr.textContent = '';
+                    const regErr = document.getElementById('regError');
+                    if(regErr) regErr.textContent = '';
                 }
-                authModal.style.display = 'flex';
+                if(authModal) authModal.style.display = 'flex';
             });
 
-            closeAuth.addEventListener('click', () => authModal.style.display = 'none');
+            closeAuth?.addEventListener('click', () => { if(authModal) authModal.style.display = 'none'; });
 
             // Tab Switching
-            tabLogin.addEventListener('click', () => {
-                tabLogin.classList.add('active'); tabRegister.classList.remove('active');
-                loginForm.classList.add('active'); registerForm.classList.remove('active');
-                document.getElementById('loginError').textContent = '';
+            tabLogin?.addEventListener('click', () => {
+                tabLogin.classList.add('active'); tabRegister?.classList.remove('active');
+                loginForm?.classList.add('active'); registerForm?.classList.remove('active');
+                const loginErr = document.getElementById('loginError');
+                if(loginErr) loginErr.textContent = '';
             });
 
-            tabRegister.addEventListener('click', () => {
-                tabRegister.classList.add('active'); tabLogin.classList.remove('active');
-                registerForm.classList.add('active'); loginForm.classList.remove('active');
-                document.getElementById('regError').textContent = '';
+            tabRegister?.addEventListener('click', () => {
+                tabRegister.classList.add('active'); tabLogin?.classList.remove('active');
+                registerForm?.classList.add('active'); loginForm?.classList.remove('active');
+                const regErr = document.getElementById('regError');
+                if(regErr) regErr.textContent = '';
             });
 
             // GOOGLE LOGIN
-            googleLoginBtn.addEventListener('click', () => {
+            googleLoginBtn?.addEventListener('click', () => {
                 if(window.firebaseAuth && window.signInWithPopup && window.GoogleAuthProvider) {
                     const provider = new window.GoogleAuthProvider();
                     window.signInWithPopup(window.firebaseAuth, provider)
                         .then((result) => {
-                            authModal.style.display = 'none';
+                            if(authModal) authModal.style.display = 'none';
                             window.showToast("Logged in with Google!", "fa-star");
                         })
                         .catch((error) => {
-                            document.getElementById('loginError').textContent = error.message.replace("Firebase: ", "");
+                            const errEl = document.getElementById('loginError');
+                            if(errEl) errEl.textContent = error.message.replace("Firebase: ", "");
                         });
                 } else {
-                    document.getElementById('loginError').textContent = "Firebase is not configured.";
+                    const errEl = document.getElementById('loginError');
+                    if(errEl) errEl.textContent = "Firebase is not configured.";
                 }
             });
 
             // EMAIL LOGIN
-            loginForm.addEventListener('submit', (e) => {
+            loginForm?.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const email = document.getElementById('loginEmail').value.trim();
-                const pass = document.getElementById('loginPassword').value;
+                const email = document.getElementById('loginEmail')?.value.trim();
+                const pass = document.getElementById('loginPassword')?.value;
                 const errorDiv = document.getElementById('loginError');
-                errorDiv.textContent = '';
+                if(errorDiv) errorDiv.textContent = '';
 
                 if(window.firebaseSignIn) {
                     window.firebaseSignIn(window.firebaseAuth, email, pass)
                         .then(() => {
-                            authModal.style.display = 'none';
+                            if(authModal) authModal.style.display = 'none';
                             loginForm.reset();
                             window.showToast("Logged in successfully!", "fa-check");
                         })
                         .catch((error) => {
-                            errorDiv.textContent = error.message.replace("Firebase: ", "");
+                            if(errorDiv) errorDiv.textContent = error.message.replace("Firebase: ", "");
                         });
                 } else {
-                    errorDiv.textContent = "Firebase is not configured.";
+                    if(errorDiv) errorDiv.textContent = "Firebase is not configured.";
                 }
             });
 
             // EMAIL REGISTER
-            registerForm.addEventListener('submit', (e) => {
+            registerForm?.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const email = document.getElementById('regEmail').value.trim();
-                const pass = document.getElementById('regPassword').value;
+                const email = document.getElementById('regEmail')?.value.trim();
+                const pass = document.getElementById('regPassword')?.value;
                 const errorDiv = document.getElementById('regError');
-                errorDiv.textContent = '';
+                if(errorDiv) errorDiv.textContent = '';
 
                 if(window.firebaseCreateUser) {
                     window.firebaseCreateUser(window.firebaseAuth, email, pass)
                         .then(() => {
-                            authModal.style.display = 'none';
+                            if(authModal) authModal.style.display = 'none';
                             registerForm.reset();
                             window.showToast("Account created successfully!", "fa-star");
                         })
                         .catch((error) => {
-                            errorDiv.textContent = error.message.replace("Firebase: ", "");
+                            if(errorDiv) errorDiv.textContent = error.message.replace("Firebase: ", "");
                         });
                 } else {
-                    errorDiv.textContent = "Firebase is not configured.";
+                    if(errorDiv) errorDiv.textContent = "Firebase is not configured.";
                 }
             });
 
             // LOGOUT
-            document.getElementById('logoutBtn').addEventListener('click', () => {
+            document.getElementById('logoutBtn')?.addEventListener('click', () => {
                 if(window.firebaseSignOut) {
                     window.firebaseSignOut(window.firebaseAuth).then(() => {
-                        authModal.style.display = 'none';
+                        if(authModal) authModal.style.display = 'none';
                         window.showToast("Signed out successfully", "fa-sign-out-alt");
                     });
                 }
@@ -1388,39 +1393,47 @@
                     adminTabs.forEach(t => t.classList.remove('active'));
                     adminSections.forEach(s => s.classList.remove('active'));
                     tab.classList.add('active');
-                    document.getElementById(tab.dataset.target).classList.add('active');
+                    const tEl = document.getElementById(tab.dataset.target);
+                    if(tEl) tEl.classList.add('active');
                 });
             });
 
             // Open Admin Panel
-            adminPanelBtn.addEventListener('click', () => {
+            adminPanelBtn?.addEventListener('click', () => {
                 const user = window.firebaseAuth?.currentUser;
                 if (!user || !user.email || !adminEmails.includes(user.email.toLowerCase())) {
                     window.showToast("Unauthorized access", "fa-exclamation-triangle");
                     return;
                 }
-                authModal.style.display = 'none';
-                adminModal.style.display = 'flex';
+                if(authModal) authModal.style.display = 'none';
+                if(adminModal) adminModal.style.display = 'flex';
                 
-                document.getElementById('adminProductsView').classList.add('active');
-                document.getElementById('adminFormView').style.display = 'none';
+                const apv = document.getElementById('adminProductsView');
+                if(apv) apv.classList.add('active');
+                const afv = document.getElementById('adminFormView');
+                if(afv) afv.style.display = 'none';
                 
                 // Initialize Stats Tab Values
-                document.getElementById('statsMode').value = statsConfig.mode;
-                document.getElementById('fakeViews').value = statsConfig.fakeViews;
-                document.getElementById('fakeOrders').value = statsConfig.fakeOrders;
-                document.getElementById('fakeCustomers').value = statsConfig.fakeCustomers;
+                const modeEl = document.getElementById('statsMode');
+                if(modeEl) modeEl.value = statsConfig.mode;
+                const fViews = document.getElementById('fakeViews');
+                if(fViews) fViews.value = statsConfig.fakeViews;
+                const fOrders = document.getElementById('fakeOrders');
+                if(fOrders) fOrders.value = statsConfig.fakeOrders;
+                const fCust = document.getElementById('fakeCustomers');
+                if(fCust) fCust.value = statsConfig.fakeCustomers;
 
                 renderAdminTable();
                 renderCouponsTable();
                 renderAnnouncementsTable();
             });
 
-            closeAdmin.addEventListener('click', () => adminModal.style.display = 'none');
+            closeAdmin?.addEventListener('click', () => { if(adminModal) adminModal.style.display = 'none'; });
 
             // Render Products Table
             const adminTableBody = document.getElementById('adminTableBody');
             function renderAdminTable() {
+                if(!adminTableBody) return;
                 adminTableBody.innerHTML = '';
                 products.forEach(p => {
                     const tr = document.createElement('tr');
@@ -1452,47 +1465,55 @@
                 if(!p) return;
                 
                 editingProductId = id;
-                document.getElementById('adminFormTitle').textContent = "Edit Product";
+                const adminTitle = document.getElementById('adminFormTitle');
+                if(adminTitle) adminTitle.textContent = "Edit Product";
                 
-                document.getElementById('adminName').value = p.name;
-                document.getElementById('adminCategory').value = p.category;
-                document.getElementById('adminGender').value = p.gender || 'all';
-                document.getElementById('adminPrice').value = p.basePrice;
-                document.getElementById('adminStock').value = p.stock;
-                document.getElementById('adminDesc').value = p.description || '';
-                document.getElementById('adminImages').value = p.images ? p.images.join('\n') : '';
+                const aname = document.getElementById('adminName'); if(aname) aname.value = p.name;
+                const acat = document.getElementById('adminCategory'); if(acat) acat.value = p.category;
+                const agen = document.getElementById('adminGender'); if(agen) agen.value = p.gender || 'all';
+                const aprice = document.getElementById('adminPrice'); if(aprice) aprice.value = p.basePrice;
+                const astock = document.getElementById('adminStock'); if(astock) astock.value = p.stock;
+                const adesc = document.getElementById('adminDesc'); if(adesc) adesc.value = p.description || '';
+                const aimg = document.getElementById('adminImages'); if(aimg) aimg.value = p.images ? p.images.join('\n') : '';
 
-                document.getElementById('adminProductsView').querySelector('.admin-table-wrapper').style.display = 'none';
-                document.getElementById('addNewProductBtn').style.display = 'none';
-                document.getElementById('adminFormView').style.display = 'flex';
+                const wrap = document.querySelector('#adminProductsView .admin-table-wrapper');
+                if(wrap) wrap.style.display = 'none';
+                if(addNewProductBtn) addNewProductBtn.style.display = 'none';
+                const afv = document.getElementById('adminFormView');
+                if(afv) afv.style.display = 'flex';
             }
 
-            cancelEditBtn.addEventListener('click', () => {
-                document.getElementById('adminFormView').style.display = 'none';
-                document.getElementById('adminProductsView').querySelector('.admin-table-wrapper').style.display = 'block';
-                document.getElementById('addNewProductBtn').style.display = 'inline-block';
+            cancelEditBtn?.addEventListener('click', () => {
+                const afv = document.getElementById('adminFormView');
+                if(afv) afv.style.display = 'none';
+                const wrap = document.querySelector('#adminProductsView .admin-table-wrapper');
+                if(wrap) wrap.style.display = 'block';
+                if(addNewProductBtn) addNewProductBtn.style.display = 'inline-block';
             });
 
-            addNewProductBtn.addEventListener('click', () => {
+            addNewProductBtn?.addEventListener('click', () => {
                 editingProductId = null;
-                document.getElementById('adminFormTitle').textContent = "Add New Product";
-                adminForm.reset();
-                document.getElementById('adminProductsView').querySelector('.admin-table-wrapper').style.display = 'none';
-                document.getElementById('addNewProductBtn').style.display = 'none';
-                document.getElementById('adminFormView').style.display = 'flex';
+                const atitle = document.getElementById('adminFormTitle');
+                if(atitle) atitle.textContent = "Add New Product";
+                if(adminForm) adminForm.reset();
+                const wrap = document.querySelector('#adminProductsView .admin-table-wrapper');
+                if(wrap) wrap.style.display = 'none';
+                addNewProductBtn.style.display = 'none';
+                const afv = document.getElementById('adminFormView');
+                if(afv) afv.style.display = 'flex';
             });
 
-            adminForm.addEventListener('submit', (e) => {
+            adminForm?.addEventListener('submit', (e) => {
                 e.preventDefault();
                 
-                const name = document.getElementById('adminName').value.trim();
-                const category = document.getElementById('adminCategory').value;
-                const gender = document.getElementById('adminGender').value;
-                const basePrice = parseInt(document.getElementById('adminPrice').value) || 0;
-                const stock = parseInt(document.getElementById('adminStock').value) || 0;
-                const description = document.getElementById('adminDesc').value.trim();
+                const name = document.getElementById('adminName')?.value.trim();
+                const category = document.getElementById('adminCategory')?.value;
+                const gender = document.getElementById('adminGender')?.value || 'all';
+                const basePrice = parseInt(document.getElementById('adminPrice')?.value) || 0;
+                const stock = parseInt(document.getElementById('adminStock')?.value) || 0;
+                const description = document.getElementById('adminDesc')?.value.trim();
                 
-                const rawImages = document.getElementById('adminImages').value;
+                const rawImages = document.getElementById('adminImages')?.value;
                 let imgArray = [];
                 if(rawImages) {
                     imgArray = rawImages.split(/[\n,]+/).map(u => getDirectImageUrl(u.trim())).filter(u => u !== '');
@@ -1514,7 +1535,7 @@
                 window.showToast("Product saved!", "fa-check");
                 renderAdminTable();
                 renderProducts();
-                cancelEditBtn.click();
+                if(cancelEditBtn) cancelEditBtn.click();
             });
 
             function deleteProduct(id) {
@@ -1532,6 +1553,7 @@
             const couponsTableBody = document.getElementById('couponsTableBody');
 
             function renderCouponsTable() {
+                if(!couponsTableBody) return;
                 couponsTableBody.innerHTML = '';
                 adminCoupons.forEach((c, idx) => {
                     const tr = document.createElement('tr');
@@ -1556,13 +1578,13 @@
                 }
             };
 
-            couponForm.addEventListener('submit', (e) => {
+            couponForm?.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const code = document.getElementById('couponCodeInput').value.trim().toUpperCase();
-                const type = document.getElementById('couponType').value;
-                const value = parseInt(document.getElementById('couponValue').value);
-                const minAmount = parseInt(document.getElementById('couponMinAmount').value) || 0;
-                const minProducts = parseInt(document.getElementById('couponMinProducts').value) || 0;
+                const code = document.getElementById('couponCodeInput')?.value.trim().toUpperCase();
+                const type = document.getElementById('couponType')?.value;
+                const value = parseInt(document.getElementById('couponValue')?.value) || 0;
+                const minAmount = parseInt(document.getElementById('couponMinAmount')?.value) || 0;
+                const minProducts = parseInt(document.getElementById('couponMinProducts')?.value) || 0;
 
                 const exists = adminCoupons.find(c => c.code === code);
                 if (exists) {
@@ -1582,6 +1604,7 @@
             const announcementsTableBody = document.getElementById('announcementsTableBody');
 
             function renderAnnouncementsTable() {
+                if(!announcementsTableBody) return;
                 announcementsTableBody.innerHTML = '';
                 announcements.forEach((text, idx) => {
                     const tr = document.createElement('tr');
@@ -1599,7 +1622,8 @@
                     localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
                     renderAnnouncementsTable();
                     if(announcements.length === 0) {
-                        document.getElementById('announcementBot').style.display = 'none';
+                        const botEl = document.getElementById('announcementBot');
+                        if(botEl) botEl.style.display = 'none';
                     } else {
                         currentAnnIndex = 0;
                         updateBotBubble();
@@ -1607,33 +1631,34 @@
                 }
             };
 
-            announcementForm.addEventListener('submit', (e) => {
+            announcementForm?.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const text = document.getElementById('announcementText').value.trim();
+                const text = document.getElementById('announcementText')?.value.trim();
                 announcements.push(text);
                 localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
                 window.showToast("Announcement posted!", "fa-bullhorn");
                 renderAnnouncementsTable();
                 announcementForm.reset();
                 
-                document.getElementById('announcementBot').style.display = 'flex';
+                const botEl = document.getElementById('announcementBot');
+                if(botEl) botEl.style.display = 'flex';
                 currentAnnIndex = announcements.length - 1;
                 updateBotBubble();
             });
 
             // --- ADMIN STATS CONFIG LOGIC ---
-            document.getElementById('statsConfigForm').addEventListener('submit', (e) => {
+            document.getElementById('statsConfigForm')?.addEventListener('submit', (e) => {
                 e.preventDefault();
-                statsConfig.mode = document.getElementById('statsMode').value;
-                statsConfig.fakeViews = parseInt(document.getElementById('fakeViews').value) || 0;
-                statsConfig.fakeOrders = parseInt(document.getElementById('fakeOrders').value) || 0;
-                statsConfig.fakeCustomers = parseInt(document.getElementById('fakeCustomers').value) || 0;
+                if(typeof statsConfig === 'undefined') window.statsConfig = { mode: 'live', fakeViews: 0, fakeOrders: 0, fakeCustomers: 0 };
+                statsConfig.mode = document.getElementById('statsMode')?.value || 'live';
+                statsConfig.fakeViews = parseInt(document.getElementById('fakeViews')?.value) || 0;
+                statsConfig.fakeOrders = parseInt(document.getElementById('fakeOrders')?.value) || 0;
+                statsConfig.fakeCustomers = parseInt(document.getElementById('fakeCustomers')?.value) || 0;
                 
                 localStorage.setItem('artisan_stats_config', JSON.stringify(statsConfig));
-                updatePublicStatsDisplay();
+                if(typeof updatePublicStatsDisplay === 'function') updatePublicStatsDisplay();
                 window.showToast("Stats config updated!", "fa-chart-line");
             });
-
 
             let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '', stateLabel: '' };
             let currentDiscount = 0;
@@ -1642,7 +1667,7 @@
             const btnHandmade = document.getElementById('btnHandmade');
             const btnFashion = document.getElementById('btnFashion');
             const themeBtn = document.getElementById('themeToggle');
-            const themeIcon = themeBtn.querySelector('i');
+            const themeIcon = themeBtn?.querySelector('i');
             const mainBrandText = document.getElementById('mainBrandText');
             const footerBrandName = document.getElementById('footerBrandName');
 
@@ -1667,21 +1692,31 @@
                         if(themeIcon) themeIcon.className = 'fas fa-sun';
                         if(cursorIcon) { cursorIcon.classList.remove('fa-feather-alt'); cursorIcon.classList.add('fa-gem'); }
                         
-                        btnFashion.classList.add('active'); btnHandmade.classList.remove('active');
+                        if(btnFashion) btnFashion.classList.add('active'); 
+                        if(btnHandmade) btnHandmade.classList.remove('active');
                         
                         if(mainBrandText) mainBrandText.textContent = "Artisan Jewelers & Clothes";
                         if(footerBrandName) footerBrandName.textContent = "artisan jewelers & clothes";
                         
-                        document.getElementById('heroTitle').innerHTML = `elevate your <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">everyday style</span>`;
-                        document.getElementById('heroBtn1').innerHTML = `shop fashion <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
-                        document.getElementById('heroBadge').textContent = "premium quality";
-                        document.getElementById('heroTagIcon').className = 'fas fa-gem';
+                        const hTitle = document.getElementById('heroTitle');
+                        if(hTitle) hTitle.innerHTML = `elevate your <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">everyday style</span>`;
+                        const hBtn = document.getElementById('heroBtn1');
+                        if(hBtn) hBtn.innerHTML = `shop fashion <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
+                        const hBadge = document.getElementById('heroBadge');
+                        if(hBadge) hBadge.textContent = "premium quality";
+                        const hTag = document.getElementById('heroTagIcon');
+                        if(hTag) hTag.className = 'fas fa-gem';
                         
-                        document.getElementById('storyTitle').textContent = "our philosophy";
-                        document.getElementById('storyText').textContent = "We source the finest materials to bring you apparel and jewelry that stands the test of time. Elegance is in the details.";
-                        document.getElementById('storyIcon').className = 'fas fa-gem';
-                        document.getElementById('footerIcon').className = 'fas fa-gem';
-                        document.getElementById('footerMotto').textContent = "elevated everyday style.";
+                        const sTitle = document.getElementById('storyTitle');
+                        if(sTitle) sTitle.textContent = "our philosophy";
+                        const sText = document.getElementById('storyText');
+                        if(sText) sText.textContent = "We source the finest materials to bring you apparel and jewelry that stands the test of time. Elegance is in the details.";
+                        const sIcon = document.getElementById('storyIcon');
+                        if(sIcon) sIcon.className = 'fas fa-gem';
+                        const fIcon = document.getElementById('footerIcon');
+                        if(fIcon) fIcon.className = 'fas fa-gem';
+                        const fMotto = document.getElementById('footerMotto');
+                        if(fMotto) fMotto.textContent = "elevated everyday style.";
                     } else {
                         document.body.classList.remove('theme-fashion');
                         if(!manualDarkMode) {
@@ -1692,21 +1727,31 @@
                         }
                         if(cursorIcon) { cursorIcon.classList.remove('fa-gem'); cursorIcon.classList.add('fa-feather-alt'); }
                         
-                        btnHandmade.classList.add('active'); btnFashion.classList.remove('active');
+                        if(btnHandmade) btnHandmade.classList.add('active'); 
+                        if(btnFashion) btnFashion.classList.remove('active');
                         
                         if(mainBrandText) mainBrandText.textContent = "Artisan";
                         if(footerBrandName) footerBrandName.textContent = "artisan";
                         
-                        document.getElementById('heroTitle').innerHTML = `handmade with <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">heart & soul</span>`;
-                        document.getElementById('heroBtn1').innerHTML = `shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
-                        document.getElementById('heroBadge').textContent = "ethically made";
-                        document.getElementById('heroTagIcon').className = 'fas fa-heart';
+                        const hTitle = document.getElementById('heroTitle');
+                        if(hTitle) hTitle.innerHTML = `handmade with <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">heart & soul</span>`;
+                        const hBtn = document.getElementById('heroBtn1');
+                        if(hBtn) hBtn.innerHTML = `shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
+                        const hBadge = document.getElementById('heroBadge');
+                        if(hBadge) hBadge.textContent = "ethically made";
+                        const hTag = document.getElementById('heroTagIcon');
+                        if(hTag) hTag.className = 'fas fa-heart';
                         
-                        document.getElementById('storyTitle').textContent = "our story";
-                        document.getElementById('storyText').textContent = "Artisan was born in a small workshop surrounded by looms and clay. We believe in the beauty of things made slowly.";
-                        document.getElementById('storyIcon').className = 'fas fa-feather-alt';
-                        document.getElementById('footerIcon').className = 'fas fa-feather-alt';
-                        document.getElementById('footerMotto').textContent = "celebrating true craft.";
+                        const sTitle = document.getElementById('storyTitle');
+                        if(sTitle) sTitle.textContent = "our story";
+                        const sText = document.getElementById('storyText');
+                        if(sText) sText.textContent = "Artisan was born in a small workshop surrounded by looms and clay. We believe in the beauty of things made slowly.";
+                        const sIcon = document.getElementById('storyIcon');
+                        if(sIcon) sIcon.className = 'fas fa-feather-alt';
+                        const fIcon = document.getElementById('footerIcon');
+                        if(fIcon) fIcon.className = 'fas fa-feather-alt';
+                        const fMotto = document.getElementById('footerMotto');
+                        if(fMotto) fMotto.textContent = "celebrating true craft.";
                     }
                     renderProducts();
                     if(sections) sections.style.opacity = '1'; 
@@ -1714,14 +1759,12 @@
             }
 
             if (manualDarkMode) { document.body.classList.add('dark-mode'); if(themeIcon) themeIcon.className = 'fas fa-sun'; }
-            if(themeBtn) {
-                themeBtn.addEventListener('click', () => {
-                    document.body.classList.toggle('dark-mode');
-                    manualDarkMode = document.body.classList.contains('dark-mode');
-                    localStorage.setItem('darkMode', manualDarkMode);
-                    if(themeIcon) themeIcon.className = manualDarkMode ? 'fas fa-sun' : 'fas fa-moon';
-                });
-            }
+            themeBtn?.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                manualDarkMode = document.body.classList.contains('dark-mode');
+                localStorage.setItem('darkMode', manualDarkMode);
+                if(themeIcon) themeIcon.className = manualDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+            });
 
             // --- BUTTERY CUSTOM SORT DROPDOWN LOGIC ---
             const customSort = document.getElementById('customSort');
@@ -1730,18 +1773,16 @@
             const sortLabel = document.getElementById('sortLabel');
             const sortInput = document.getElementById('sortSelect');
 
-            if(sortTrigger) {
-                sortTrigger.addEventListener('click', (e) => { e.stopPropagation(); customSort.classList.toggle('active'); });
-            }
+            sortTrigger?.addEventListener('click', (e) => { e.stopPropagation(); if(customSort) customSort.classList.toggle('active'); });
 
             sortOptions.forEach(opt => {
                 opt.addEventListener('click', (e) => {
                     e.stopPropagation();
                     sortOptions.forEach(o => o.classList.remove('active'));
                     opt.classList.add('active');
-                    sortLabel.textContent = "Sort: " + opt.dataset.label;
-                    sortInput.value = opt.dataset.value;
-                    customSort.classList.remove('active');
+                    if(sortLabel) sortLabel.textContent = "Sort: " + opt.dataset.label;
+                    if(sortInput) sortInput.value = opt.dataset.value;
+                    if(customSort) customSort.classList.remove('active');
                     renderProducts(); 
                 });
             });
@@ -1753,8 +1794,9 @@
                 btn.addEventListener('click', (e) => {
                     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
                     e.target.classList.add('active'); fashionCat = e.target.dataset.cat;
-                    if(fashionCat === 'clothes') document.getElementById('genderFilters').classList.add('active');
-                    else document.getElementById('genderFilters').classList.remove('active');
+                    const genF = document.getElementById('genderFilters');
+                    if(fashionCat === 'clothes') { if(genF) genF.classList.add('active'); }
+                    else { if(genF) genF.classList.remove('active'); }
                     const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0';
                     setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200);
                 });
@@ -1770,11 +1812,24 @@
             });
 
             function formatPrice(p) { return '₹' + p; }
-            function updateCartCount() { document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.quantity,0); }
+            function updateCartCount() { const cc = document.getElementById('cartCount'); if(cc) cc.textContent = cart.reduce((s,i)=>s+i.quantity,0); }
             function saveCart() { localStorage.setItem('cart',JSON.stringify(cart)); updateCartCount(); }
-            function updateWishlistCount() { document.getElementById('wishlistCount').textContent = wishlist.length; }
+            function updateWishlistCount() { const wc = document.getElementById('wishlistCount'); if(wc) wc.textContent = wishlist.length; }
             function saveWishlist() { localStorage.setItem('wishlist',JSON.stringify(wishlist)); updateWishlistCount(); }
             
+            function calculateDTDCRate(distanceKm, totalWeight=1) {
+                if(distanceKm <= 15) { let c = Math.floor(Math.random()*51)+100; return { charge:c, service:'DTDC Local Express', eta:'Same day' }; }
+                let base=0, service='';
+                if(distanceKm<=50) { base=60; service='DTDC Plus (Local)'; }
+                else if(distanceKm<=200) { base=90; service='DTDC Regional Plus'; }
+                else if(distanceKm<=500) { base=120; service='DTDC Zonal Plus'; }
+                else if(distanceKm<=1500) { base=200; service='DTDC National Plus'; }
+                else { base=300; service='DTDC Prime'; }
+                let charge = base * Math.ceil(totalWeight*2);
+                let eta = distanceKm<=50?'Same day':(distanceKm<=200?'Next business day':(distanceKm<=500?'2 business days':(distanceKm<=1500?'3-4 business days':'5-7 business days')));
+                return { charge, service, eta };
+            }
+
             // --- MAGIC FLIGHT CART ANIMATION LOGIC ---
             function addToCart(id, qty, size, color, eventTarget) {
                 let existing = cart.find(i=>i.id===id && i.size===size && i.color===color);
@@ -1783,7 +1838,7 @@
                 
                 const cartIcon = document.getElementById('cartBtn');
                 
-                if(eventTarget) {
+                if(eventTarget && cartIcon) {
                     const card = eventTarget.closest('.product-card') || eventTarget.closest('.product-detail-images');
                     if(card) {
                         const img = card.querySelector('.main-image') || card.querySelector('.main-image-detail');
@@ -1814,66 +1869,77 @@
                             }, 700);
                         }
                     }
-                } else {
+                } else if(cartIcon) {
                     cartIcon.classList.add('wiggle'); setTimeout(()=>cartIcon.classList.remove('wiggle'), 400);
                 }
                 
                 window.showToast('Item added to cart!');
             }
 
-            function openProductDetail(productId) {
+            window.openProductDetail = function(productId) {
                 const product = products.find(p => p.id === productId);
                 if (!product) return;
                 
                 const mainUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
                 
                 const mainImgEl = document.getElementById('detailMainImage');
-                mainImgEl.src = mainUrl;
-                mainImgEl.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/400x500?text=Image+Unavailable'; };
+                if(mainImgEl) {
+                    mainImgEl.src = mainUrl;
+                    mainImgEl.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/400x500?text=Image+Unavailable'; };
+                }
                 
-                document.getElementById('detailName').textContent = product.name;
-                document.getElementById('detailPrice').textContent = formatPrice(product.basePrice);
-                document.getElementById('detailTotalPrice').textContent = 'total: ' + formatPrice(product.basePrice);
-                document.getElementById('detailDescription').textContent = product.description || "";
-                document.getElementById('detailStock').innerHTML = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
+                const dn = document.getElementById('detailName'); if(dn) dn.textContent = product.name;
+                const dp = document.getElementById('detailPrice'); if(dp) dp.textContent = formatPrice(product.basePrice);
+                const dt = document.getElementById('detailTotalPrice'); if(dt) dt.textContent = 'total: ' + formatPrice(product.basePrice);
+                const dd = document.getElementById('detailDescription'); if(dd) dd.textContent = product.description || "";
+                const ds = document.getElementById('detailStock'); if(ds) ds.innerHTML = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
                 
                 const thumbContainer = document.getElementById('detailThumbnails');
-                thumbContainer.innerHTML = '';
-                
-                if (product.images) {
-                    product.images.forEach((imgUrl, idx) => {
-                        const thumb = document.createElement('img');
-                        thumb.src = imgUrl; 
-                        thumb.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/60?text=N/A'; };
-                        thumb.classList.add('product-detail-thumb');
-                        if (idx === 0) thumb.classList.add('active');
-                        thumb.addEventListener('click', () => {
-                            document.getElementById('detailMainImage').src = imgUrl;
-                            document.querySelectorAll('.product-detail-thumb').forEach(t => t.classList.remove('active'));
-                            thumb.classList.add('active');
+                if(thumbContainer) {
+                    thumbContainer.innerHTML = '';
+                    if (product.images) {
+                        product.images.forEach((imgUrl, idx) => {
+                            const thumb = document.createElement('img');
+                            thumb.src = imgUrl; 
+                            thumb.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/60?text=N/A'; };
+                            thumb.classList.add('product-detail-thumb');
+                            if (idx === 0) thumb.classList.add('active');
+                            thumb.addEventListener('click', () => {
+                                if(mainImgEl) mainImgEl.src = imgUrl;
+                                document.querySelectorAll('.product-detail-thumb').forEach(t => t.classList.remove('active'));
+                                thumb.classList.add('active');
+                            });
+                            thumbContainer.appendChild(thumb);
                         });
-                        thumbContainer.appendChild(thumb);
-                    });
+                    }
                 }
 
                 const variantsDiv = document.getElementById('detailVariants');
-                if (product.variants) {
-                    let html = '';
-                    if (product.variants.sizes && product.variants.sizes.length > 0) html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
-                    if (product.variants.colors && product.variants.colors.length > 0) html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
-                    variantsDiv.innerHTML = html;
-                } else variantsDiv.innerHTML = '';
+                if(variantsDiv) {
+                    if (product.variants) {
+                        let html = '';
+                        if (product.variants.sizes && product.variants.sizes.length > 0) html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
+                        if (product.variants.colors && product.variants.colors.length > 0) html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
+                        variantsDiv.innerHTML = html;
+                    } else variantsDiv.innerHTML = '';
+                }
                 
                 const qtyInput = document.getElementById('detailQuantity');
-                qtyInput.value = 1;
-                qtyInput.oninput = () => { document.getElementById('detailTotalPrice').textContent = 'total: ' + formatPrice(product.basePrice * (parseInt(qtyInput.value) || 1)); };
+                if(qtyInput) {
+                    qtyInput.value = 1;
+                    qtyInput.oninput = () => { if(dt) dt.textContent = 'total: ' + formatPrice(product.basePrice * (parseInt(qtyInput.value) || 1)); };
+                }
                 
                 const addBtn = document.getElementById('detailAddToCart');
-                addBtn.onclick = () => {
-                    addToCart(product.id, parseInt(document.getElementById('detailQuantity').value) || 1, document.getElementById('detailSize') ? document.getElementById('detailSize').value : null, document.getElementById('detailColor') ? document.getElementById('detailColor').value : null, addBtn);
-                    document.getElementById('productDetailModal').style.display = 'none';
-                };
-                document.getElementById('productDetailModal').style.display = 'flex';
+                if(addBtn) {
+                    addBtn.onclick = () => {
+                        addToCart(product.id, parseInt(document.getElementById('detailQuantity')?.value) || 1, document.getElementById('detailSize') ? document.getElementById('detailSize').value : null, document.getElementById('detailColor') ? document.getElementById('detailColor').value : null, addBtn);
+                        const pdModal = document.getElementById('productDetailModal');
+                        if(pdModal) pdModal.style.display = 'none';
+                    };
+                }
+                const pdModal = document.getElementById('productDetailModal');
+                if(pdModal) pdModal.style.display = 'flex';
             }
 
             function renderProducts() {
@@ -2001,7 +2067,13 @@
                     });
                 });
                 
-                document.querySelectorAll('.main-image, .hover-image').forEach(img => img.addEventListener('click', function(e){ e.stopPropagation(); document.getElementById('lightboxImg').src = this.src; document.getElementById('lightbox').classList.add('show'); }));
+                document.querySelectorAll('.main-image, .hover-image').forEach(img => img.addEventListener('click', function(e){ 
+                    e.stopPropagation(); 
+                    const lbImg = document.getElementById('lightboxImg');
+                    if(lbImg) lbImg.src = this.src; 
+                    const lb = document.getElementById('lightbox');
+                    if(lb) lb.classList.add('show'); 
+                }));
                 
                 document.querySelectorAll('.add-to-cart').forEach(btn => {
                     btn.addEventListener('click', function(e){
@@ -2016,7 +2088,7 @@
                 document.querySelectorAll('.product-card').forEach(card => {
                     card.addEventListener('click', function(e){
                         if(e.target.closest('.wishlist-heart') || e.target.closest('.quantity-input') || e.target.closest('.add-to-cart') || e.target.closest('select')) return;
-                        openProductDetail(parseInt(this.dataset.id));
+                        window.openProductDetail(parseInt(this.dataset.id));
                     });
                     card.addEventListener('mousemove', function(e) {
                         let rect = this.getBoundingClientRect();
@@ -2027,22 +2099,37 @@
                 });
             }
 
-            document.getElementById('closeLightboxBtn').addEventListener('click', () => document.getElementById('lightbox').classList.remove('show'));
-            document.getElementById('lightbox').addEventListener('click', (e) => { if(e.target === document.getElementById('lightbox')) document.getElementById('lightbox').classList.remove('show'); });
+            document.getElementById('closeLightboxBtn')?.addEventListener('click', () => {
+                const lb = document.getElementById('lightbox');
+                if(lb) lb.classList.remove('show');
+            });
+            
+            document.getElementById('lightbox')?.addEventListener('click', (e) => { 
+                if(e.target === document.getElementById('lightbox')) e.target.classList.remove('show'); 
+            });
 
-            document.getElementById('cartBtn').addEventListener('click',()=>{ renderCartModal(); document.getElementById('cartModal').style.display='flex'; });
+            document.getElementById('cartBtn')?.addEventListener('click',()=>{ 
+                renderCartModal(); 
+                const cm = document.getElementById('cartModal');
+                if(cm) cm.style.display='flex'; 
+            });
             
             // ORDER HISTORY LOGIC
             const orderHistoryModal = document.getElementById('orderHistoryModal');
-            document.getElementById('viewOrderHistoryBtn').addEventListener('click', () => {
-                document.getElementById('cartModal').style.display = 'none';
-                orderHistoryModal.style.display = 'flex';
+            document.getElementById('viewOrderHistoryBtn')?.addEventListener('click', () => {
+                const cm = document.getElementById('cartModal');
+                if(cm) cm.style.display = 'none';
+                if(orderHistoryModal) orderHistoryModal.style.display = 'flex';
                 renderOrderHistory();
             });
-            document.getElementById('closeOrderHistory').addEventListener('click', () => orderHistoryModal.style.display = 'none');
+            
+            document.getElementById('closeOrderHistory')?.addEventListener('click', () => {
+                if(orderHistoryModal) orderHistoryModal.style.display = 'none';
+            });
 
             function renderOrderHistory() {
                 const list = document.getElementById('orderHistoryList');
+                if(!list) return;
                 if (orderHistory.length === 0) {
                     list.innerHTML = '<p style="text-align: center; opacity: 0.7;">No past orders found.</p>';
                     return;
@@ -2065,14 +2152,31 @@
                 list.innerHTML = html;
             }
 
-            document.getElementById('wishlistBtn').addEventListener('click',()=>{ renderWishlistModal(); document.getElementById('wishlistModal').style.display='flex'; });
-            document.getElementById('openFaqBtn').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('faqModal').style.display='flex'; });
-            document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ this.closest('.modal').style.display='none'; }));
-            window.addEventListener('click',e=>{ if(e.target.classList.contains('modal')) e.target.style.display='none'; });
+            document.getElementById('wishlistBtn')?.addEventListener('click',()=>{ 
+                renderWishlistModal(); 
+                const wm = document.getElementById('wishlistModal');
+                if(wm) wm.style.display='flex'; 
+            });
+            
+            document.getElementById('openFaqBtn')?.addEventListener('click', (e)=>{ 
+                e.preventDefault(); 
+                const fm = document.getElementById('faqModal');
+                if(fm) fm.style.display='flex'; 
+            });
+            
+            document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ 
+                const m = this.closest('.modal');
+                if(m) m.style.display='none'; 
+            }));
+            
+            window.addEventListener('click',e=>{ 
+                if(e.target.classList.contains('modal')) e.target.style.display='none'; 
+            });
 
             // --- STATE-BASED DELIVERY RATE CALCULATION ---
-            document.getElementById('estimateDelivery').addEventListener('click',()=>{
+            document.getElementById('estimateDelivery')?.addEventListener('click',()=>{
                 let stateSelect = document.getElementById('deliveryState');
+                if(!stateSelect) return;
                 let stateCode = stateSelect.value;
                 let stateLabel = stateSelect.options[stateSelect.selectedIndex].text;
                 
@@ -2094,18 +2198,35 @@
 
                 currentDelivery = { charge: charge, provider: 'DTDC', eta: eta, stateLabel: stateLabel, service: service };
                 
-                document.getElementById('deliveryEstimateArea').style.display='block';
-                document.getElementById('deliveryChargeUI').innerText = formatPrice(currentDelivery.charge); 
-                document.getElementById('deliveryEta').innerText = currentDelivery.eta;
-                document.getElementById('deliveryDistance').innerText = currentDelivery.stateLabel;
-                document.getElementById('deliveryService').innerText = currentDelivery.service;
+                const estArea = document.getElementById('deliveryEstimateArea');
+                if(estArea) estArea.style.display='block';
+                const chargeUi = document.getElementById('deliveryChargeUI');
+                if(chargeUi) chargeUi.innerText = formatPrice(currentDelivery.charge); 
+                const etaEl = document.getElementById('deliveryEta');
+                if(etaEl) etaEl.innerText = currentDelivery.eta;
+                const distEl = document.getElementById('deliveryDistance');
+                if(distEl) distEl.innerText = currentDelivery.stateLabel;
+                const srvEl = document.getElementById('deliveryService');
+                if(srvEl) srvEl.innerText = currentDelivery.service;
+                
                 updateDeliverySummary(currentDelivery.charge);
+            });
+
+            document.getElementById('deliveryState')?.addEventListener('change', () => {
+                const estArea = document.getElementById('deliveryEstimateArea');
+                if(estArea && estArea.style.display === 'block') {
+                    const estBtn = document.getElementById('estimateDelivery');
+                    if(estBtn) estBtn.click();
+                }
             });
 
             function updateDeliverySummary(deliveryCharge = 0){
                 let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
                 let total = subtotal + deliveryCharge - currentDiscount;
-                document.getElementById('deliveryOrderSummary').innerHTML = `<strong>Subtotal:</strong> ${formatPrice(subtotal)}<br>${deliveryCharge>0?`<strong>DTDC Delivery:</strong> ${formatPrice(deliveryCharge)}<br>`:''}${currentDiscount>0?`<strong>Discount:</strong> -${formatPrice(currentDiscount)}<br>`:''}<strong style="font-size:1.2rem;">Total: ${formatPrice(total)}</strong>`;
+                const sumEl = document.getElementById('deliveryOrderSummary');
+                if(sumEl) {
+                    sumEl.innerHTML = `<strong>Subtotal:</strong> ${formatPrice(subtotal)}<br>${deliveryCharge>0?`<strong>DTDC Delivery:</strong> ${formatPrice(deliveryCharge)}<br>`:''}${currentDiscount>0?`<strong>Discount:</strong> -${formatPrice(currentDiscount)}<br>`:''}<strong style="font-size:1.2rem;">Total: ${formatPrice(total)}</strong>`;
+                }
                 
                 // Re-evaluate suggested coupons when subtotal updates
                 renderSuggestedCoupons();
@@ -2140,16 +2261,27 @@
                 }
             }
 
-            document.getElementById('proceedToDelivery').addEventListener('click',()=>{
+            document.getElementById('proceedToDelivery')?.addEventListener('click',()=>{
                 if(cart.length===0) return window.showToast('Your cart is empty', 'fa-exclamation-circle');
-                document.getElementById('cartModal').style.display='none'; document.getElementById('deliveryModal').style.display='flex';
-                document.getElementById('deliveryCity').value=''; document.getElementById('deliveryState').value=''; document.getElementById('couponCode').value=''; document.getElementById('deliveryEstimateArea').style.display='none'; document.getElementById('couponMessage').innerHTML=''; 
+                const cm = document.getElementById('cartModal');
+                if(cm) cm.style.display='none'; 
+                const dm = document.getElementById('deliveryModal');
+                if(dm) dm.style.display='flex';
+                
+                const dCity = document.getElementById('deliveryCity'); if(dCity) dCity.value=''; 
+                const dState = document.getElementById('deliveryState'); if(dState) dState.value=''; 
+                const cCode = document.getElementById('couponCode'); if(cCode) cCode.value=''; 
+                const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='none'; 
+                const cMsg = document.getElementById('couponMessage'); if(cMsg) cMsg.innerHTML=''; 
+                
                 currentDiscount=0; updateDeliverySummary(0);
                 renderSuggestedCoupons();
             });
 
-            document.getElementById('applyCouponBtn').addEventListener('click',()=>{
-                let code = document.getElementById('couponCode').value.trim().toUpperCase(); 
+            document.getElementById('applyCouponBtn')?.addEventListener('click',()=>{
+                const cCodeInput = document.getElementById('couponCode');
+                if(!cCodeInput) return;
+                let code = cCodeInput.value.trim().toUpperCase(); 
                 
                 // Merge static coupons and dynamic admin coupons
                 const allCoupons = [
@@ -2159,36 +2291,49 @@
                 ];
 
                 let coupon = allCoupons.find(c => c.code === code);
-                if(!coupon){ document.getElementById('couponMessage').innerText='Invalid code'; return; }
+                const cMsg = document.getElementById('couponMessage');
+                if(!coupon){ 
+                    if(cMsg) cMsg.innerText='Invalid code'; 
+                    return; 
+                }
                 
                 let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
                 let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
 
                 if (subtotal < coupon.minAmount) {
-                    document.getElementById('couponMessage').innerText = `Minimum order amount of ₹${coupon.minAmount} required.`;
+                    if(cMsg) cMsg.innerText = `Minimum order amount of ₹${coupon.minAmount} required.`;
                     return;
                 }
                 if (itemCount < coupon.minProducts) {
-                    document.getElementById('couponMessage').innerText = `Minimum ${coupon.minProducts} items required.`;
+                    if(cMsg) cMsg.innerText = `Minimum ${coupon.minProducts} items required.`;
                     return;
                 }
 
                 currentDiscount = coupon.type==='percent' ? Math.round(subtotal*coupon.value/100) : coupon.value;
                 if(currentDiscount>subtotal) currentDiscount=subtotal;
-                document.getElementById('couponMessage').innerHTML = `Discount applied: -${formatPrice(currentDiscount)}`;
-                updateDeliverySummary(document.getElementById('deliveryEstimateArea').style.display==='none' ? 0 : parseInt(document.getElementById('deliveryChargeUI').innerText.replace('₹','')));
+                if(cMsg) cMsg.innerHTML = `Discount applied: -${formatPrice(currentDiscount)}`;
+                
+                const chargeUI = document.getElementById('deliveryChargeUI');
+                const estArea = document.getElementById('deliveryEstimateArea');
+                let chargeVal = 0;
+                if(estArea && estArea.style.display !== 'none' && chargeUI) {
+                    chargeVal = parseInt(chargeUI.innerText.replace('₹','')) || 0;
+                }
+                updateDeliverySummary(chargeVal);
             });
 
-            document.getElementById('sendOrder').addEventListener('click',()=>{
-                let name=document.getElementById('deliveryName').value.trim();
-                let addr=document.getElementById('deliveryAddress').value.trim();
-                let landmark=document.getElementById('deliveryLandmark').value.trim();
-                let pincode=document.getElementById('deliveryPincode').value.trim();
-                let phone=document.getElementById('deliveryPhone').value.trim();
-                let city=document.getElementById('deliveryCity').value.trim();
-                let stateSelect=document.getElementById('deliveryState');
+            document.getElementById('sendOrder')?.addEventListener('click',()=>{
+                let name = document.getElementById('deliveryName')?.value.trim();
+                let addr = document.getElementById('deliveryAddress')?.value.trim();
+                let landmark = document.getElementById('deliveryLandmark')?.value.trim();
+                let pincode = document.getElementById('deliveryPincode')?.value.trim();
+                let phone = document.getElementById('deliveryPhone')?.value.trim();
+                let city = document.getElementById('deliveryCity')?.value.trim();
+                let stateSelect = document.getElementById('deliveryState');
                 
-                if(!name||!addr||!pincode||!phone||!city||stateSelect.value==='') return window.showToast('Please fill all required fields including state.', 'fa-exclamation-circle');
+                if(!name||!addr||!pincode||!phone||!city||!stateSelect||stateSelect.value==='') {
+                    return window.showToast('Please fill all required fields including state.', 'fa-exclamation-circle');
+                }
                 
                 let stateName = stateSelect.options[stateSelect.selectedIndex].text;
                 let subtotal=0;
@@ -2229,26 +2374,37 @@
                 updatePublicStatsDisplay();
 
                 openWhatsApp(msg);
-                document.getElementById('deliveryModal').style.display='none'; 
+                const dm = document.getElementById('deliveryModal');
+                if(dm) dm.style.display='none'; 
                 cart=[]; saveCart(); renderCartModal();
             });
 
             function renderCartModal(){ 
                 let cont=document.getElementById('cartItems'); 
-                if(cart.length===0){ cont.innerHTML='<div class="empty-cart">Your cart is empty</div>'; document.getElementById('cartTotal').innerHTML=''; return; } 
+                if(!cont) return;
+                if(cart.length===0){ 
+                    cont.innerHTML='<div class="empty-cart">Your cart is empty</div>'; 
+                    const ct = document.getElementById('cartTotal');
+                    if(ct) ct.innerHTML=''; 
+                    return; 
+                } 
                 let html='', total=0; 
                 cart.forEach((item,idx)=>{ 
                     let p=products.find(p=>p.id===item.id); if(!p) return; total+=p.basePrice*item.quantity; 
                     let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
                     html+=`<div class="cart-item" data-index="${idx}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${idx}" style="width:50px; text-align:center; border-radius:10px; border:1px solid var(--card-border); background:var(--input-bg); color:var(--text-color);"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; 
                 }); 
-                cont.innerHTML=html; document.getElementById('cartTotal').innerHTML=`<strong>Total: ${formatPrice(total)}</strong>`; 
+                cont.innerHTML=html; 
+                const ct = document.getElementById('cartTotal');
+                if(ct) ct.innerHTML=`<strong>Total: ${formatPrice(total)}</strong>`; 
+                
                 document.querySelectorAll('.cart-quantity').forEach(inp=>inp.addEventListener('change',function(){ let idx=this.dataset.index, nq=parseInt(this.value); if(nq>0){ cart[idx].quantity=nq; saveCart(); renderCartModal(); } })); 
                 document.querySelectorAll('.cart-item-remove').forEach(btn=>btn.addEventListener('click',function(){ cart.splice(this.dataset.index,1); saveCart(); renderCartModal(); })); 
             }
 
             function renderWishlistModal(){ 
                 let cont=document.getElementById('wishlistItems'); 
+                if(!cont) return;
                 if(wishlist.length===0){ cont.innerHTML='<div class="empty-wishlist">Your wishlist is empty 💔</div>'; return; } 
                 let html=''; 
                 wishlist.forEach(id=>{ 
@@ -2264,15 +2420,23 @@
             const searchInput = document.getElementById('searchInput');
             if(searchInput) searchInput.addEventListener('input',renderProducts);
             
-            document.getElementById('newsletterForm').addEventListener('submit',e=>{ e.preventDefault(); window.showToast('Successfully Subscribed!', 'fa-envelope-open-text'); document.getElementById('newsletterEmail').value = ''; });
+            document.getElementById('newsletterForm')?.addEventListener('submit',e=>{ 
+                e.preventDefault(); 
+                window.showToast('Successfully Subscribed!', 'fa-envelope-open-text'); 
+                const nEmail = document.getElementById('newsletterEmail');
+                if(nEmail) nEmail.value = ''; 
+            });
 
             // --- PARALLAX SCROLL LISTENER ---
             window.addEventListener('scroll', () => {
                 let scrollY = window.scrollY;
-                document.getElementById('mainHeader').classList.toggle('scrolled', scrollY > 50);
+                const mHeader = document.getElementById('mainHeader');
+                if(mHeader) mHeader.classList.toggle('scrolled', scrollY > 50);
                 requestAnimationFrame(() => {
-                    document.getElementById('blob1').style.transform = `translateY(${scrollY*0.05}px)`;
-                    document.getElementById('blob2').style.transform = `translateY(${-scrollY*0.05}px)`;
+                    const b1 = document.getElementById('blob1');
+                    if(b1) b1.style.transform = `translateY(${scrollY*0.05}px)`;
+                    const b2 = document.getElementById('blob2');
+                    if(b2) b2.style.transform = `translateY(${-scrollY*0.05}px)`;
                     
                     const storyBox = document.querySelector('.story-box');
                     if (storyBox) {
@@ -2283,8 +2447,15 @@
 
             document.querySelectorAll('.nav-links a').forEach(link=>{
                 link.addEventListener('click',function(e){
-                    e.preventDefault(); let targetId = this.getAttribute('href').substring(1); const container = document.getElementById('mainContainer'); container.classList.add('page-transition-out');
-                    setTimeout(()=>{ if(targetId && document.getElementById(targetId)) document.getElementById(targetId).scrollIntoView({behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); setTimeout(()=>container.classList.remove('page-transition-out'),100); },200);
+                    e.preventDefault(); 
+                    let targetId = this.getAttribute('href').substring(1); 
+                    const container = document.getElementById('mainContainer'); 
+                    if(container) container.classList.add('page-transition-out');
+                    setTimeout(()=>{ 
+                        if(targetId && document.getElementById(targetId)) document.getElementById(targetId).scrollIntoView({behavior:'smooth'}); 
+                        else window.scrollTo({top:0,behavior:'smooth'}); 
+                        setTimeout(()=>{if(container) container.classList.remove('page-transition-out');},100); 
+                    },200);
                 });
             });
 
