@@ -12,59 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <!-- Firebase SDK (Auth + Firestore Database) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-
-        // Your Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyA7LPp0kMnYtiQeN3xxjIAPtqZwoo9KHdo",
-            authDomain: "artisan-e4123.firebaseapp.com",
-            projectId: "artisan-e4123",
-            storageBucket: "artisan-e4123.firebasestorage.app",
-            messagingSenderId: "893218724295",
-            appId: "1:893218724295:web:d006f8983c9aabd10ee1e2",
-            measurementId: "G-0WB9M64CVG"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        
-        // Expose Firebase tools to the global window so the rest of the site can use the database
-        window.firebaseAuth = auth;
-        window.db = db;
-        window.appId = typeof __app_id !== 'undefined' ? __app_id : 'artisan-e4123';
-        window.firebaseCollection = collection;
-        window.firebaseDoc = doc;
-        window.firebaseSetDoc = setDoc;
-        window.firebaseDeleteDoc = deleteDoc;
-        window.firebaseGetDoc = getDoc;
-        window.firebaseOnSnapshot = onSnapshot;
-
-        window.GoogleAuthProvider = GoogleAuthProvider;
-        window.signInWithPopup = signInWithPopup;
-        window.firebaseCreateUser = createUserWithEmailAndPassword;
-        window.firebaseSignIn = signInWithEmailAndPassword;
-        window.firebaseSignOut = signOut;
-        window.firebaseSignInAnonymously = signInAnonymously;
-        window.firebaseSignInWithCustomToken = signInWithCustomToken;
-
-        // Custom global Toast function
-        window.showToast = function(message, icon = 'fa-check-circle') {
-            const container = document.getElementById('toastContainer');
-            if(!container) return;
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.classList.add('hiding'); setTimeout(() => { if(container.contains(toast)) container.removeChild(toast); }, 400); }, 3000); 
-        };
-    </script>
 
     <style>
         /* --- THEME VARIABLES --- */
@@ -1028,931 +975,1111 @@
 
     <!-- MAIN FIREBASE CLOUD DATABASE SCRIPT -->
     <script type="module">
-        (function() {
-            // FIREBASE CLOUD VARIABLES
-            let products = [];
-            let adminCoupons = [];
-            let announcements = [];
-            let globalOrdersList = [];
-            let siteViews = 0;
-            let currentAnnIndex = 0;
-            let statsConfig = { mode: 'live', fakeViews: 0, fakeOrders: 0, fakeCustomers: 0 };
-            
-            // LOCAL USER VARIABLES
-            let currentMode = 'handmade';
-            let manualDarkMode = localStorage.getItem('darkMode') === 'true';
-            let fashionCat = 'all'; let fashionGen = 'all';
-            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '', stateLabel: '' };
-            let currentDiscount = 0;
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-            // --- 1. FIREBASE SECURE INITIALIZATION ---
-            const initAuth = async () => {
-                const tryAnon = async () => {
-                    try {
-                        await window.firebaseSignInAnonymously(window.firebaseAuth);
-                    } catch (e) {
-                        // Silent fallback, site operates on cached/local data without cloud sync until log in
-                    }
-                };
+        // Your Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7LPp0kMnYtiQeN3xxjIAPtqZwoo9KHdo",
+            authDomain: "artisan-e4123.firebaseapp.com",
+            projectId: "artisan-e4123",
+            storageBucket: "artisan-e4123.firebasestorage.app",
+            messagingSenderId: "893218724295",
+            appId: "1:893218724295:web:d006f8983c9aabd10ee1e2",
+            measurementId: "G-0WB9M64CVG"
+        };
 
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'artisan-e4123';
+
+        window.showToast = function(message, icon = 'fa-check-circle') {
+            const container = document.getElementById('toastContainer');
+            if(!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<i class="fas ${icon}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.add('hiding'); setTimeout(() => { if(container.contains(toast)) container.removeChild(toast); }, 400); }, 3000); 
+        };
+
+        // FIREBASE CLOUD VARIABLES
+        let products = [];
+        let adminCoupons = [];
+        let announcements = [];
+        let globalOrdersList = [];
+        let siteViews = 0;
+        let currentAnnIndex = 0;
+        let statsConfig = { mode: 'live', fakeViews: 0, fakeOrders: 0, fakeCustomers: 0 };
+        
+        // LOCAL USER VARIABLES
+        let currentMode = 'handmade';
+        let manualDarkMode = localStorage.getItem('darkMode') === 'true';
+        let fashionCat = 'all'; let fashionGen = 'all';
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '', stateLabel: '' };
+        let currentDiscount = 0;
+
+        // --- 1. FIREBASE SECURE INITIALIZATION ---
+        const initAuth = async () => {
+            const tryAnon = async () => {
                 try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        try {
-                            await window.firebaseSignInWithCustomToken(window.firebaseAuth, __initial_auth_token);
-                        } catch (tokenError) {
-                            await tryAnon();
-                        }
-                    } else {
+                    await signInAnonymously(auth);
+                } catch (e) {
+                    // Silent fallback, site operates on cached/local data without cloud sync until log in
+                }
+            };
+
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } catch (tokenError) {
                         await tryAnon();
                     }
-                } catch (error) {
-                    // Ignore initialization throw
+                } else {
+                    await tryAnon();
                 }
-            };
-            initAuth();
-
-            // --- 2. FIREBASE REAL-TIME SYNC (The Magic) ---
-            const publicPath = (col) => window.firebaseCollection(window.db, 'artifacts', window.appId, 'public', 'data', col);
-            const docPath = (col, id) => window.firebaseDoc(window.db, 'artifacts', window.appId, 'public', 'data', col, id);
-
-            // Mandatory Production Error Handler
-            const snapErrorHandler = (error) => {
-                console.warn("Firestore sync paused. Check internet connection or database rules.", error);
-            };
-
-            window.firebaseAuth.onAuthStateChanged((user) => {
-                if (!user) return; // Guard clause
-
-                try {
-                    // A. Sync Products
-                    window.firebaseOnSnapshot(publicPath('products'), (snapshot) => {
-                        products = snapshot.docs.map(d => ({ id: parseInt(d.id), ...d.data() }));
-                        renderProducts();
-                        renderAdminTable();
-                    }, snapErrorHandler);
-
-                    // B. Sync Coupons
-                    window.firebaseOnSnapshot(publicPath('coupons'), (snapshot) => {
-                        adminCoupons = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
-                        renderCouponsTable();
-                    }, snapErrorHandler);
-
-                    // C. Sync Announcements
-                    window.firebaseOnSnapshot(publicPath('announcements'), (snapshot) => {
-                        let rawAnn = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
-                        rawAnn.sort((a,b) => a.ts - b.ts);
-                        announcements = rawAnn;
-                        renderAnnouncementsTable();
-                        
-                        const botEl = document.getElementById('announcementBot');
-                        if (announcements.length > 0 && botEl) {
-                            botEl.style.display = 'flex';
-                            updateBotBubble();
-                        } else if (botEl) {
-                            botEl.style.display = 'none';
-                        }
-                    }, snapErrorHandler);
-
-                    // D. Sync Global Orders (For Stats & Admin)
-                    window.firebaseOnSnapshot(publicPath('orders'), (snapshot) => {
-                        globalOrdersList = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
-                        updatePublicStatsDisplay();
-                        renderAdminOrdersTable();
-                        renderOrderHistory(user); 
-                    }, snapErrorHandler);
-
-                    // E. Sync Stats Engine & Increment Views Safely
-                    const statsRef = docPath('settings', 'statsConfig');
-                    window.firebaseGetDoc(statsRef).then(snap => {
-                        let data = snap.exists() ? snap.data() : { liveViews: 0, config: { mode: 'live', fakeViews: 0, fakeOrders: 0, fakeCustomers: 0 } };
-                        if (!sessionStorage.getItem('view_counted')) {
-                            data.liveViews = (data.liveViews || 0) + 1;
-                            sessionStorage.setItem('view_counted', 'true');
-                            window.firebaseSetDoc(statsRef, data, { merge: true }).catch(e => console.log("Read-only visitor"));
-                        }
-                    }).catch(snapErrorHandler);
-
-                    window.firebaseOnSnapshot(statsRef, (docSnap) => {
-                        if(docSnap.exists()) {
-                            let data = docSnap.data();
-                            statsConfig = data.config || statsConfig;
-                            siteViews = data.liveViews || 0;
-                            updatePublicStatsDisplay();
-                        }
-                    }, snapErrorHandler);
-                } catch(e) {
-                    console.log("Firestore listener initialization issue.");
-                }
-            });
-
-            // --- ADMIN STATS CONFIG ---
-            document.getElementById('statsConfigForm')?.addEventListener('submit', (e) => {
-                e.preventDefault();
-                statsConfig.mode = document.getElementById('statsMode')?.value || 'live';
-                statsConfig.fakeViews = parseInt(document.getElementById('fakeViews')?.value) || 0;
-                statsConfig.fakeOrders = parseInt(document.getElementById('fakeOrders')?.value) || 0;
-                statsConfig.fakeCustomers = parseInt(document.getElementById('fakeCustomers')?.value) || 0;
-                
-                const user = window.firebaseAuth.currentUser;
-                if(!user) return;
-                window.firebaseSetDoc(docPath('settings', 'statsConfig'), { config: statsConfig }, { merge: true }).then(() => {
-                     window.showToast("Stats config synced globally!", "fa-cloud-upload-alt");
-                }).catch((error) => {
-                     window.showToast("Failed to save: " + error.message, "fa-times-circle");
-                });
-            });
-
-            window.updatePublicStatsDisplay = function() {
-                let finalViews = siteViews;
-                let finalOrders = globalOrdersList.length;
-                let finalCustomers = new Set(globalOrdersList.map(o => o.phone)).size;
-
-                if (statsConfig.mode === 'custom') {
-                    finalViews = statsConfig.fakeViews;
-                    finalOrders = statsConfig.fakeOrders;
-                    finalCustomers = statsConfig.fakeCustomers;
-                } else if (statsConfig.mode === 'mixed') {
-                    finalViews += statsConfig.fakeViews;
-                    finalOrders += statsConfig.fakeOrders;
-                    finalCustomers += statsConfig.fakeCustomers;
-                }
-
-                const viewEl = document.getElementById('publicViewsStat');
-                const orderEl = document.getElementById('publicOrdersStat');
-                const custEl = document.getElementById('publicCustomersStat');
-                
-                if(viewEl) viewEl.textContent = finalViews >= 1000 ? (finalViews / 1000).toFixed(1) + 'K' : finalViews.toLocaleString();
-                if(orderEl) orderEl.textContent = finalOrders.toLocaleString();
-                if(custEl) custEl.textContent = finalCustomers.toLocaleString();
-            };
-
-            // --- RANDOM QUOTES ENGINE ---
-            const handmadeQuotes = ["Unique ceramics, textiles, and woodcrafts — each piece tells a story.", "Crafted by hands, inspired by the heart. Discover slow, intentional living.", "Every imperfection is a mark of authenticity. Embrace the true art of handmade goods."];
-            const fashionQuotes = ["Curated apparel and exquisite jewelry designed for the modern, elevated wardrobe.", "Elegance is an attitude. Discover timeless pieces that let you shine effortlessly.", "Bold, beautiful, and bespoke. Adorn yourself in modern luxury and fine details."];
-
-            function setRandomQuote(mode) {
-                const quoteArray = mode === 'fashion' ? fashionQuotes : handmadeQuotes;
-                const randomQuote = quoteArray[Math.floor(Math.random() * quoteArray.length)];
-                const descEl = document.getElementById('heroDesc');
-                if(descEl) { descEl.style.opacity = '0'; setTimeout(() => { descEl.textContent = randomQuote; descEl.style.opacity = '0.8'; }, 400); }
+            } catch (error) {
+                // Ignore initialization throw
             }
+        };
+        initAuth();
 
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    const splash = document.getElementById('splashScreen');
-                    if (splash) splash.classList.add('hidden');
-                    setTimeout(() => { const bubble = document.getElementById('speechBubble'); if(bubble) bubble.classList.remove('active'); }, 6000);
-                }, 1500);
-                setRandomQuote(currentMode);
-            });
+        // --- 2. FIREBASE REAL-TIME SYNC (The Magic) ---
+        const publicPath = (col) => collection(db, 'artifacts', appId, 'public', 'data', col);
+        const docPath = (col, id) => doc(db, 'artifacts', appId, 'public', 'data', col, id);
 
-            // --- ANNOUNCEMENT BOT LOGIC ---
-            function updateBotBubble() {
-                if(announcements.length === 0) return;
-                const annText = document.getElementById('annText');
-                if(annText) annText.textContent = announcements[currentAnnIndex].text;
-                
-                const prevAnn = document.getElementById('prevAnn');
-                const nextAnn = document.getElementById('nextAnn');
-                if(prevAnn) prevAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
-                if(nextAnn) nextAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
-                
-                const speechBubble = document.getElementById('speechBubble');
-                if(speechBubble) speechBubble.classList.add('active');
-            }
+        // Mandatory Production Error Handler
+        const snapErrorHandler = (error) => {
+            console.warn("Firestore sync paused. Check internet connection or database rules.");
+        };
 
-            document.getElementById('botChar')?.addEventListener('click', () => {
-                if (announcements.length > 0) document.getElementById('speechBubble')?.classList.toggle('active');
-            });
-
-            document.getElementById('nextAnn')?.addEventListener('click', (e) => {
-                e.stopPropagation(); currentAnnIndex = (currentAnnIndex + 1) % announcements.length; updateBotBubble();
-            });
-
-            document.getElementById('prevAnn')?.addEventListener('click', (e) => {
-                e.stopPropagation(); currentAnnIndex = (currentAnnIndex - 1 + announcements.length) % announcements.length; updateBotBubble();
-            });
-
-            // --- GOOGLE DRIVE IMAGE CONVERTER ---
-            function getDirectImageUrl(url) {
-                if (!url) return url;
-                let u = String(url).trim();
-                let id = null;
-                if (u.includes('drive.google.com/file/d/')) id = u.match(/\/d\/([a-zA-Z0-9_-]+)/)?.[1];
-                else if (u.includes('drive.google.com/open?id=')) id = u.split('id=')[1]?.split('&')[0];
-                else if (u.includes('drive.google.com/uc?')) id = u.match(/id=([a-zA-Z0-9_-]+)/)?.[1];
-                if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
-                return u;
-            }
-
-            // --- CURSOR LOGIC ---
-            const cursorIcon = document.getElementById('cursorIcon');
-            if (window.matchMedia("(pointer: fine)").matches && cursorIcon) {
-                document.addEventListener('mousemove', (e) => { cursorIcon.style.left = e.clientX + 'px'; cursorIcon.style.top = e.clientY + 'px'; });
-                const addHoverEffects = () => {
-                    document.querySelectorAll('a, button, h1, h2, h4, p, i, img, .product-card, .logo-wrapper, select, input, .toggle-btn, .f-btn, .sort-trigger, .sort-option, .auth-tab').forEach(el => {
-                        if(el.dataset.cursorBound) return; el.dataset.cursorBound = "true";
-                        el.addEventListener('mouseenter', () => cursorIcon.classList.add('hovering'));
-                        el.addEventListener('mouseleave', () => cursorIcon.classList.remove('hovering'));
-                    });
-                };
-                addHoverEffects();
-                new MutationObserver(() => addHoverEffects()).observe(document.body, { childList: true, subtree: true });
-            }
-
-            function openWhatsApp(message) {
-                const phone = '916309645717';
-                const encodedMsg = encodeURIComponent(message || '');
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                const url = isMobile ? `whatsapp://send?phone=${phone}&text=${encodedMsg}` : `https://web.whatsapp.com/send?phone=${phone}&text=${encodedMsg}`;
-                window.open(url, '_blank');
-            }
-
-            document.querySelectorAll('.directChatClass').forEach(btn => { btn?.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hello! I have a question from your website."); }); });
-            document.getElementById('floatingWaBtn')?.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hi Artisan! I have a question about your products."); });
-
-            // --- ADMIN TABS & CONTROLS ---
-            document.querySelectorAll('.admin-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-                    tab.classList.add('active');
-                    const tEl = document.getElementById(tab.dataset.target);
-                    if(tEl) tEl.classList.add('active');
-                });
-            });
-
+        onAuthStateChanged(auth, (user) => {
+            // Update UI based on auth state first
+            const loginBtn = document.getElementById('loginBtnText');
             const adminPanelBtn = document.getElementById('adminPanelBtn');
-            const adminModal = document.getElementById('adminModal');
-            let editingProductId = null;
+            const authModal = document.getElementById('authModal');
+            const profileBlock = document.getElementById('profileBlock');
+            const authContentBlock = document.getElementById('authContentBlock');
+            const profileEmailEl = document.getElementById('profileEmail');
 
-            adminPanelBtn?.addEventListener('click', () => {
-                const authModal = document.getElementById('authModal');
-                if(authModal) authModal.style.display = 'none';
-                if(adminModal) adminModal.style.display = 'flex';
+            if (user && !user.isAnonymous) {
+                if(loginBtn) loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Account';
+                if(profileEmailEl) profileEmailEl.textContent = user.displayName || user.email || "Authenticated User";
                 
-                const modeEl = document.getElementById('statsMode');
-                if(modeEl) modeEl.value = statsConfig.mode;
-                const fViews = document.getElementById('fakeViews');
-                if(fViews) fViews.value = statsConfig.fakeViews;
-                const fOrders = document.getElementById('fakeOrders');
-                if(fOrders) fOrders.value = statsConfig.fakeOrders;
-                const fCust = document.getElementById('fakeCustomers');
-                if(fCust) fCust.value = statsConfig.fakeCustomers;
-            });
-
-            document.getElementById('closeAdmin')?.addEventListener('click', () => { if(adminModal) adminModal.style.display = 'none'; });
-
-            // --- ADMIN PRODUCTS UI ---
-            function renderAdminTable() {
-                const adminTableBody = document.getElementById('adminTableBody');
-                if(!adminTableBody) return;
-                adminTableBody.innerHTML = '';
-                products.forEach(p => {
-                    const tr = document.createElement('tr');
-                    const imgUrl = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/50';
-                    tr.innerHTML = `<td><img src="${imgUrl}" alt="${p.name}"></td><td>${p.name}</td><td style="text-transform: capitalize;">${p.category}</td><td>₹${p.basePrice}</td><td>${p.stock}</td><td><button class="admin-actions-btn edit" data-id="${p.id}" title="Edit"><i class="fas fa-edit"></i></button><button class="admin-actions-btn delete" data-id="${p.id}" title="Delete"><i class="fas fa-trash"></i></button></td>`;
-                    adminTableBody.appendChild(tr);
-                });
-
-                document.querySelectorAll('.admin-actions-btn.edit').forEach(btn => { btn.addEventListener('click', () => editProduct(parseInt(btn.dataset.id))); });
-                document.querySelectorAll('.admin-actions-btn.delete').forEach(btn => { btn.addEventListener('click', () => deleteProduct(parseInt(btn.dataset.id))); });
-            }
-
-            window.editProduct = function(id) {
-                const p = products.find(prod => prod.id === id);
-                if(!p) return;
-                
-                editingProductId = id;
-                const adminTitle = document.getElementById('adminFormTitle'); if(adminTitle) adminTitle.textContent = "Edit Product";
-                const aname = document.getElementById('adminName'); if(aname) aname.value = p.name;
-                const acat = document.getElementById('adminCategory'); if(acat) acat.value = p.category;
-                const agen = document.getElementById('adminGender'); if(agen) agen.value = p.gender || 'all';
-                const aprice = document.getElementById('adminPrice'); if(aprice) aprice.value = p.basePrice;
-                const astock = document.getElementById('adminStock'); if(astock) astock.value = p.stock;
-                const adesc = document.getElementById('adminDesc'); if(adesc) adesc.value = p.description || '';
-                const aimg = document.getElementById('adminImages'); if(aimg) aimg.value = p.images ? p.images.join('\n') : '';
-
-                const wrap = document.querySelector('#adminProductsView .admin-table-wrapper'); if(wrap) wrap.style.display = 'none';
-                const addBtn = document.getElementById('addNewProductBtn'); if(addBtn) addBtn.style.display = 'none';
-                const afv = document.getElementById('adminFormView'); if(afv) afv.style.display = 'flex';
-            }
-
-            document.getElementById('cancelEditBtn')?.addEventListener('click', () => {
-                const afv = document.getElementById('adminFormView'); if(afv) afv.style.display = 'none';
-                const wrap = document.querySelector('#adminProductsView .admin-table-wrapper'); if(wrap) wrap.style.display = 'block';
-                const addBtn = document.getElementById('addNewProductBtn'); if(addBtn) addBtn.style.display = 'inline-block';
-            });
-
-            document.getElementById('addNewProductBtn')?.addEventListener('click', () => {
-                editingProductId = null;
-                const atitle = document.getElementById('adminFormTitle'); if(atitle) atitle.textContent = "Add New Product";
-                const adminForm = document.getElementById('adminForm'); if(adminForm) adminForm.reset();
-                const wrap = document.querySelector('#adminProductsView .admin-table-wrapper'); if(wrap) wrap.style.display = 'none';
-                document.getElementById('addNewProductBtn').style.display = 'none';
-                const afv = document.getElementById('adminFormView'); if(afv) afv.style.display = 'flex';
-            });
-
-            document.getElementById('adminForm')?.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if(!window.firebaseAuth.currentUser) return;
-                
-                const name = document.getElementById('adminName')?.value.trim();
-                const category = document.getElementById('adminCategory')?.value;
-                const gender = document.getElementById('adminGender')?.value || 'all';
-                const basePrice = parseInt(document.getElementById('adminPrice')?.value) || 0;
-                const stock = parseInt(document.getElementById('adminStock')?.value) || 0;
-                const description = document.getElementById('adminDesc')?.value.trim();
-                
-                const rawImages = document.getElementById('adminImages')?.value;
-                let imgArray = [];
-                if(rawImages) imgArray = rawImages.split(/[\n,]+/).map(u => getDirectImageUrl(u.trim())).filter(u => u !== '');
-                if(imgArray.length === 0) imgArray = ['https://via.placeholder.com/400x500?text=No+Image'];
-
-                let variants = null;
-                if (category === 'clothes') variants = { sizes: ["S", "M", "L"], colors: ["Standard"] };
-                else if (category === 'jewelry') variants = { sizes: ["One Size"] };
-                
-                const idToSave = editingProductId || Date.now();
-                const productData = { name, category, gender, basePrice, stock, description, images: imgArray, variants };
-
-                window.firebaseSetDoc(docPath('products', String(idToSave)), productData).then(()=>{
-                    window.showToast("Product saved globally!", "fa-cloud-upload-alt");
-                    document.getElementById('cancelEditBtn')?.click();
-                }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
-            });
-
-            window.deleteProduct = function(id) {
-                if(confirm("Are you sure you want to permanently delete this product?")) {
-                    if(!window.firebaseAuth.currentUser) return;
-                    window.firebaseDeleteDoc(docPath('products', String(id))).then(()=>{
-                        window.showToast("Product deleted from cloud.", "fa-trash");
-                    }).catch(err => window.showToast("Failed to delete: " + err.message, "fa-times"));
+                const adminEmails = ['tej9079917@gmail.com', 'artisan.onlinsales@gmail.com', 'artisan.onlinesales@gmail.com'];
+                if(adminPanelBtn) {
+                    adminPanelBtn.style.display = (user.email && adminEmails.includes(user.email.toLowerCase())) ? 'block' : 'none';
                 }
+                if(authContentBlock) authContentBlock.style.display = 'none';
+                if(profileBlock) profileBlock.style.display = 'block';
+            } else {
+                if(loginBtn) loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                if(authContentBlock) authContentBlock.style.display = 'block';
+                if(profileBlock) profileBlock.style.display = 'none';
+                if(adminPanelBtn) adminPanelBtn.style.display = 'none';
             }
 
-            // --- ADMIN COUPONS LOGIC ---
-            function renderCouponsTable() {
-                const couponsTableBody = document.getElementById('couponsTableBody');
-                if(!couponsTableBody) return;
-                couponsTableBody.innerHTML = '';
-                adminCoupons.forEach((c) => {
-                    const tr = document.createElement('tr');
-                    const typeLabel = c.type === 'percent' ? c.value + '%' : '₹' + c.value;
-                    tr.innerHTML = `<td><strong>${c.code}</strong></td><td style="text-transform:capitalize;">${c.type}</td><td>${typeLabel}</td><td>Min: ₹${c.minAmount} | Qty: ${c.minProducts}</td><td><button class="admin-actions-btn delete" data-dbid="${c.dbId}"><i class="fas fa-trash"></i></button></td>`;
-                    couponsTableBody.appendChild(tr);
-                });
-                document.querySelectorAll('#adminCouponsView .delete').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        if(confirm("Delete coupon globally?")) {
-                            window.firebaseDeleteDoc(docPath('coupons', btn.dataset.dbid)).catch(e => window.showToast("Failed to delete: " + e.message, "fa-times"));
-                        }
-                    });
-                });
-            }
+            if (!user) return; // Guard clause for Firestore
 
-            document.getElementById('couponForm')?.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if(!window.firebaseAuth.currentUser) return;
-                
-                const code = document.getElementById('couponCodeInput')?.value.trim().toUpperCase();
-                const type = document.getElementById('couponType')?.value;
-                const value = parseInt(document.getElementById('couponValue')?.value) || 0;
-                const minAmount = parseInt(document.getElementById('couponMinAmount')?.value) || 0;
-                const minProducts = parseInt(document.getElementById('couponMinProducts')?.value) || 0;
-
-                const exists = adminCoupons.find(c => c.code === code);
-                if (exists) return window.showToast("Code already exists!", "fa-exclamation-triangle");
-
-                window.firebaseSetDoc(docPath('coupons', code), { code, type, value, minAmount, minProducts }).then(()=>{
-                    window.showToast("Coupon deployed globally!", "fa-cloud-upload-alt");
-                    document.getElementById('couponForm').reset();
-                }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
-            });
-
-            // --- ADMIN ANNOUNCEMENTS LOGIC ---
-            function renderAnnouncementsTable() {
-                const announcementsTableBody = document.getElementById('announcementsTableBody');
-                if(!announcementsTableBody) return;
-                announcementsTableBody.innerHTML = '';
-                announcements.forEach((a) => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${a.text}</td><td style="width: 60px;"><button class="admin-actions-btn delete" data-dbid="${a.dbId}"><i class="fas fa-trash"></i></button></td>`;
-                    announcementsTableBody.appendChild(tr);
-                });
-                document.querySelectorAll('#adminAnnouncementsView .delete').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        if(confirm("Delete announcement globally?")) {
-                            window.firebaseDeleteDoc(docPath('announcements', btn.dataset.dbid)).catch(e => window.showToast("Failed to delete: " + e.message, "fa-times"));
-                        }
-                    });
-                });
-            }
-
-            document.getElementById('announcementForm')?.addEventListener('submit', (e) => {
-                e.preventDefault();
-                if(!window.firebaseAuth.currentUser) return;
-                const text = document.getElementById('announcementText')?.value.trim();
-                const id = Date.now().toString();
-                window.firebaseSetDoc(docPath('announcements', id), { text: text, ts: parseInt(id) }).then(()=>{
-                    window.showToast("Announcement broadcasted!", "fa-bullhorn");
-                    document.getElementById('announcementForm').reset();
-                }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
-            });
-
-            // --- ADMIN ORDERS VIEW ---
-            function renderAdminOrdersTable() {
-                const ob = document.getElementById('adminOrdersTableBody');
-                if(!ob) return;
-                if(globalOrdersList.length === 0) { ob.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders placed yet.</td></tr>'; return; }
-                
-                let html = '';
-                globalOrdersList.slice().sort((a,b)=>b.ts - a.ts).forEach(o => {
-                    html += `<tr><td>${o.date}</td><td>${o.phone}<br><small>${o.name}</small></td><td><small>${o.items}</small></td><td>${o.address}<br>Pin: ${o.pincode}</td><td><span class="badge">₹${o.total}</span></td></tr>`;
-                });
-                ob.innerHTML = html;
-            }
-
-            // --- MODE TOGGLE & UI SWITCHING ---
-            const btnHandmade = document.getElementById('btnHandmade');
-            const btnFashion = document.getElementById('btnFashion');
-            const themeBtn = document.getElementById('themeToggle');
-            const themeIcon = themeBtn?.querySelector('i');
-            const mainBrandText = document.getElementById('mainBrandText');
-            const footerBrandName = document.getElementById('footerBrandName');
-
-            if(btnHandmade && btnFashion) {
-                btnHandmade.addEventListener('click', () => switchMode('handmade'));
-                btnFashion.addEventListener('click', () => switchMode('fashion'));
-            }
-
-            function switchMode(mode) {
-                if (currentMode === mode) return;
-                currentMode = mode;
-                const sections = document.getElementById('productSections');
-                if(sections) sections.style.opacity = '0'; 
-                setTimeout(() => {
-                    setRandomQuote(mode);
-                    if (mode === 'fashion') {
-                        document.body.classList.add('theme-fashion'); document.body.classList.add('dark-mode');
-                        if(themeIcon) themeIcon.className = 'fas fa-sun';
-                        if(btnFashion) btnFashion.classList.add('active'); if(btnHandmade) btnHandmade.classList.remove('active');
-                        if(mainBrandText) mainBrandText.textContent = "Artisan Jewelers & Clothes";
-                        if(footerBrandName) footerBrandName.textContent = "artisan jewelers & clothes";
-                        const hTitle = document.getElementById('heroTitle'); if(hTitle) hTitle.innerHTML = `elevate your <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">everyday style</span>`;
-                        const hBtn = document.getElementById('heroBtn1'); if(hBtn) hBtn.innerHTML = `shop fashion <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
-                    } else {
-                        document.body.classList.remove('theme-fashion');
-                        if(!manualDarkMode) { document.body.classList.remove('dark-mode'); if(themeIcon) themeIcon.className = 'fas fa-moon'; }
-                        else { if(themeIcon) themeIcon.className = 'fas fa-sun'; }
-                        if(btnHandmade) btnHandmade.classList.add('active'); if(btnFashion) btnFashion.classList.remove('active');
-                        if(mainBrandText) mainBrandText.textContent = "Artisan"; if(footerBrandName) footerBrandName.textContent = "artisan";
-                        const hTitle = document.getElementById('heroTitle'); if(hTitle) hTitle.innerHTML = `handmade with <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">heart & soul</span>`;
-                        const hBtn = document.getElementById('heroBtn1'); if(hBtn) hBtn.innerHTML = `shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
-                    }
+            try {
+                // A. Sync Products
+                onSnapshot(publicPath('products'), (snapshot) => {
+                    products = snapshot.docs.map(d => ({ id: parseInt(d.id), ...d.data() }));
+                    localStorage.setItem('artisan_products', JSON.stringify(products));
                     renderProducts();
-                    if(sections) sections.style.opacity = '1'; 
-                }, 300); 
+                    renderAdminTable();
+                }, snapErrorHandler);
+
+                // B. Sync Coupons
+                onSnapshot(publicPath('coupons'), (snapshot) => {
+                    adminCoupons = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
+                    localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
+                    renderCouponsTable();
+                }, snapErrorHandler);
+
+                // C. Sync Announcements
+                onSnapshot(publicPath('announcements'), (snapshot) => {
+                    let rawAnn = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
+                    rawAnn.sort((a,b) => a.ts - b.ts);
+                    announcements = rawAnn;
+                    localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
+                    renderAnnouncementsTable();
+                    
+                    const botEl = document.getElementById('announcementBot');
+                    if (announcements.length > 0 && botEl) {
+                        botEl.style.display = 'flex';
+                        updateBotBubble();
+                    } else if (botEl) {
+                        botEl.style.display = 'none';
+                    }
+                }, snapErrorHandler);
+
+                // D. Sync Global Orders (For Stats & Admin)
+                onSnapshot(publicPath('orders'), (snapshot) => {
+                    globalOrdersList = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
+                    updatePublicStatsDisplay();
+                    renderAdminOrdersTable();
+                    renderOrderHistory(user); 
+                }, snapErrorHandler);
+
+                // E. Sync Stats Engine & Increment Views Safely
+                const statsRef = docPath('settings', 'statsConfig');
+                getDoc(statsRef).then(snap => {
+                    let data = snap.exists() ? snap.data() : { liveViews: 0, config: { mode: 'live', fakeViews: 0, fakeOrders: 0, fakeCustomers: 0 } };
+                    if (!sessionStorage.getItem('view_counted')) {
+                        data.liveViews = (data.liveViews || 0) + 1;
+                        sessionStorage.setItem('view_counted', 'true');
+                        setDoc(statsRef, data, { merge: true }).catch(e => console.log("Read-only visitor"));
+                    }
+                }).catch(snapErrorHandler);
+
+                onSnapshot(statsRef, (docSnap) => {
+                    if(docSnap.exists()) {
+                        let data = docSnap.data();
+                        statsConfig = data.config || statsConfig;
+                        // Only update siteViews if cloud has a higher number
+                        if(data.liveViews > siteViews) siteViews = data.liveViews;
+                        localStorage.setItem('artisan_stats_config', JSON.stringify(statsConfig));
+                        updatePublicStatsDisplay();
+                    }
+                }, snapErrorHandler);
+            } catch(e) {
+                console.log("Firestore listener initialization issue.");
+            }
+        });
+
+        // --- ADMIN STATS CONFIG ---
+        document.getElementById('statsConfigForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            statsConfig.mode = document.getElementById('statsMode')?.value || 'live';
+            statsConfig.fakeViews = parseInt(document.getElementById('fakeViews')?.value) || 0;
+            statsConfig.fakeOrders = parseInt(document.getElementById('fakeOrders')?.value) || 0;
+            statsConfig.fakeCustomers = parseInt(document.getElementById('fakeCustomers')?.value) || 0;
+            
+            const user = auth.currentUser;
+            if(!user) return;
+            
+            setDoc(docPath('settings', 'statsConfig'), { config: statsConfig }, { merge: true }).then(() => {
+                 window.showToast("Stats config synced globally!", "fa-cloud-upload-alt");
+            }).catch((error) => {
+                 window.showToast("Failed to save: " + error.message, "fa-times-circle");
+            });
+        });
+
+        window.updatePublicStatsDisplay = function() {
+            let finalViews = siteViews;
+            let finalOrders = globalOrdersList.length || JSON.parse(localStorage.getItem('artisan_order_history') || '[]').length;
+            let finalCustomers = globalOrdersList.length ? new Set(globalOrdersList.map(o => o.phone)).size : new Set(JSON.parse(localStorage.getItem('artisan_order_history') || '[]').map(o=>o.phone)).size;
+
+            if (statsConfig.mode === 'custom') {
+                finalViews = statsConfig.fakeViews;
+                finalOrders = statsConfig.fakeOrders;
+                finalCustomers = statsConfig.fakeCustomers;
+            } else if (statsConfig.mode === 'mixed') {
+                finalViews += statsConfig.fakeViews;
+                finalOrders += statsConfig.fakeOrders;
+                finalCustomers += statsConfig.fakeCustomers;
             }
 
-            if (manualDarkMode) { document.body.classList.add('dark-mode'); if(themeIcon) themeIcon.className = 'fas fa-sun'; }
-            themeBtn?.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                manualDarkMode = document.body.classList.contains('dark-mode');
-                localStorage.setItem('darkMode', manualDarkMode);
-                if(themeIcon) themeIcon.className = manualDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+            const viewEl = document.getElementById('publicViewsStat');
+            const orderEl = document.getElementById('publicOrdersStat');
+            const custEl = document.getElementById('publicCustomersStat');
+            
+            if(viewEl) viewEl.textContent = finalViews >= 1000 ? (finalViews / 1000).toFixed(1) + 'K' : finalViews.toLocaleString();
+            if(orderEl) orderEl.textContent = finalOrders.toLocaleString();
+            if(custEl) custEl.textContent = finalCustomers.toLocaleString();
+        };
+
+        // --- RANDOM QUOTES ENGINE ---
+        const handmadeQuotes = ["Unique ceramics, textiles, and woodcrafts — each piece tells a story.", "Crafted by hands, inspired by the heart. Discover slow, intentional living.", "Every imperfection is a mark of authenticity. Embrace the true art of handmade goods."];
+        const fashionQuotes = ["Curated apparel and exquisite jewelry designed for the modern, elevated wardrobe.", "Elegance is an attitude. Discover timeless pieces that let you shine effortlessly.", "Bold, beautiful, and bespoke. Adorn yourself in modern luxury and fine details."];
+
+        function setRandomQuote(mode) {
+            const quoteArray = mode === 'fashion' ? fashionQuotes : handmadeQuotes;
+            const randomQuote = quoteArray[Math.floor(Math.random() * quoteArray.length)];
+            const descEl = document.getElementById('heroDesc');
+            if(descEl) { descEl.style.opacity = '0'; setTimeout(() => { descEl.textContent = randomQuote; descEl.style.opacity = '0.8'; }, 400); }
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if (splash) splash.classList.add('hidden');
+                setTimeout(() => { const bubble = document.getElementById('speechBubble'); if(bubble) bubble.classList.remove('active'); }, 6000);
+            }, 1500);
+            
+            // Fallback initial view counter if not connected
+            if(!sessionStorage.getItem('local_view_counted')) {
+                siteViews++;
+                sessionStorage.setItem('local_view_counted', 'true');
+                localStorage.setItem('artisan_views', siteViews);
+            }
+            
+            setRandomQuote(currentMode);
+            renderProducts();
+            window.updatePublicStatsDisplay();
+        });
+
+        // --- ANNOUNCEMENT BOT LOGIC ---
+        function updateBotBubble() {
+            if(announcements.length === 0) return;
+            const annText = document.getElementById('annText');
+            if(annText) annText.textContent = announcements[currentAnnIndex].text;
+            
+            const prevAnn = document.getElementById('prevAnn');
+            const nextAnn = document.getElementById('nextAnn');
+            if(prevAnn) prevAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
+            if(nextAnn) nextAnn.style.display = announcements.length > 1 ? 'flex' : 'none';
+            
+            const speechBubble = document.getElementById('speechBubble');
+            if(speechBubble) speechBubble.classList.add('active');
+        }
+
+        document.getElementById('botChar')?.addEventListener('click', () => {
+            if (announcements.length > 0) document.getElementById('speechBubble')?.classList.toggle('active');
+        });
+
+        document.getElementById('nextAnn')?.addEventListener('click', (e) => {
+            e.stopPropagation(); currentAnnIndex = (currentAnnIndex + 1) % announcements.length; updateBotBubble();
+        });
+
+        document.getElementById('prevAnn')?.addEventListener('click', (e) => {
+            e.stopPropagation(); currentAnnIndex = (currentAnnIndex - 1 + announcements.length) % announcements.length; updateBotBubble();
+        });
+
+        // --- GOOGLE DRIVE IMAGE CONVERTER ---
+        function getDirectImageUrl(url) {
+            if (!url) return url;
+            let u = String(url).trim();
+            let id = null;
+            if (u.includes('drive.google.com/file/d/')) id = u.match(/\/d\/([a-zA-Z0-9_-]+)/)?.[1];
+            else if (u.includes('drive.google.com/open?id=')) id = u.split('id=')[1]?.split('&')[0];
+            else if (u.includes('drive.google.com/uc?')) id = u.match(/id=([a-zA-Z0-9_-]+)/)?.[1];
+            if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+            return u;
+        }
+
+        // --- CURSOR LOGIC ---
+        const cursorIcon = document.getElementById('cursorIcon');
+        if (window.matchMedia("(pointer: fine)").matches && cursorIcon) {
+            document.addEventListener('mousemove', (e) => { cursorIcon.style.left = e.clientX + 'px'; cursorIcon.style.top = e.clientY + 'px'; });
+            const addHoverEffects = () => {
+                document.querySelectorAll('a, button, h1, h2, h4, p, i, img, .product-card, .logo-wrapper, select, input, .toggle-btn, .f-btn, .sort-trigger, .sort-option, .auth-tab').forEach(el => {
+                    if(el.dataset.cursorBound) return; el.dataset.cursorBound = "true";
+                    el.addEventListener('mouseenter', () => cursorIcon.classList.add('hovering'));
+                    el.addEventListener('mouseleave', () => cursorIcon.classList.remove('hovering'));
+                });
+            };
+            addHoverEffects();
+            new MutationObserver(() => addHoverEffects()).observe(document.body, { childList: true, subtree: true });
+        }
+
+        function openWhatsApp(message) {
+            const phone = '916309645717';
+            const encodedMsg = encodeURIComponent(message || '');
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const url = isMobile ? `whatsapp://send?phone=${phone}&text=${encodedMsg}` : `https://web.whatsapp.com/send?phone=${phone}&text=${encodedMsg}`;
+            window.open(url, '_blank');
+        }
+
+        document.querySelectorAll('.directChatClass').forEach(btn => { btn?.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hello! I have a question from your website."); }); });
+        document.getElementById('floatingWaBtn')?.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hi Artisan! I have a question about your products."); });
+
+        // --- AUTH UI DOM BINDINGS ---
+        const authModal = document.getElementById('authModal');
+        const openAuthModalBtn = document.getElementById('openAuthModalBtn');
+        const closeAuth = document.getElementById('closeAuth');
+        const tabLogin = document.getElementById('tabLogin');
+        const tabRegister = document.getElementById('tabRegister');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+
+        openAuthModalBtn?.addEventListener('click', () => {
+            const user = auth.currentUser;
+            if(!user || user.isAnonymous) {
+                const authContentBlock = document.getElementById('authContentBlock');
+                const profileBlock = document.getElementById('profileBlock');
+                if(authContentBlock) authContentBlock.style.display = 'block';
+                if(profileBlock) profileBlock.style.display = 'none';
+                if(tabLogin) tabLogin.classList.add('active'); 
+                if(tabRegister) tabRegister.classList.remove('active');
+                if(loginForm) loginForm.classList.add('active'); 
+                if(registerForm) registerForm.classList.remove('active');
+                const loginErr = document.getElementById('loginError');
+                if(loginErr) loginErr.textContent = '';
+                const regErr = document.getElementById('regError');
+                if(regErr) regErr.textContent = '';
+            }
+            if(authModal) authModal.style.display = 'flex';
+        });
+
+        closeAuth?.addEventListener('click', () => { if(authModal) authModal.style.display = 'none'; });
+
+        tabLogin?.addEventListener('click', () => {
+            tabLogin.classList.add('active'); tabRegister?.classList.remove('active');
+            loginForm?.classList.add('active'); registerForm?.classList.remove('active');
+            const loginErr = document.getElementById('loginError');
+            if(loginErr) loginErr.textContent = '';
+        });
+
+        tabRegister?.addEventListener('click', () => {
+            tabRegister.classList.add('active'); tabLogin?.classList.remove('active');
+            registerForm?.classList.add('active'); loginForm?.classList.remove('active');
+            const regErr = document.getElementById('regError');
+            if(regErr) regErr.textContent = '';
+        });
+
+        document.getElementById('googleLoginBtn')?.addEventListener('click', () => {
+            if(auth && signInWithPopup && GoogleAuthProvider) {
+                const provider = new GoogleAuthProvider();
+                signInWithPopup(auth, provider)
+                    .then((result) => {
+                        if(authModal) authModal.style.display = 'none';
+                        window.showToast("Logged in with Google!", "fa-star");
+                    })
+                    .catch((error) => {
+                        const errEl = document.getElementById('loginError');
+                        if(errEl) errEl.textContent = error.message.replace("Firebase: ", "");
+                    });
+            } else {
+                const errEl = document.getElementById('loginError');
+                if(errEl) errEl.textContent = "Firebase is not configured.";
+            }
+        });
+
+        loginForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail')?.value.trim();
+            const pass = document.getElementById('loginPassword')?.value;
+            const errorDiv = document.getElementById('loginError');
+            if(errorDiv) errorDiv.textContent = '';
+
+            if(signInWithEmailAndPassword) {
+                signInWithEmailAndPassword(auth, email, pass)
+                    .then(() => {
+                        if(authModal) authModal.style.display = 'none';
+                        loginForm.reset();
+                        window.showToast("Logged in successfully!", "fa-check");
+                    })
+                    .catch((error) => {
+                        if(errorDiv) errorDiv.textContent = error.message.replace("Firebase: ", "");
+                    });
+            } else {
+                if(errorDiv) errorDiv.textContent = "Firebase is not configured.";
+            }
+        });
+
+        registerForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('regEmail')?.value.trim();
+            const pass = document.getElementById('regPassword')?.value;
+            const errorDiv = document.getElementById('regError');
+            if(errorDiv) errorDiv.textContent = '';
+
+            if(createUserWithEmailAndPassword) {
+                createUserWithEmailAndPassword(auth, email, pass)
+                    .then(() => {
+                        if(authModal) authModal.style.display = 'none';
+                        registerForm.reset();
+                        window.showToast("Account created successfully!", "fa-star");
+                    })
+                    .catch((error) => {
+                        if(errorDiv) errorDiv.textContent = error.message.replace("Firebase: ", "");
+                    });
+            } else {
+                if(errorDiv) errorDiv.textContent = "Firebase is not configured.";
+            }
+        });
+
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            if(signOut) {
+                signOut(auth).then(() => {
+                    if(authModal) authModal.style.display = 'none';
+                    window.showToast("Signed out successfully", "fa-sign-out-alt");
+                });
+            }
+        });
+
+        // --- ADMIN TABS & CONTROLS ---
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                const tEl = document.getElementById(tab.dataset.target);
+                if(tEl) tEl.classList.add('active');
+            });
+        });
+
+        const adminPanelBtn = document.getElementById('adminPanelBtn');
+        const adminModal = document.getElementById('adminModal');
+        let editingProductId = null;
+
+        adminPanelBtn?.addEventListener('click', () => {
+            if(authModal) authModal.style.display = 'none';
+            if(adminModal) adminModal.style.display = 'flex';
+            
+            const modeEl = document.getElementById('statsMode');
+            if(modeEl) modeEl.value = statsConfig.mode;
+            const fViews = document.getElementById('fakeViews');
+            if(fViews) fViews.value = statsConfig.fakeViews;
+            const fOrders = document.getElementById('fakeOrders');
+            if(fOrders) fOrders.value = statsConfig.fakeOrders;
+            const fCust = document.getElementById('fakeCustomers');
+            if(fCust) fCust.value = statsConfig.fakeCustomers;
+        });
+
+        document.getElementById('closeAdmin')?.addEventListener('click', () => { if(adminModal) adminModal.style.display = 'none'; });
+
+        // --- ADMIN PRODUCTS UI ---
+        function renderAdminTable() {
+            const adminTableBody = document.getElementById('adminTableBody');
+            if(!adminTableBody) return;
+            adminTableBody.innerHTML = '';
+            products.forEach(p => {
+                const tr = document.createElement('tr');
+                const imgUrl = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/50';
+                tr.innerHTML = `<td><img src="${imgUrl}" alt="${p.name}"></td><td>${p.name}</td><td style="text-transform: capitalize;">${p.category}</td><td>₹${p.basePrice}</td><td>${p.stock}</td><td><button class="admin-actions-btn edit" data-id="${p.id}" title="Edit"><i class="fas fa-edit"></i></button><button class="admin-actions-btn delete" data-id="${p.id}" title="Delete"><i class="fas fa-trash"></i></button></td>`;
+                adminTableBody.appendChild(tr);
             });
 
-            // --- CART & WISHLIST ENGINE (Local Session) ---
-            function formatPrice(p) { return '₹' + (p || 0); }
-            function updateCartCount() { const cc = document.getElementById('cartCount'); if(cc) cc.textContent = cart.reduce((s,i)=>s+i.quantity,0); }
-            function saveCart() { localStorage.setItem('cart',JSON.stringify(cart)); updateCartCount(); }
-            function updateWishlistCount() { const wc = document.getElementById('wishlistCount'); if(wc) wc.textContent = wishlist.length; }
-            function saveWishlist() { localStorage.setItem('wishlist',JSON.stringify(wishlist)); updateWishlistCount(); }
-            
-            function addToCart(id, qty, size, color, eventTarget) {
-                let existing = cart.find(i=>i.id===id && i.size===size && i.color===color);
-                if(existing) existing.quantity += qty; else cart.push({ id, quantity:qty, size, color });
-                saveCart();
-                const cartIcon = document.getElementById('cartBtn');
-                if(eventTarget && cartIcon) {
-                    const card = eventTarget.closest('.product-card') || eventTarget.closest('.product-detail-images');
-                    if(card) {
-                        const img = card.querySelector('.main-image') || card.querySelector('.main-image-detail');
-                        if(img) {
-                            const imgRect = img.getBoundingClientRect(); const cartRect = cartIcon.getBoundingClientRect();
-                            const flyingImg = img.cloneNode(true); flyingImg.className = 'cart-flying-img';
-                            flyingImg.style.left = imgRect.left + 'px'; flyingImg.style.top = imgRect.top + 'px';
-                            flyingImg.style.width = imgRect.width + 'px'; flyingImg.style.height = imgRect.height + 'px';
-                            document.body.appendChild(flyingImg);
-                            requestAnimationFrame(() => {
-                                flyingImg.style.left = (cartRect.left + cartRect.width/2 - 25) + 'px'; flyingImg.style.top = (cartRect.top + cartRect.height/2 - 25) + 'px';
-                                flyingImg.style.width = '50px'; flyingImg.style.height = '50px'; flyingImg.style.opacity = '0'; flyingImg.style.transform = 'scale(0.2) rotate(15deg)';
-                            });
-                            setTimeout(() => { if(document.body.contains(flyingImg)) document.body.removeChild(flyingImg); cartIcon.classList.add('wiggle'); setTimeout(()=>cartIcon.classList.remove('wiggle'), 400); }, 700);
-                        }
-                    }
-                } else if(cartIcon) { cartIcon.classList.add('wiggle'); setTimeout(()=>cartIcon.classList.remove('wiggle'), 400); }
-                window.showToast('Item added to cart!');
-            }
+            document.querySelectorAll('.admin-actions-btn.edit').forEach(btn => { btn.addEventListener('click', () => editProduct(parseInt(btn.dataset.id))); });
+            document.querySelectorAll('.admin-actions-btn.delete').forEach(btn => { btn.addEventListener('click', () => deleteProduct(parseInt(btn.dataset.id))); });
+        }
 
-            window.openProductDetail = function(productId) {
-                const product = products.find(p => p.id === productId); if (!product) return;
-                const mainUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
-                const mainImgEl = document.getElementById('detailMainImage');
-                if(mainImgEl) { mainImgEl.src = mainUrl; mainImgEl.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/400x500?text=Image+Unavailable'; }; }
-                
-                const dn = document.getElementById('detailName'); if(dn) dn.textContent = product.name;
-                const dp = document.getElementById('detailPrice'); if(dp) dp.textContent = formatPrice(product.basePrice);
-                const dt = document.getElementById('detailTotalPrice'); if(dt) dt.textContent = 'total: ' + formatPrice(product.basePrice);
-                const dd = document.getElementById('detailDescription'); if(dd) dd.textContent = product.description || "";
-                const ds = document.getElementById('detailStock'); if(ds) ds.innerHTML = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
-                
-                const thumbContainer = document.getElementById('detailThumbnails');
-                if(thumbContainer) {
-                    thumbContainer.innerHTML = '';
-                    if (product.images) {
-                        product.images.forEach((imgUrl, idx) => {
-                            const thumb = document.createElement('img'); thumb.src = imgUrl; thumb.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/60?text=N/A'; };
-                            thumb.classList.add('product-detail-thumb'); if (idx === 0) thumb.classList.add('active');
-                            thumb.addEventListener('click', () => { if(mainImgEl) mainImgEl.src = imgUrl; document.querySelectorAll('.product-detail-thumb').forEach(t => t.classList.remove('active')); thumb.classList.add('active'); });
-                            thumbContainer.appendChild(thumb);
+        window.editProduct = function(id) {
+            const p = products.find(prod => prod.id === id);
+            if(!p) return;
+            
+            editingProductId = id;
+            const adminTitle = document.getElementById('adminFormTitle'); if(adminTitle) adminTitle.textContent = "Edit Product";
+            const aname = document.getElementById('adminName'); if(aname) aname.value = p.name;
+            const acat = document.getElementById('adminCategory'); if(acat) acat.value = p.category;
+            const agen = document.getElementById('adminGender'); if(agen) agen.value = p.gender || 'all';
+            const aprice = document.getElementById('adminPrice'); if(aprice) aprice.value = p.basePrice;
+            const astock = document.getElementById('adminStock'); if(astock) astock.value = p.stock;
+            const adesc = document.getElementById('adminDesc'); if(adesc) adesc.value = p.description || '';
+            const aimg = document.getElementById('adminImages'); if(aimg) aimg.value = p.images ? p.images.join('\n') : '';
+
+            const wrap = document.querySelector('#adminProductsView .admin-table-wrapper'); if(wrap) wrap.style.display = 'none';
+            const addBtn = document.getElementById('addNewProductBtn'); if(addBtn) addBtn.style.display = 'none';
+            const afv = document.getElementById('adminFormView'); if(afv) afv.style.display = 'flex';
+        }
+
+        document.getElementById('cancelEditBtn')?.addEventListener('click', () => {
+            const afv = document.getElementById('adminFormView'); if(afv) afv.style.display = 'none';
+            const wrap = document.querySelector('#adminProductsView .admin-table-wrapper'); if(wrap) wrap.style.display = 'block';
+            const addBtn = document.getElementById('addNewProductBtn'); if(addBtn) addBtn.style.display = 'inline-block';
+        });
+
+        document.getElementById('addNewProductBtn')?.addEventListener('click', () => {
+            editingProductId = null;
+            const atitle = document.getElementById('adminFormTitle'); if(atitle) atitle.textContent = "Add New Product";
+            const adminForm = document.getElementById('adminForm'); if(adminForm) adminForm.reset();
+            const wrap = document.querySelector('#adminProductsView .admin-table-wrapper'); if(wrap) wrap.style.display = 'none';
+            document.getElementById('addNewProductBtn').style.display = 'none';
+            const afv = document.getElementById('adminFormView'); if(afv) afv.style.display = 'flex';
+        });
+
+        document.getElementById('adminForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(!auth.currentUser) return;
+            
+            const name = document.getElementById('adminName')?.value.trim();
+            const category = document.getElementById('adminCategory')?.value;
+            const gender = document.getElementById('adminGender')?.value || 'all';
+            const basePrice = parseInt(document.getElementById('adminPrice')?.value) || 0;
+            const stock = parseInt(document.getElementById('adminStock')?.value) || 0;
+            const description = document.getElementById('adminDesc')?.value.trim();
+            
+            const rawImages = document.getElementById('adminImages')?.value;
+            let imgArray = [];
+            if(rawImages) imgArray = rawImages.split(/[\n,]+/).map(u => getDirectImageUrl(u.trim())).filter(u => u !== '');
+            if(imgArray.length === 0) imgArray = ['https://via.placeholder.com/400x500?text=No+Image'];
+
+            let variants = null;
+            if (category === 'clothes') variants = { sizes: ["S", "M", "L"], colors: ["Standard"] };
+            else if (category === 'jewelry') variants = { sizes: ["One Size"] };
+            
+            const idToSave = editingProductId || Date.now();
+            const productData = { name, category, gender, basePrice, stock, description, images: imgArray, variants };
+
+            setDoc(docPath('products', String(idToSave)), productData).then(()=>{
+                window.showToast("Product saved globally!", "fa-cloud-upload-alt");
+                document.getElementById('cancelEditBtn')?.click();
+            }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
+        });
+
+        window.deleteProduct = function(id) {
+            if(confirm("Are you sure you want to permanently delete this product?")) {
+                if(!auth.currentUser) return;
+                deleteDoc(docPath('products', String(id))).then(()=>{
+                    window.showToast("Product deleted from cloud.", "fa-trash");
+                }).catch(err => window.showToast("Failed to delete: " + err.message, "fa-times"));
+            }
+        }
+
+        // --- ADMIN COUPONS LOGIC ---
+        function renderCouponsTable() {
+            const couponsTableBody = document.getElementById('couponsTableBody');
+            if(!couponsTableBody) return;
+            couponsTableBody.innerHTML = '';
+            adminCoupons.forEach((c) => {
+                const tr = document.createElement('tr');
+                const typeLabel = c.type === 'percent' ? c.value + '%' : '₹' + c.value;
+                tr.innerHTML = `<td><strong>${c.code}</strong></td><td style="text-transform:capitalize;">${c.type}</td><td>${typeLabel}</td><td>Min: ₹${c.minAmount} | Qty: ${c.minProducts}</td><td><button class="admin-actions-btn delete" data-dbid="${c.dbId}"><i class="fas fa-trash"></i></button></td>`;
+                couponsTableBody.appendChild(tr);
+            });
+            document.querySelectorAll('#adminCouponsView .delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if(confirm("Delete coupon globally?")) {
+                        deleteDoc(docPath('coupons', btn.dataset.dbid)).catch(e => window.showToast("Failed to delete: " + e.message, "fa-times"));
+                    }
+                });
+            });
+        }
+
+        document.getElementById('couponForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(!auth.currentUser) return;
+            
+            const code = document.getElementById('couponCodeInput')?.value.trim().toUpperCase();
+            const type = document.getElementById('couponType')?.value;
+            const value = parseInt(document.getElementById('couponValue')?.value) || 0;
+            const minAmount = parseInt(document.getElementById('couponMinAmount')?.value) || 0;
+            const minProducts = parseInt(document.getElementById('couponMinProducts')?.value) || 0;
+
+            const exists = adminCoupons.find(c => c.code === code);
+            if (exists) return window.showToast("Code already exists!", "fa-exclamation-triangle");
+
+            setDoc(docPath('coupons', code), { code, type, value, minAmount, minProducts }).then(()=>{
+                window.showToast("Coupon deployed globally!", "fa-cloud-upload-alt");
+                document.getElementById('couponForm').reset();
+            }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
+        });
+
+        // --- ADMIN ANNOUNCEMENTS LOGIC ---
+        function renderAnnouncementsTable() {
+            const announcementsTableBody = document.getElementById('announcementsTableBody');
+            if(!announcementsTableBody) return;
+            announcementsTableBody.innerHTML = '';
+            announcements.forEach((a) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${a.text}</td><td style="width: 60px;"><button class="admin-actions-btn delete" data-dbid="${a.dbId}"><i class="fas fa-trash"></i></button></td>`;
+                announcementsTableBody.appendChild(tr);
+            });
+            document.querySelectorAll('#adminAnnouncementsView .delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if(confirm("Delete announcement globally?")) {
+                        deleteDoc(docPath('announcements', btn.dataset.dbid)).catch(e => window.showToast("Failed to delete: " + e.message, "fa-times"));
+                    }
+                });
+            });
+        }
+
+        document.getElementById('announcementForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if(!auth.currentUser) return;
+            const text = document.getElementById('announcementText')?.value.trim();
+            const id = Date.now().toString();
+            setDoc(docPath('announcements', id), { text: text, ts: parseInt(id) }).then(()=>{
+                window.showToast("Announcement broadcasted!", "fa-bullhorn");
+                document.getElementById('announcementForm').reset();
+            }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
+        });
+
+        // --- ADMIN ORDERS VIEW ---
+        function renderAdminOrdersTable() {
+            const ob = document.getElementById('adminOrdersTableBody');
+            if(!ob) return;
+            if(globalOrdersList.length === 0) { ob.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders placed yet.</td></tr>'; return; }
+            
+            let html = '';
+            globalOrdersList.slice().sort((a,b)=>b.ts - a.ts).forEach(o => {
+                html += `<tr><td>${o.date}</td><td>${o.phone}<br><small>${o.name}</small></td><td><small>${o.items}</small></td><td>${o.address}<br>Pin: ${o.pincode}</td><td><span class="badge">₹${o.total}</span></td></tr>`;
+            });
+            ob.innerHTML = html;
+        }
+
+        // --- MODE TOGGLE & UI SWITCHING ---
+        const btnHandmade = document.getElementById('btnHandmade');
+        const btnFashion = document.getElementById('btnFashion');
+        const themeBtn = document.getElementById('themeToggle');
+        const themeIcon = themeBtn?.querySelector('i');
+        const mainBrandText = document.getElementById('mainBrandText');
+        const footerBrandName = document.getElementById('footerBrandName');
+
+        if(btnHandmade && btnFashion) {
+            btnHandmade.addEventListener('click', () => switchMode('handmade'));
+            btnFashion.addEventListener('click', () => switchMode('fashion'));
+        }
+
+        function switchMode(mode) {
+            if (currentMode === mode) return;
+            currentMode = mode;
+            const sections = document.getElementById('productSections');
+            if(sections) sections.style.opacity = '0'; 
+            setTimeout(() => {
+                setRandomQuote(mode);
+                if (mode === 'fashion') {
+                    document.body.classList.add('theme-fashion'); document.body.classList.add('dark-mode');
+                    if(themeIcon) themeIcon.className = 'fas fa-sun';
+                    if(btnFashion) btnFashion.classList.add('active'); if(btnHandmade) btnHandmade.classList.remove('active');
+                    if(mainBrandText) mainBrandText.textContent = "Artisan Jewelers & Clothes";
+                    if(footerBrandName) footerBrandName.textContent = "artisan jewelers & clothes";
+                    const hTitle = document.getElementById('heroTitle'); if(hTitle) hTitle.innerHTML = `elevate your <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">everyday style</span>`;
+                    const hBtn = document.getElementById('heroBtn1'); if(hBtn) hBtn.innerHTML = `shop fashion <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
+                } else {
+                    document.body.classList.remove('theme-fashion');
+                    if(!manualDarkMode) { document.body.classList.remove('dark-mode'); if(themeIcon) themeIcon.className = 'fas fa-moon'; }
+                    else { if(themeIcon) themeIcon.className = 'fas fa-sun'; }
+                    if(btnHandmade) btnHandmade.classList.add('active'); if(btnFashion) btnFashion.classList.remove('active');
+                    if(mainBrandText) mainBrandText.textContent = "Artisan"; if(footerBrandName) footerBrandName.textContent = "artisan";
+                    const hTitle = document.getElementById('heroTitle'); if(hTitle) hTitle.innerHTML = `handmade with <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">heart & soul</span>`;
+                    const hBtn = document.getElementById('heroBtn1'); if(hBtn) hBtn.innerHTML = `shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
+                }
+                renderProducts();
+                if(sections) sections.style.opacity = '1'; 
+            }, 300); 
+        }
+
+        if (manualDarkMode) { document.body.classList.add('dark-mode'); if(themeIcon) themeIcon.className = 'fas fa-sun'; }
+        themeBtn?.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            manualDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', manualDarkMode);
+            if(themeIcon) themeIcon.className = manualDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+        });
+
+        // --- CART & WISHLIST ENGINE (Local Session) ---
+        function formatPrice(p) { return '₹' + (p || 0); }
+        function updateCartCount() { const cc = document.getElementById('cartCount'); if(cc) cc.textContent = cart.reduce((s,i)=>s+i.quantity,0); }
+        function saveCart() { localStorage.setItem('cart',JSON.stringify(cart)); updateCartCount(); }
+        function updateWishlistCount() { const wc = document.getElementById('wishlistCount'); if(wc) wc.textContent = wishlist.length; }
+        function saveWishlist() { localStorage.setItem('wishlist',JSON.stringify(wishlist)); updateWishlistCount(); }
+        
+        function addToCart(id, qty, size, color, eventTarget) {
+            let existing = cart.find(i=>i.id===id && i.size===size && i.color===color);
+            if(existing) existing.quantity += qty; else cart.push({ id, quantity:qty, size, color });
+            saveCart();
+            const cartIcon = document.getElementById('cartBtn');
+            if(eventTarget && cartIcon) {
+                const card = eventTarget.closest('.product-card') || eventTarget.closest('.product-detail-images');
+                if(card) {
+                    const img = card.querySelector('.main-image') || card.querySelector('.main-image-detail');
+                    if(img) {
+                        const imgRect = img.getBoundingClientRect(); const cartRect = cartIcon.getBoundingClientRect();
+                        const flyingImg = img.cloneNode(true); flyingImg.className = 'cart-flying-img';
+                        flyingImg.style.left = imgRect.left + 'px'; flyingImg.style.top = imgRect.top + 'px';
+                        flyingImg.style.width = imgRect.width + 'px'; flyingImg.style.height = imgRect.height + 'px';
+                        document.body.appendChild(flyingImg);
+                        requestAnimationFrame(() => {
+                            flyingImg.style.left = (cartRect.left + cartRect.width/2 - 25) + 'px'; flyingImg.style.top = (cartRect.top + cartRect.height/2 - 25) + 'px';
+                            flyingImg.style.width = '50px'; flyingImg.style.height = '50px'; flyingImg.style.opacity = '0'; flyingImg.style.transform = 'scale(0.2) rotate(15deg)';
                         });
+                        setTimeout(() => { if(document.body.contains(flyingImg)) document.body.removeChild(flyingImg); cartIcon.classList.add('wiggle'); setTimeout(()=>cartIcon.classList.remove('wiggle'), 400); }, 700);
                     }
                 }
+            } else if(cartIcon) { cartIcon.classList.add('wiggle'); setTimeout(()=>cartIcon.classList.remove('wiggle'), 400); }
+            window.showToast('Item added to cart!');
+        }
 
-                const variantsDiv = document.getElementById('detailVariants');
-                if(variantsDiv) {
-                    if (product.variants) {
-                        let html = '';
-                        if (product.variants.sizes && product.variants.sizes.length > 0) html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
-                        if (product.variants.colors && product.variants.colors.length > 0) html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
-                        variantsDiv.innerHTML = html;
-                    } else variantsDiv.innerHTML = '';
-                }
-                
-                const qtyInput = document.getElementById('detailQuantity');
-                if(qtyInput) { qtyInput.value = 1; qtyInput.oninput = () => { if(dt) dt.textContent = 'total: ' + formatPrice(product.basePrice * (parseInt(qtyInput.value) || 1)); }; }
-                
-                const addBtn = document.getElementById('detailAddToCart');
-                if(addBtn) { addBtn.onclick = () => { addToCart(product.id, parseInt(document.getElementById('detailQuantity')?.value) || 1, document.getElementById('detailSize') ? document.getElementById('detailSize').value : null, document.getElementById('detailColor') ? document.getElementById('detailColor').value : null, addBtn); const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'none'; }; }
-                const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'flex';
-            }
-
-            // --- STORE RENDERING ---
-            function renderProducts() {
-                const sections = document.getElementById('productSections');
-                if(!sections) return;
-                if(products.length === 0) { sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>Your store is currently empty.</h2><p>Please login to the Admin Dashboard to add products globally.</p></div>'; return; }
-
-                const searchInput = document.getElementById('searchInput'); const sortInput = document.getElementById('sortSelect'); 
-                const s = searchInput ? searchInput.value.toLowerCase() : ''; const sort = sortInput ? sortInput.value : 'default';
-                
-                let filtered = products.filter(p => {
-                    if (currentMode === 'handmade') return p.category === 'handmade';
-                    if(p.category !== 'clothes' && p.category !== 'jewelry') return false;
-                    if(fashionCat !== 'all' && p.category !== fashionCat) return false;
-                    if(fashionCat === 'clothes' && fashionGen !== 'all' && p.gender !== fashionGen) return false;
-                    return true;
-                });
-
-                const isSearchingOrSorting = (s !== '' || sort !== 'default');
-                if(s) filtered = filtered.filter(p => p.name.toLowerCase().includes(s));
-                if(sort==='priceAsc') filtered.sort((a,b)=>a.basePrice-b.basePrice);
-                else if(sort==='priceDesc') filtered.sort((a,b)=>b.basePrice-a.basePrice);
-                
-                let html = '';
-
-                if (!isSearchingOrSorting && filtered.length >= 4) {
-                    let sortedById = [...filtered].sort((a,b) => b.id - a.id); let newArrivals = sortedById.slice(0, 4); 
-                    let sortedByStock = [...filtered].sort((a,b) => a.stock - b.stock); let mostOrdered = sortedByStock.slice(0, 4); 
-                    let trending = [...filtered].sort((a,b) => (b.id * 7 % 10) - (a.id * 7 % 10)).slice(0, 4);
-
-                    if(newArrivals.length) html += `<h2 style="margin-top:1rem; margin-bottom: 1.5rem; text-align:center;"><span class="badge">✨ New Arrivals</span></h2><div class="product-grid" style="margin-bottom: 3rem;">${newArrivals.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
-                    if(trending.length) html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">🔥 Trending Now</span></h2><div class="product-grid" style="margin-bottom: 3rem;">${trending.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
-                    if(mostOrdered.length) html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">📦 Most Ordered</span></h2><div class="product-grid" style="margin-bottom: 3rem;">${mostOrdered.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
-                    html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">🛍️ View All Catalog</span></h2><div class="product-grid">${filtered.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
-                } else {
-                    if (currentMode === 'handmade') {
-                        if(filtered.length) html += '<div class="product-grid">'+filtered.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
-                    } else {
-                        const clothes = filtered.filter(p=>p.category==='clothes'); const jewelry = filtered.filter(p=>p.category==='jewelry');
-                        if(fashionCat === 'all' || fashionCat === 'clothes') { if(clothes.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">👗 apparel</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i)).join('')+'</div>'; }
-                        if(fashionCat === 'all' || fashionCat === 'jewelry') { if(jewelry.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">💎 fine jewelry</span></h2><div class="product-grid">'+jewelry.map((p,i)=>renderProductCard(p,i+clothes.length)).join('')+'</div>'; }
-                    }
-                }
-                
-                if (!html) sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>No products found</h2><p>Try adjusting your search or filters.</p></div>';
-                else {
-                    sections.innerHTML = html; attachProductEvents();
-                    setTimeout(() => { document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible')); }, 50);
-                }
-            }
-
-            function renderProductCard(p, idx) {
-                const isWished = wishlist.includes(p.id);
-                const stockBadge = p.stock>0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
-                const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
-                const hoverImgHtml = p.images && p.images.length > 1 ? `<img src="${p.images[1]}" class="hover-image" alt="Lifestyle shot" onerror="this.style.display='none';">` : '';
-                const shortDesc = p.description ? `<p class="card-description">${p.description}</p>` : '';
-                let variantsHtml = '';
-                if(p.variants) {
-                    variantsHtml = '<div class="product-variants">';
-                    if(p.variants.sizes && p.variants.sizes.length > 0) variantsHtml += `<div class="variant-row"><label>Size:</label> <select class="size-select">${p.variants.sizes.map(s=>`<option>${s}</option>`).join('')}</select></div>`;
-                    if(p.variants.colors && p.variants.colors.length > 0) variantsHtml += `<div class="variant-row"><label>Color:</label> <select class="color-select">${p.variants.colors.map(c=>`<option>${c}</option>`).join('')}</select></div>`;
-                    variantsHtml += '</div>';
-                }
-                return `<div class="product-card" data-id="${p.id}" data-base-price="${p.basePrice}" style="--card-index:${idx}"><div class="wishlist-heart ${isWished?'active':''}" data-id="${p.id}"><i class="${isWished?'fas':'far'} fa-heart"></i></div><div class="product-images"><img src="${mainImg}" class="main-image" alt="${p.name}" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x500?text=Image+Unavailable';">${hoverImgHtml}</div><h4 style="margin-top:1rem;">${p.name}</h4>${shortDesc}${stockBadge}${variantsHtml}
-                    <div class="price-info"><span class="base-price">${formatPrice(p.basePrice)}</span></div><div class="order-row" style="display:flex; gap:0.5rem; margin-top:auto; padding-top:1rem;"><input type="number" min="1" value="1" class="quantity-input"><button class="btn-cart add-to-cart" data-id="${p.id}" style="flex:1; justify-content:center;"><i class="fas fa-cart-plus"></i> Add</button></div></div>`;
-            }
-
-            function attachProductEvents() {
-                document.querySelectorAll('.wishlist-heart').forEach(heart => {
-                    heart.addEventListener('click', function(e) {
-                        e.stopPropagation(); const id = parseInt(this.dataset.id);
-                        if (wishlist.includes(id)) { wishlist = wishlist.filter(i => i !== id); this.classList.remove('active'); this.innerHTML = '<i class="far fa-heart"></i>'; } 
-                        else { wishlist.push(id); this.classList.add('active'); this.innerHTML = '<i class="fas fa-heart"></i>'; window.showToast('Added to Wishlist ❤️', 'fa-heart'); }
-                        saveWishlist(); this.classList.add('heart-pulse'); setTimeout(() => this.classList.remove('heart-pulse'), 400);
-                    });
-                });
-                document.querySelectorAll('.main-image, .hover-image').forEach(img => img.addEventListener('click', function(e){ e.stopPropagation(); const lbImg = document.getElementById('lightboxImg'); if(lbImg) lbImg.src = this.src; const lb = document.getElementById('lightbox'); if(lb) lb.classList.add('show'); }));
-                document.querySelectorAll('.add-to-cart').forEach(btn => {
-                    btn.addEventListener('click', function(e){
-                        e.stopPropagation(); let card=this.closest('.product-card'), id=parseInt(card.dataset.id), qty=parseInt(card.querySelector('.quantity-input').value)||1;
-                        let sizeSelect=card.querySelector('.size-select'), colorSelect=card.querySelector('.color-select');
-                        addToCart(id,qty, sizeSelect?sizeSelect.value:null, colorSelect?colorSelect.value:null, this); updateCartCount();
-                    });
-                });
-                document.querySelectorAll('.product-card').forEach(card => {
-                    card.addEventListener('click', function(e){ if(e.target.closest('.wishlist-heart') || e.target.closest('.quantity-input') || e.target.closest('.add-to-cart') || e.target.closest('select')) return; window.openProductDetail(parseInt(this.dataset.id)); });
-                    card.addEventListener('mousemove', function(e) { let rect = this.getBoundingClientRect(); let x = (e.clientX - rect.left) / rect.width - 0.5; let y = (e.clientY - rect.top) / rect.height - 0.5; this.style.transform = `perspective(1000px) rotateX(${y * -8}deg) rotateY(${x * 8}deg) scale3d(1.02, 1.02, 1.02)`; });
-                    card.addEventListener('mouseleave', function() { this.style.transform = ''; });
-                });
-            }
-
-            // FILTER BINDINGS
-            const customSort = document.getElementById('customSort');
-            const sortTrigger = document.querySelector('.sort-trigger');
-            const sortOptions = document.querySelectorAll('.sort-option');
-            const sortLabel = document.getElementById('sortLabel');
-            const sortInput = document.getElementById('sortSelect');
-            sortTrigger?.addEventListener('click', (e) => { e.stopPropagation(); if(customSort) customSort.classList.toggle('active'); });
-            sortOptions.forEach(opt => {
-                opt.addEventListener('click', (e) => { e.stopPropagation(); sortOptions.forEach(o => o.classList.remove('active')); opt.classList.add('active'); if(sortLabel) sortLabel.textContent = "Sort: " + opt.dataset.label; if(sortInput) sortInput.value = opt.dataset.value; if(customSort) customSort.classList.remove('active'); renderProducts(); });
-            });
-            document.addEventListener('click', () => { if(customSort && customSort.classList.contains('active')) customSort.classList.remove('active'); });
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); fashionCat = e.target.dataset.cat; const genF = document.getElementById('genderFilters'); if(fashionCat === 'clothes') { if(genF) genF.classList.add('active'); } else { if(genF) genF.classList.remove('active'); } const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0'; setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200); });
-            });
-            document.querySelectorAll('.gen-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => { document.querySelectorAll('.gen-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); fashionGen = e.target.dataset.gen; const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0'; setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200); });
-            });
-            document.getElementById('searchInput')?.addEventListener('input',renderProducts);
-
-            // --- CART & CHECKOUT LOGIC ---
-            document.getElementById('cartBtn')?.addEventListener('click',()=>{ renderCartModal(); const cm = document.getElementById('cartModal'); if(cm) cm.style.display='flex'; });
+        window.openProductDetail = function(productId) {
+            const product = products.find(p => p.id === productId); if (!product) return;
+            const mainUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
+            const mainImgEl = document.getElementById('detailMainImage');
+            if(mainImgEl) { mainImgEl.src = mainUrl; mainImgEl.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/400x500?text=Image+Unavailable'; }; }
             
-            function renderOrderHistory(userContext) {
-                const list = document.getElementById('orderHistoryList');
-                if(!list) return;
-                
-                // Standard unauthenticated users only see their locally stored orders
-                let myOrders = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
-                
-                if (userContext && userContext.uid && globalOrdersList.length > 0) {
-                    // Pull from the global list based on the auth UID
-                    myOrders = globalOrdersList.filter(o => o.uid === userContext.uid);
-                }
-
-                if (myOrders.length === 0) { list.innerHTML = '<p style="text-align: center; opacity: 0.7;">No past orders found.</p>'; return; }
-                
-                let html = '';
-                myOrders.slice().sort((a,b)=>b.ts - a.ts).forEach(order => {
-                    html += `<div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 15px; margin-bottom: 1rem;"><div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;"><strong style="color: var(--accent-color);">${order.date}</strong><span class="badge">₹${order.total}</span></div><div style="font-size: 0.85rem; opacity: 0.8;"><p><strong>Items:</strong> ${order.items}</p><p><strong>Delivery:</strong> ${order.address} (${order.pincode})</p></div></div>`;
-                });
-                list.innerHTML = html;
-            }
-
-            document.getElementById('viewOrderHistoryBtn')?.addEventListener('click', () => {
-                const cm = document.getElementById('cartModal'); if(cm) cm.style.display = 'none';
-                const oh = document.getElementById('orderHistoryModal'); if(oh) oh.style.display = 'flex';
-                renderOrderHistory(window.firebaseAuth?.currentUser);
-            });
-            document.getElementById('closeOrderHistory')?.addEventListener('click', () => { const oh = document.getElementById('orderHistoryModal'); if(oh) oh.style.display = 'none'; });
-            document.getElementById('wishlistBtn')?.addEventListener('click',()=>{ renderWishlistModal(); const wm = document.getElementById('wishlistModal'); if(wm) wm.style.display='flex'; });
-            document.getElementById('openFaqBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); const fm = document.getElementById('faqModal'); if(fm) fm.style.display='flex'; });
-            document.getElementById('closeLightboxBtn')?.addEventListener('click', () => { const lb = document.getElementById('lightbox'); if(lb) lb.classList.remove('show'); });
-            document.getElementById('lightbox')?.addEventListener('click', (e) => { if(e.target === document.getElementById('lightbox')) e.target.classList.remove('show'); });
-            document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ const m = this.closest('.modal'); if(m) m.style.display='none'; }));
-            window.addEventListener('click',e=>{ if(e.target.classList.contains('modal')) e.target.style.display='none'; });
-
-            // State Delivery Calculation
-            document.getElementById('estimateDelivery')?.addEventListener('click',()=>{
-                let stateSelect = document.getElementById('deliveryState'); if(!stateSelect) return;
-                let stateCode = stateSelect.value; let stateLabel = stateSelect.options[stateSelect.selectedIndex].text;
-                if(!stateCode) return window.showToast('Please select a state first', 'fa-exclamation-circle');
-                let charge = 250; let eta = '5-7 business days'; let service = 'DTDC Prime';
-                if (stateCode === 'AP' || stateCode === 'TS') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
-                else if (stateCode === 'KA' || stateCode === 'TN') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
-                currentDelivery = { charge: charge, provider: 'DTDC', eta: eta, stateLabel: stateLabel, service: service };
-                const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='block';
-                const chargeUi = document.getElementById('deliveryChargeUI'); if(chargeUi) chargeUi.innerText = formatPrice(currentDelivery.charge); 
-                const etaEl = document.getElementById('deliveryEta'); if(etaEl) etaEl.innerText = currentDelivery.eta;
-                const distEl = document.getElementById('deliveryDistance'); if(distEl) distEl.innerText = currentDelivery.stateLabel;
-                const srvEl = document.getElementById('deliveryService'); if(srvEl) srvEl.innerText = currentDelivery.service;
-                updateDeliverySummary(currentDelivery.charge);
-            });
-            document.getElementById('deliveryState')?.addEventListener('change', () => { const estArea = document.getElementById('deliveryEstimateArea'); if(estArea && estArea.style.display === 'block') { const estBtn = document.getElementById('estimateDelivery'); if(estBtn) estBtn.click(); } });
-
-            function updateDeliverySummary(deliveryCharge = 0){
-                let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
-                // Fix for empty cart NaN error
-                let total = (subtotal || 0) + (deliveryCharge || 0) - (currentDiscount || 0);
-                if(total < 0) total = 0;
-                
-                const sumEl = document.getElementById('deliveryOrderSummary');
-                if(sumEl) { sumEl.innerHTML = `<strong>Subtotal:</strong> ${formatPrice(subtotal)}<br>${deliveryCharge>0?`<strong>DTDC Delivery:</strong> ${formatPrice(deliveryCharge)}<br>`:''}${currentDiscount>0?`<strong>Discount:</strong> -${formatPrice(currentDiscount)}<br>`:''}<strong style="font-size:1.2rem;">Total: ${formatPrice(total)}</strong>`; }
-                renderSuggestedCoupons();
-            }
-
-            // --- SMART COUPON SUGGESTION ENGINE ---
-            function renderSuggestedCoupons() {
-                let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
-                let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
-                
-                const allCoupons = [
-                    { code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 },
-                    { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 },
-                    ...adminCoupons 
-                ];
-                
-                // Filter coupons based on cart thresholds
-                const eligible = allCoupons.filter(c => subtotal >= c.minAmount && itemCount >= c.minProducts);
-                const container = document.getElementById('suggestedCouponsArea');
-                if(!container) return;
-                
-                if(eligible.length > 0) {
-                    let html = '<span style="font-size:0.85rem; opacity:0.8; width:100%; display:block;">🎉 Suggested for you:</span>';
-                    eligible.forEach(c => {
-                        const desc = c.type === 'percent' ? `${c.value}% off` : `₹${c.value} off`;
-                        // Clickable badge that automatically applies the code
-                        html += `<span class="badge" style="cursor:pointer; background: var(--badge-bg); color: var(--accent-color); border: 1px dashed var(--accent-color); padding: 0.3rem 0.8rem; transition: 0.2s;" onmouseover="this.style.background='var(--accent-color)'; this.style.color='#fff';" onmouseout="this.style.background='var(--badge-bg)'; this.style.color='var(--accent-color)';" onclick="document.getElementById('couponCode').value='${c.code}'; document.getElementById('applyCouponBtn').click();"><i class="fas fa-tag"></i> ${c.code} (${desc})</span>`;
+            const dn = document.getElementById('detailName'); if(dn) dn.textContent = product.name;
+            const dp = document.getElementById('detailPrice'); if(dp) dp.textContent = formatPrice(product.basePrice);
+            const dt = document.getElementById('detailTotalPrice'); if(dt) dt.textContent = 'total: ' + formatPrice(product.basePrice);
+            const dd = document.getElementById('detailDescription'); if(dd) dd.textContent = product.description || "";
+            const ds = document.getElementById('detailStock'); if(ds) ds.innerHTML = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
+            
+            const thumbContainer = document.getElementById('detailThumbnails');
+            if(thumbContainer) {
+                thumbContainer.innerHTML = '';
+                if (product.images) {
+                    product.images.forEach((imgUrl, idx) => {
+                        const thumb = document.createElement('img'); thumb.src = imgUrl; thumb.onerror = function() { this.onerror=null; this.src='https://via.placeholder.com/60?text=N/A'; };
+                        thumb.classList.add('product-detail-thumb'); if (idx === 0) thumb.classList.add('active');
+                        thumb.addEventListener('click', () => { if(mainImgEl) mainImgEl.src = imgUrl; document.querySelectorAll('.product-detail-thumb').forEach(t => t.classList.remove('active')); thumb.classList.add('active'); });
+                        thumbContainer.appendChild(thumb);
                     });
-                    container.innerHTML = html;
-                } else {
-                    container.innerHTML = '';
                 }
             }
 
-            document.getElementById('proceedToDelivery')?.addEventListener('click',()=>{
-                if(cart.length===0) return window.showToast('Your cart is empty', 'fa-exclamation-circle');
-                const cm = document.getElementById('cartModal'); if(cm) cm.style.display='none'; 
-                const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='flex';
-                const dCity = document.getElementById('deliveryCity'); if(dCity) dCity.value=''; 
-                const dState = document.getElementById('deliveryState'); if(dState) dState.value=''; 
-                const cCode = document.getElementById('couponCode'); if(cCode) cCode.value=''; 
-                const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='none'; 
-                const cMsg = document.getElementById('couponMessage'); if(cMsg) cMsg.innerHTML=''; 
-                currentDiscount=0; updateDeliverySummary(0); renderSuggestedCoupons();
+            const variantsDiv = document.getElementById('detailVariants');
+            if(variantsDiv) {
+                if (product.variants) {
+                    let html = '';
+                    if (product.variants.sizes && product.variants.sizes.length > 0) html += `<div class="variant-row"><label>Size:</label> <select id="detailSize">${product.variants.sizes.map(s => `<option>${s}</option>`).join('')}</select></div>`;
+                    if (product.variants.colors && product.variants.colors.length > 0) html += `<div class="variant-row"><label>Color:</label> <select id="detailColor">${product.variants.colors.map(c => `<option>${c}</option>`).join('')}</select></div>`;
+                    variantsDiv.innerHTML = html;
+                } else variantsDiv.innerHTML = '';
+            }
+            
+            const qtyInput = document.getElementById('detailQuantity');
+            if(qtyInput) { qtyInput.value = 1; qtyInput.oninput = () => { if(dt) dt.textContent = 'total: ' + formatPrice(product.basePrice * (parseInt(qtyInput.value) || 1)); }; }
+            
+            const addBtn = document.getElementById('detailAddToCart');
+            if(addBtn) { addBtn.onclick = () => { addToCart(product.id, parseInt(document.getElementById('detailQuantity')?.value) || 1, document.getElementById('detailSize') ? document.getElementById('detailSize').value : null, document.getElementById('detailColor') ? document.getElementById('detailColor').value : null, addBtn); const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'none'; }; }
+            const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'flex';
+        }
+
+        // --- STORE RENDERING ---
+        function renderProducts() {
+            const sections = document.getElementById('productSections');
+            if(!sections) return;
+            if(products.length === 0) { sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>Your store is currently empty.</h2><p>Please login to the Admin Dashboard to add products globally.</p></div>'; return; }
+
+            const searchInput = document.getElementById('searchInput'); const sortInput = document.getElementById('sortSelect'); 
+            const s = searchInput ? searchInput.value.toLowerCase() : ''; const sort = sortInput ? sortInput.value : 'default';
+            
+            let filtered = products.filter(p => {
+                if (currentMode === 'handmade') return p.category === 'handmade';
+                if(p.category !== 'clothes' && p.category !== 'jewelry') return false;
+                if(fashionCat !== 'all' && p.category !== fashionCat) return false;
+                if(fashionCat === 'clothes' && fashionGen !== 'all' && p.gender !== fashionGen) return false;
+                return true;
             });
 
-            document.getElementById('applyCouponBtn')?.addEventListener('click',()=>{
-                const cCodeInput = document.getElementById('couponCode'); if(!cCodeInput) return;
-                let code = cCodeInput.value.trim().toUpperCase(); 
-                const allCoupons = [{ code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 }, { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 }, ...adminCoupons];
-                let coupon = allCoupons.find(c => c.code === code);
-                const cMsg = document.getElementById('couponMessage');
-                if(!coupon){ if(cMsg) cMsg.innerText='Invalid code'; return; }
-                let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
-                let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
-                if (subtotal < coupon.minAmount) { if(cMsg) cMsg.innerText = `Minimum order amount of ₹${coupon.minAmount} required.`; return; }
-                if (itemCount < coupon.minProducts) { if(cMsg) cMsg.innerText = `Minimum ${coupon.minProducts} items required.`; return; }
-                currentDiscount = coupon.type==='percent' ? Math.round(subtotal*coupon.value/100) : coupon.value;
-                if(currentDiscount>subtotal) currentDiscount=subtotal;
-                if(cMsg) cMsg.innerHTML = `Discount applied: -${formatPrice(currentDiscount)}`;
-                const chargeUI = document.getElementById('deliveryChargeUI'); const estArea = document.getElementById('deliveryEstimateArea');
-                let chargeVal = 0; if(estArea && estArea.style.display !== 'none' && chargeUI) { chargeVal = parseInt(chargeUI.innerText.replace('₹','')) || 0; }
-                updateDeliverySummary(chargeVal);
-            });
+            const isSearchingOrSorting = (s !== '' || sort !== 'default');
+            if(s) filtered = filtered.filter(p => p.name.toLowerCase().includes(s));
+            if(sort==='priceAsc') filtered.sort((a,b)=>a.basePrice-b.basePrice);
+            else if(sort==='priceDesc') filtered.sort((a,b)=>b.basePrice-a.basePrice);
+            
+            let html = '';
 
-            document.getElementById('sendOrder')?.addEventListener('click',()=>{
-                let name = document.getElementById('deliveryName')?.value.trim();
-                let addr = document.getElementById('deliveryAddress')?.value.trim();
-                let landmark = document.getElementById('deliveryLandmark')?.value.trim();
-                let pincode = document.getElementById('deliveryPincode')?.value.trim();
-                let phone = document.getElementById('deliveryPhone')?.value.trim();
-                let city = document.getElementById('deliveryCity')?.value.trim();
-                let stateSelect = document.getElementById('deliveryState');
-                
-                if(!name||!addr||!pincode||!phone||!city||!stateSelect||stateSelect.value==='') return window.showToast('Please fill all required fields including state.', 'fa-exclamation-circle');
-                
-                let stateName = stateSelect.options[stateSelect.selectedIndex].text;
-                let subtotal=0; let itemsSummary = ''; let msg=`Hello! I'd like to place an order:\n\n`;
-                
-                cart.forEach(i=>{ 
-                    let p=products.find(p=>p.id===i.id); 
-                    if(p){ 
-                        let t=p.basePrice*i.quantity; subtotal+=t; 
-                        let itemStr = `${p.name} x${i.quantity} ${i.size||i.color?`(${i.size||''}${i.size&&i.color?', ':''}${i.color||''})`:''}`;
-                        msg+=`- *${itemStr}* — ${formatPrice(t)}\n`; itemsSummary += itemStr + ", ";
-                    } 
-                });
+            if (!isSearchingOrSorting && filtered.length >= 4) {
+                let sortedById = [...filtered].sort((a,b) => b.id - a.id); let newArrivals = sortedById.slice(0, 4); 
+                let sortedByStock = [...filtered].sort((a,b) => a.stock - b.stock); let mostOrdered = sortedByStock.slice(0, 4); 
+                let trending = [...filtered].sort((a,b) => (b.id * 7 % 10) - (a.id * 7 % 10)).slice(0, 4);
 
-                let deliveryCharge = currentDelivery.charge || 0;
-                let grandTotal = subtotal + deliveryCharge - currentDiscount;
-                msg += `\n👤 Name: ${name}\n📮 Address: ${addr}, ${landmark ? landmark+', ' : ''}${city}, ${stateName} - ${pincode}\n📞 Phone: ${phone}\n\n*Grand Total: ${formatPrice(grandTotal)}* (including shipping)\n\nThank you! 💛`;
-                
-                // Track Order globally in Firestore
-                const today = new Date().toLocaleDateString();
-                const tsId = Date.now().toString();
-                const userObj = window.firebaseAuth?.currentUser;
-                
-                const orderData = {
-                    date: today,
-                    ts: parseInt(tsId),
-                    name: name,
-                    items: itemsSummary.slice(0, -2), 
-                    total: grandTotal,
-                    address: `${city}, ${stateName}`,
-                    pincode: pincode,
-                    phone: phone,
-                    uid: userObj ? userObj.uid : 'anonymous'
-                };
-                
-                // Push to cloud db
-                if(window.firebaseSetDoc && window.db) {
-                    window.firebaseSetDoc(docPath('orders', tsId), orderData).catch(e => {
-                        console.error("Order save failed:", e);
-                        // Fallback to local storage if no internet/db
-                        let oHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
-                        oHist.push(orderData);
-                        localStorage.setItem('artisan_order_history', JSON.stringify(oHist));
-                    });
+                if(newArrivals.length) html += `<h2 style="margin-top:1rem; margin-bottom: 1.5rem; text-align:center;"><span class="badge">✨ New Arrivals</span></h2><div class="product-grid" style="margin-bottom: 3rem;">${newArrivals.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
+                if(trending.length) html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">🔥 Trending Now</span></h2><div class="product-grid" style="margin-bottom: 3rem;">${trending.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
+                if(mostOrdered.length) html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">📦 Most Ordered</span></h2><div class="product-grid" style="margin-bottom: 3rem;">${mostOrdered.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
+                html += `<h2 style="margin-bottom: 1.5rem; text-align:center;"><span class="badge">🛍️ View All Catalog</span></h2><div class="product-grid">${filtered.map((p,i)=>renderProductCard(p,i)).join('')}</div>`;
+            } else {
+                if (currentMode === 'handmade') {
+                    if(filtered.length) html += '<div class="product-grid">'+filtered.map((p,i)=>renderProductCard(p,i)).join('')+'</div>';
                 } else {
-                    // Fallback to local storage if no internet/db
+                    const clothes = filtered.filter(p=>p.category==='clothes'); const jewelry = filtered.filter(p=>p.category==='jewelry');
+                    if(fashionCat === 'all' || fashionCat === 'clothes') { if(clothes.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">👗 apparel</span></h2><div class="product-grid">'+clothes.map((p,i)=>renderProductCard(p,i)).join('')+'</div>'; }
+                    if(fashionCat === 'all' || fashionCat === 'jewelry') { if(jewelry.length) html += '<h2 class="section-title" style="margin-top:1rem; text-align:center;"><span class="badge">💎 fine jewelry</span></h2><div class="product-grid">'+jewelry.map((p,i)=>renderProductCard(p,i+clothes.length)).join('')+'</div>'; }
+                }
+            }
+            
+            if (!html) sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>No products found</h2><p>Try adjusting your search or filters.</p></div>';
+            else {
+                sections.innerHTML = html; attachProductEvents();
+                setTimeout(() => { document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible')); }, 50);
+            }
+        }
+
+        function renderProductCard(p, idx) {
+            const isWished = wishlist.includes(p.id);
+            const stockBadge = p.stock>0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
+            const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
+            const hoverImgHtml = p.images && p.images.length > 1 ? `<img src="${p.images[1]}" class="hover-image" alt="Lifestyle shot" onerror="this.style.display='none';">` : '';
+            const shortDesc = p.description ? `<p class="card-description">${p.description}</p>` : '';
+            let variantsHtml = '';
+            if(p.variants) {
+                variantsHtml = '<div class="product-variants">';
+                if(p.variants.sizes && p.variants.sizes.length > 0) variantsHtml += `<div class="variant-row"><label>Size:</label> <select class="size-select">${p.variants.sizes.map(s=>`<option>${s}</option>`).join('')}</select></div>`;
+                if(p.variants.colors && p.variants.colors.length > 0) variantsHtml += `<div class="variant-row"><label>Color:</label> <select class="color-select">${p.variants.colors.map(c=>`<option>${c}</option>`).join('')}</select></div>`;
+                variantsHtml += '</div>';
+            }
+            return `<div class="product-card" data-id="${p.id}" data-base-price="${p.basePrice}" style="--card-index:${idx}"><div class="wishlist-heart ${isWished?'active':''}" data-id="${p.id}"><i class="${isWished?'fas':'far'} fa-heart"></i></div><div class="product-images"><img src="${mainImg}" class="main-image" alt="${p.name}" onerror="this.onerror=null;this.src='https://via.placeholder.com/400x500?text=Image+Unavailable';">${hoverImgHtml}</div><h4 style="margin-top:1rem;">${p.name}</h4>${shortDesc}${stockBadge}${variantsHtml}
+                <div class="price-info"><span class="base-price">${formatPrice(p.basePrice)}</span></div><div class="order-row" style="display:flex; gap:0.5rem; margin-top:auto; padding-top:1rem;"><input type="number" min="1" value="1" class="quantity-input"><button class="btn-cart add-to-cart" data-id="${p.id}" style="flex:1; justify-content:center;"><i class="fas fa-cart-plus"></i> Add</button></div></div>`;
+        }
+
+        function attachProductEvents() {
+            document.querySelectorAll('.wishlist-heart').forEach(heart => {
+                heart.addEventListener('click', function(e) {
+                    e.stopPropagation(); const id = parseInt(this.dataset.id);
+                    if (wishlist.includes(id)) { wishlist = wishlist.filter(i => i !== id); this.classList.remove('active'); this.innerHTML = '<i class="far fa-heart"></i>'; } 
+                    else { wishlist.push(id); this.classList.add('active'); this.innerHTML = '<i class="fas fa-heart"></i>'; window.showToast('Added to Wishlist ❤️', 'fa-heart'); }
+                    saveWishlist(); this.classList.add('heart-pulse'); setTimeout(() => this.classList.remove('heart-pulse'), 400);
+                });
+            });
+            document.querySelectorAll('.main-image, .hover-image').forEach(img => img.addEventListener('click', function(e){ e.stopPropagation(); const lbImg = document.getElementById('lightboxImg'); if(lbImg) lbImg.src = this.src; const lb = document.getElementById('lightbox'); if(lb) lb.classList.add('show'); }));
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', function(e){
+                    e.stopPropagation(); let card=this.closest('.product-card'), id=parseInt(card.dataset.id), qty=parseInt(card.querySelector('.quantity-input').value)||1;
+                    let sizeSelect=card.querySelector('.size-select'), colorSelect=card.querySelector('.color-select');
+                    addToCart(id,qty, sizeSelect?sizeSelect.value:null, colorSelect?colorSelect.value:null, this); updateCartCount();
+                });
+            });
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.addEventListener('click', function(e){ if(e.target.closest('.wishlist-heart') || e.target.closest('.quantity-input') || e.target.closest('.add-to-cart') || e.target.closest('select')) return; window.openProductDetail(parseInt(this.dataset.id)); });
+                card.addEventListener('mousemove', function(e) { let rect = this.getBoundingClientRect(); let x = (e.clientX - rect.left) / rect.width - 0.5; let y = (e.clientY - rect.top) / rect.height - 0.5; this.style.transform = `perspective(1000px) rotateX(${y * -8}deg) rotateY(${x * 8}deg) scale3d(1.02, 1.02, 1.02)`; });
+                card.addEventListener('mouseleave', function() { this.style.transform = ''; });
+            });
+        }
+
+        // FILTER BINDINGS
+        const customSort = document.getElementById('customSort');
+        const sortTrigger = document.querySelector('.sort-trigger');
+        const sortOptions = document.querySelectorAll('.sort-option');
+        const sortLabel = document.getElementById('sortLabel');
+        const sortInput = document.getElementById('sortSelect');
+        sortTrigger?.addEventListener('click', (e) => { e.stopPropagation(); if(customSort) customSort.classList.toggle('active'); });
+        sortOptions.forEach(opt => {
+            opt.addEventListener('click', (e) => { e.stopPropagation(); sortOptions.forEach(o => o.classList.remove('active')); opt.classList.add('active'); if(sortLabel) sortLabel.textContent = "Sort: " + opt.dataset.label; if(sortInput) sortInput.value = opt.dataset.value; if(customSort) customSort.classList.remove('active'); renderProducts(); });
+        });
+        document.addEventListener('click', () => { if(customSort && customSort.classList.contains('active')) customSort.classList.remove('active'); });
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); fashionCat = e.target.dataset.cat; const genF = document.getElementById('genderFilters'); if(fashionCat === 'clothes') { if(genF) genF.classList.add('active'); } else { if(genF) genF.classList.remove('active'); } const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0'; setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200); });
+        });
+        document.querySelectorAll('.gen-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => { document.querySelectorAll('.gen-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); fashionGen = e.target.dataset.gen; const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0'; setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200); });
+        });
+        document.getElementById('searchInput')?.addEventListener('input',renderProducts);
+
+        // --- CART & CHECKOUT LOGIC ---
+        document.getElementById('cartBtn')?.addEventListener('click',()=>{ renderCartModal(); const cm = document.getElementById('cartModal'); if(cm) cm.style.display='flex'; });
+        
+        function renderOrderHistory(userContext) {
+            const list = document.getElementById('orderHistoryList');
+            if(!list) return;
+            
+            // Standard unauthenticated users only see their locally stored orders
+            let myOrders = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
+            
+            if (userContext && userContext.uid && globalOrdersList.length > 0) {
+                // Pull from the global list based on the auth UID
+                myOrders = globalOrdersList.filter(o => o.uid === userContext.uid);
+            }
+
+            if (myOrders.length === 0) { list.innerHTML = '<p style="text-align: center; opacity: 0.7;">No past orders found.</p>'; return; }
+            
+            let html = '';
+            myOrders.slice().sort((a,b)=>b.ts - a.ts).forEach(order => {
+                html += `<div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 15px; margin-bottom: 1rem;"><div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;"><strong style="color: var(--accent-color);">${order.date}</strong><span class="badge">₹${order.total}</span></div><div style="font-size: 0.85rem; opacity: 0.8;"><p><strong>Items:</strong> ${order.items}</p><p><strong>Delivery:</strong> ${order.address} (${order.pincode})</p></div></div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        document.getElementById('viewOrderHistoryBtn')?.addEventListener('click', () => {
+            const cm = document.getElementById('cartModal'); if(cm) cm.style.display = 'none';
+            const oh = document.getElementById('orderHistoryModal'); if(oh) oh.style.display = 'flex';
+            renderOrderHistory(auth.currentUser);
+        });
+        document.getElementById('closeOrderHistory')?.addEventListener('click', () => { const oh = document.getElementById('orderHistoryModal'); if(oh) oh.style.display = 'none'; });
+        document.getElementById('wishlistBtn')?.addEventListener('click',()=>{ renderWishlistModal(); const wm = document.getElementById('wishlistModal'); if(wm) wm.style.display='flex'; });
+        document.getElementById('openFaqBtn')?.addEventListener('click', (e)=>{ e.preventDefault(); const fm = document.getElementById('faqModal'); if(fm) fm.style.display='flex'; });
+        document.getElementById('closeLightboxBtn')?.addEventListener('click', () => { const lb = document.getElementById('lightbox'); if(lb) lb.classList.remove('show'); });
+        document.getElementById('lightbox')?.addEventListener('click', (e) => { if(e.target === document.getElementById('lightbox')) e.target.classList.remove('show'); });
+        document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ const m = this.closest('.modal'); if(m) m.style.display='none'; }));
+        window.addEventListener('click',e=>{ if(e.target.classList.contains('modal')) e.target.style.display='none'; });
+
+        // State Delivery Calculation
+        document.getElementById('estimateDelivery')?.addEventListener('click',()=>{
+            let stateSelect = document.getElementById('deliveryState'); if(!stateSelect) return;
+            let stateCode = stateSelect.value; let stateLabel = stateSelect.options[stateSelect.selectedIndex].text;
+            if(!stateCode) return window.showToast('Please select a state first', 'fa-exclamation-circle');
+            let charge = 250; let eta = '5-7 business days'; let service = 'DTDC Prime';
+            if (stateCode === 'Andhra Pradesh' || stateCode === 'Telangana') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
+            else if (stateCode === 'Karnataka' || stateCode === 'Tamil Nadu') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
+            currentDelivery = { charge: charge, provider: 'DTDC', eta: eta, stateLabel: stateLabel, service: service };
+            const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='block';
+            const chargeUi = document.getElementById('deliveryChargeUI'); if(chargeUi) chargeUi.innerText = formatPrice(currentDelivery.charge); 
+            const etaEl = document.getElementById('deliveryEta'); if(etaEl) etaEl.innerText = currentDelivery.eta;
+            const distEl = document.getElementById('deliveryDistance'); if(distEl) distEl.innerText = currentDelivery.stateLabel;
+            const srvEl = document.getElementById('deliveryService'); if(srvEl) srvEl.innerText = currentDelivery.service;
+            updateDeliverySummary(currentDelivery.charge);
+        });
+        document.getElementById('deliveryState')?.addEventListener('change', () => { const estArea = document.getElementById('deliveryEstimateArea'); if(estArea && estArea.style.display === 'block') { const estBtn = document.getElementById('estimateDelivery'); if(estBtn) estBtn.click(); } });
+
+        function updateDeliverySummary(deliveryCharge = 0){
+            let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
+            let total = (subtotal || 0) + (deliveryCharge || 0) - (currentDiscount || 0);
+            if(total < 0) total = 0;
+            
+            const sumEl = document.getElementById('deliveryOrderSummary');
+            if(sumEl) { sumEl.innerHTML = `<strong>Subtotal:</strong> ${formatPrice(subtotal)}<br>${deliveryCharge>0?`<strong>DTDC Delivery:</strong> ${formatPrice(deliveryCharge)}<br>`:''}${currentDiscount>0?`<strong>Discount:</strong> -${formatPrice(currentDiscount)}<br>`:''}<strong style="font-size:1.2rem;">Total: ${formatPrice(total)}</strong>`; }
+            renderSuggestedCoupons();
+        }
+
+        // --- SMART COUPON SUGGESTION ENGINE ---
+        function renderSuggestedCoupons() {
+            let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
+            let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
+            
+            const allCoupons = [
+                { code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 },
+                { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 },
+                ...adminCoupons 
+            ];
+            
+            // Filter coupons based on cart thresholds
+            const eligible = allCoupons.filter(c => subtotal >= c.minAmount && itemCount >= c.minProducts);
+            const container = document.getElementById('suggestedCouponsArea');
+            if(!container) return;
+            
+            if(eligible.length > 0) {
+                let html = '<span style="font-size:0.85rem; opacity:0.8; width:100%; display:block;">🎉 Suggested for you:</span>';
+                eligible.forEach(c => {
+                    const desc = c.type === 'percent' ? `${c.value}% off` : `₹${c.value} off`;
+                    // Clickable badge that automatically applies the code
+                    html += `<span class="badge" style="cursor:pointer; background: var(--badge-bg); color: var(--accent-color); border: 1px dashed var(--accent-color); padding: 0.3rem 0.8rem; transition: 0.2s;" onmouseover="this.style.background='var(--accent-color)'; this.style.color='#fff';" onmouseout="this.style.background='var(--badge-bg)'; this.style.color='var(--accent-color)';" onclick="document.getElementById('couponCode').value='${c.code}'; document.getElementById('applyCouponBtn').click();"><i class="fas fa-tag"></i> ${c.code} (${desc})</span>`;
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
+        document.getElementById('proceedToDelivery')?.addEventListener('click',()=>{
+            if(cart.length===0) return window.showToast('Your cart is empty', 'fa-exclamation-circle');
+            const cm = document.getElementById('cartModal'); if(cm) cm.style.display='none'; 
+            const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='flex';
+            const dCity = document.getElementById('deliveryCity'); if(dCity) dCity.value=''; 
+            const dState = document.getElementById('deliveryState'); if(dState) dState.value=''; 
+            const cCode = document.getElementById('couponCode'); if(cCode) cCode.value=''; 
+            const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='none'; 
+            const cMsg = document.getElementById('couponMessage'); if(cMsg) cMsg.innerHTML=''; 
+            currentDiscount=0; updateDeliverySummary(0); renderSuggestedCoupons();
+        });
+
+        document.getElementById('applyCouponBtn')?.addEventListener('click',()=>{
+            const cCodeInput = document.getElementById('couponCode'); if(!cCodeInput) return;
+            let code = cCodeInput.value.trim().toUpperCase(); 
+            const allCoupons = [{ code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 }, { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 }, ...adminCoupons];
+            let coupon = allCoupons.find(c => c.code === code);
+            const cMsg = document.getElementById('couponMessage');
+            if(!coupon){ if(cMsg) cMsg.innerText='Invalid code'; return; }
+            let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
+            let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
+            if (subtotal < coupon.minAmount) { if(cMsg) cMsg.innerText = `Minimum order amount of ₹${coupon.minAmount} required.`; return; }
+            if (itemCount < coupon.minProducts) { if(cMsg) cMsg.innerText = `Minimum ${coupon.minProducts} items required.`; return; }
+            currentDiscount = coupon.type==='percent' ? Math.round(subtotal*coupon.value/100) : coupon.value;
+            if(currentDiscount>subtotal) currentDiscount=subtotal;
+            if(cMsg) cMsg.innerHTML = `Discount applied: -${formatPrice(currentDiscount)}`;
+            const chargeUI = document.getElementById('deliveryChargeUI'); const estArea = document.getElementById('deliveryEstimateArea');
+            let chargeVal = 0; if(estArea && estArea.style.display !== 'none' && chargeUI) { chargeVal = parseInt(chargeUI.innerText.replace('₹','')) || 0; }
+            updateDeliverySummary(chargeVal);
+        });
+
+        document.getElementById('sendOrder')?.addEventListener('click',()=>{
+            let name = document.getElementById('deliveryName')?.value.trim();
+            let addr = document.getElementById('deliveryAddress')?.value.trim();
+            let landmark = document.getElementById('deliveryLandmark')?.value.trim();
+            let pincode = document.getElementById('deliveryPincode')?.value.trim();
+            let phone = document.getElementById('deliveryPhone')?.value.trim();
+            let city = document.getElementById('deliveryCity')?.value.trim();
+            let stateSelect = document.getElementById('deliveryState');
+            
+            if(!name||!addr||!pincode||!phone||!city||!stateSelect||stateSelect.value==='') return window.showToast('Please fill all required fields including state.', 'fa-exclamation-circle');
+            
+            let stateName = stateSelect.options[stateSelect.selectedIndex].text;
+            let subtotal=0; let itemsSummary = ''; let msg=`Hello! I'd like to place an order:\n\n`;
+            
+            cart.forEach(i=>{ 
+                let p=products.find(p=>p.id===i.id); 
+                if(p){ 
+                    let t=p.basePrice*i.quantity; subtotal+=t; 
+                    let itemStr = `${p.name} x${i.quantity} ${i.size||i.color?`(${i.size||''}${i.size&&i.color?', ':''}${i.color||''})`:''}`;
+                    msg+=`- *${itemStr}* — ${formatPrice(t)}\n`; itemsSummary += itemStr + ", ";
+                } 
+            });
+
+            let deliveryCharge = currentDelivery.charge || 0;
+            let grandTotal = subtotal + deliveryCharge - currentDiscount;
+            msg += `\n👤 Name: ${name}\n📮 Address: ${addr}, ${landmark ? landmark+', ' : ''}${city}, ${stateName} - ${pincode}\n📞 Phone: ${phone}\n\n*Grand Total: ${formatPrice(grandTotal)}* (including shipping)\n\nThank you! 💛`;
+            
+            // Track Order globally in Firestore
+            const today = new Date().toLocaleDateString();
+            const tsId = Date.now().toString();
+            const userObj = auth.currentUser;
+            
+            const orderData = {
+                date: today,
+                ts: parseInt(tsId),
+                name: name,
+                items: itemsSummary.slice(0, -2), 
+                total: grandTotal,
+                address: `${city}, ${stateName}`,
+                pincode: pincode,
+                phone: phone,
+                uid: userObj ? userObj.uid : 'anonymous'
+            };
+            
+            // Push to cloud db
+            if(setDoc && db) {
+                setDoc(docPath('orders', tsId), orderData).catch(e => {
+                    console.error("Order save failed:", e);
                     let oHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
                     oHist.push(orderData);
                     localStorage.setItem('artisan_order_history', JSON.stringify(oHist));
-                }
+                });
+            } else {
+                let oHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
+                oHist.push(orderData);
+                localStorage.setItem('artisan_order_history', JSON.stringify(oHist));
+            }
 
-                openWhatsApp(msg);
-                const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='none'; 
-                cart=[]; saveCart(); renderCartModal();
-            });
+            openWhatsApp(msg);
+            const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='none'; 
+            cart=[]; saveCart(); renderCartModal();
+        });
 
-            function renderCartModal(){ 
-                let cont=document.getElementById('cartItems'); if(!cont) return;
-                if(cart.length===0){ cont.innerHTML='<div class="empty-cart">Your cart is empty</div>'; const ct = document.getElementById('cartTotal'); if(ct) ct.innerHTML=''; return; } 
-                let html='', total=0; 
-                cart.forEach((item,idx)=>{ 
-                    let p=products.find(p=>p.id===item.id); if(!p) return; total+=p.basePrice*item.quantity; 
+        function renderCartModal(){ 
+            let cont=document.getElementById('cartItems'); if(!cont) return;
+            if(cart.length===0){ cont.innerHTML='<div class="empty-cart">Your cart is empty</div>'; const ct = document.getElementById('cartTotal'); if(ct) ct.innerHTML=''; return; } 
+            let html='', total=0; 
+            cart.forEach((item,idx)=>{ 
+                let p=products.find(p=>p.id===item.id); if(!p) return; total+=p.basePrice*item.quantity; 
+                let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
+                html+=`<div class="cart-item" data-index="${idx}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${idx}" style="width:50px; text-align:center; border-radius:10px; border:1px solid var(--card-border); background:var(--input-bg); color:var(--text-color);"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; 
+            }); 
+            cont.innerHTML=html; const ct = document.getElementById('cartTotal'); if(ct) ct.innerHTML=`<strong>Total: ${formatPrice(total)}</strong>`; 
+            document.querySelectorAll('.cart-quantity').forEach(inp=>inp.addEventListener('change',function(){ let idx=this.dataset.index, nq=parseInt(this.value); if(nq>0){ cart[idx].quantity=nq; saveCart(); renderCartModal(); } })); 
+            document.querySelectorAll('.cart-item-remove').forEach(btn=>btn.addEventListener('click',function(){ cart.splice(this.dataset.index,1); saveCart(); renderCartModal(); })); 
+        }
+
+        function renderWishlistModal(){ 
+            let cont=document.getElementById('wishlistItems'); if(!cont) return;
+            if(wishlist.length===0){ cont.innerHTML='<div class="empty-wishlist">Your wishlist is empty 💔</div>'; return; } 
+            let html=''; 
+            wishlist.forEach(id=>{ 
+                let p=products.find(p=>p.id===id); if(p) {
                     let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
-                    html+=`<div class="cart-item" data-index="${idx}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${idx}" style="width:50px; text-align:center; border-radius:10px; border:1px solid var(--card-border); background:var(--input-bg); color:var(--text-color);"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; 
-                }); 
-                cont.innerHTML=html; const ct = document.getElementById('cartTotal'); if(ct) ct.innerHTML=`<strong>Total: ${formatPrice(total)}</strong>`; 
-                document.querySelectorAll('.cart-quantity').forEach(inp=>inp.addEventListener('change',function(){ let idx=this.dataset.index, nq=parseInt(this.value); if(nq>0){ cart[idx].quantity=nq; saveCart(); renderCartModal(); } })); 
-                document.querySelectorAll('.cart-item-remove').forEach(btn=>btn.addEventListener('click',function(){ cart.splice(this.dataset.index,1); saveCart(); renderCartModal(); })); 
-            }
+                    html+=`<div class="wishlist-item" data-id="${p.id}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="wishlist-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)}</p></div><i class="fas fa-trash remove-wishlist" data-id="${p.id}"></i></div>`; 
+                }
+            }); 
+            cont.innerHTML=html; 
+            document.querySelectorAll('.remove-wishlist').forEach(btn=>btn.addEventListener('click',function(e){ e.stopPropagation(); wishlist=wishlist.filter(i=>i!==parseInt(this.dataset.id)); saveWishlist(); renderWishlistModal(); renderProducts(); })); 
+        }
 
-            function renderWishlistModal(){ 
-                let cont=document.getElementById('wishlistItems'); if(!cont) return;
-                if(wishlist.length===0){ cont.innerHTML='<div class="empty-wishlist">Your wishlist is empty 💔</div>'; return; } 
-                let html=''; 
-                wishlist.forEach(id=>{ 
-                    let p=products.find(p=>p.id===id); if(p) {
-                        let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
-                        html+=`<div class="wishlist-item" data-id="${p.id}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="wishlist-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)}</p></div><i class="fas fa-trash remove-wishlist" data-id="${p.id}"></i></div>`; 
-                    }
-                }); 
-                cont.innerHTML=html; 
-                document.querySelectorAll('.remove-wishlist').forEach(btn=>btn.addEventListener('click',function(e){ e.stopPropagation(); wishlist=wishlist.filter(i=>i!==parseInt(this.dataset.id)); saveWishlist(); renderWishlistModal(); renderProducts(); })); 
-            }
+        document.getElementById('newsletterForm')?.addEventListener('submit',e=>{ e.preventDefault(); window.showToast('Successfully Subscribed!', 'fa-envelope-open-text'); const nEmail = document.getElementById('newsletterEmail'); if(nEmail) nEmail.value = ''; });
 
-            document.getElementById('newsletterForm')?.addEventListener('submit',e=>{ e.preventDefault(); window.showToast('Successfully Subscribed!', 'fa-envelope-open-text'); const nEmail = document.getElementById('newsletterEmail'); if(nEmail) nEmail.value = ''; });
-
-            // --- SCROLL ANIMATIONS ---
-            window.addEventListener('scroll', () => {
-                let scrollY = window.scrollY;
-                const mHeader = document.getElementById('mainHeader'); if(mHeader) mHeader.classList.toggle('scrolled', scrollY > 50);
-                requestAnimationFrame(() => {
-                    const b1 = document.getElementById('blob1'); if(b1) b1.style.transform = `translateY(${scrollY*0.05}px)`;
-                    const b2 = document.getElementById('blob2'); if(b2) b2.style.transform = `translateY(${-scrollY*0.05}px)`;
-                    const storyBox = document.querySelector('.story-box'); if (storyBox) storyBox.style.transform = `translateY(${scrollY * 0.03}px)`;
-                });
+        // --- SCROLL ANIMATIONS ---
+        window.addEventListener('scroll', () => {
+            let scrollY = window.scrollY;
+            const mHeader = document.getElementById('mainHeader'); if(mHeader) mHeader.classList.toggle('scrolled', scrollY > 50);
+            requestAnimationFrame(() => {
+                const b1 = document.getElementById('blob1'); if(b1) b1.style.transform = `translateY(${scrollY*0.05}px)`;
+                const b2 = document.getElementById('blob2'); if(b2) b2.style.transform = `translateY(${-scrollY*0.05}px)`;
+                const storyBox = document.querySelector('.story-box'); if (storyBox) storyBox.style.transform = `translateY(${scrollY * 0.03}px)`;
             });
+        });
 
-            document.querySelectorAll('.nav-links a').forEach(link=>{
-                link.addEventListener('click',function(e){
-                    e.preventDefault(); let targetId = this.getAttribute('href').substring(1); 
-                    const container = document.getElementById('mainContainer'); if(container) container.classList.add('page-transition-out');
-                    setTimeout(()=>{ if(targetId && document.getElementById(targetId)) document.getElementById(targetId).scrollIntoView({behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); setTimeout(()=>{if(container) container.classList.remove('page-transition-out');},100); },200);
-                });
+        document.querySelectorAll('.nav-links a').forEach(link=>{
+            link.addEventListener('click',function(e){
+                e.preventDefault(); let targetId = this.getAttribute('href').substring(1); 
+                const container = document.getElementById('mainContainer'); if(container) container.classList.add('page-transition-out');
+                setTimeout(()=>{ if(targetId && document.getElementById(targetId)) document.getElementById(targetId).scrollIntoView({behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); setTimeout(()=>{if(container) container.classList.remove('page-transition-out');},100); },200);
             });
+        });
 
-            updateCartCount(); updateWishlistCount();
-        })();
+        updateCartCount(); updateWishlistCount();
     </script>
 </body>
 </html>
