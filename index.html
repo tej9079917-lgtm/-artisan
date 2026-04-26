@@ -1029,10 +1029,9 @@
                 try {
                     await signInAnonymously(auth);
                 } catch (e) {
-                    // Silent fallback, site operates on cached/local data without cloud sync until log in
+                    // Silent fallback
                 }
             };
-
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     try {
@@ -1043,9 +1042,7 @@
                 } else {
                     await tryAnon();
                 }
-            } catch (error) {
-                // Ignore initialization throw
-            }
+            } catch (error) {}
         };
         initAuth();
 
@@ -1053,13 +1050,11 @@
         const publicPath = (col) => collection(db, 'artifacts', appId, 'public', 'data', col);
         const docPath = (col, id) => doc(db, 'artifacts', appId, 'public', 'data', col, id);
 
-        // Mandatory Production Error Handler
         const snapErrorHandler = (error) => {
             console.warn("Firestore sync paused. Check internet connection or database rules.");
         };
 
         onAuthStateChanged(auth, (user) => {
-            // Update UI based on auth state first
             const loginBtn = document.getElementById('loginBtnText');
             const adminPanelBtn = document.getElementById('adminPanelBtn');
             const authModal = document.getElementById('authModal');
@@ -1084,57 +1079,65 @@
                 if(adminPanelBtn) adminPanelBtn.style.display = 'none';
             }
 
-            if (!user) return; // Guard clause for Firestore
+            if (!user) return; // Guard clause
 
             try {
                 // A. Sync Products
                 onSnapshot(publicPath('products'), (snapshot) => {
-                    products = snapshot.docs.map(d => ({ id: parseInt(d.id), ...d.data() }));
-                    localStorage.setItem('artisan_products', JSON.stringify(products));
-                    renderProducts();
-                    renderAdminTable();
+                    if(!snapshot.empty) {
+                        products = snapshot.docs.map(d => ({ id: parseInt(d.id), ...d.data() }));
+                        localStorage.setItem('artisan_products', JSON.stringify(products));
+                        renderProducts();
+                        renderAdminTable();
+                    }
                 }, snapErrorHandler);
 
                 // B. Sync Coupons
                 onSnapshot(publicPath('coupons'), (snapshot) => {
-                    adminCoupons = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
-                    localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
-                    renderCouponsTable();
+                    if(!snapshot.empty) {
+                        adminCoupons = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
+                        localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
+                        renderCouponsTable();
+                    }
                 }, snapErrorHandler);
 
                 // C. Sync Announcements
                 onSnapshot(publicPath('announcements'), (snapshot) => {
-                    let rawAnn = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
-                    rawAnn.sort((a,b) => a.ts - b.ts);
-                    announcements = rawAnn;
-                    localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
-                    renderAnnouncementsTable();
-                    
-                    const botEl = document.getElementById('announcementBot');
-                    if (announcements.length > 0 && botEl) {
-                        botEl.style.display = 'flex';
-                        updateBotBubble();
-                    } else if (botEl) {
-                        botEl.style.display = 'none';
+                    if(!snapshot.empty) {
+                        let rawAnn = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
+                        rawAnn.sort((a,b) => a.ts - b.ts);
+                        announcements = rawAnn;
+                        localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
+                        renderAnnouncementsTable();
+                        
+                        const botEl = document.getElementById('announcementBot');
+                        if (announcements.length > 0 && botEl) {
+                            botEl.style.display = 'flex';
+                            updateBotBubble();
+                        } else if (botEl) {
+                            botEl.style.display = 'none';
+                        }
                     }
                 }, snapErrorHandler);
 
-                // D. Sync Global Orders (For Stats & Admin)
+                // D. Sync Global Orders
                 onSnapshot(publicPath('orders'), (snapshot) => {
-                    globalOrdersList = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
-                    updatePublicStatsDisplay();
-                    renderAdminOrdersTable();
-                    renderOrderHistory(user); 
+                    if(!snapshot.empty) {
+                        globalOrdersList = snapshot.docs.map(d => ({ dbId: d.id, ...d.data() }));
+                        updatePublicStatsDisplay();
+                        renderAdminOrdersTable();
+                        renderOrderHistory(user); 
+                    }
                 }, snapErrorHandler);
 
-                // E. Sync Stats Engine & Increment Views Safely
+                // E. Sync Stats Engine
                 const statsRef = docPath('settings', 'statsConfig');
                 getDoc(statsRef).then(snap => {
                     let data = snap.exists() ? snap.data() : { liveViews: 0, config: { mode: 'live', fakeViews: 0, fakeOrders: 0, fakeCustomers: 0 } };
                     if (!sessionStorage.getItem('view_counted')) {
                         data.liveViews = (data.liveViews || 0) + 1;
                         sessionStorage.setItem('view_counted', 'true');
-                        setDoc(statsRef, data, { merge: true }).catch(e => console.log("Read-only visitor"));
+                        setDoc(statsRef, data, { merge: true }).catch(e => {});
                     }
                 }).catch(snapErrorHandler);
 
@@ -1142,15 +1145,12 @@
                     if(docSnap.exists()) {
                         let data = docSnap.data();
                         statsConfig = data.config || statsConfig;
-                        // Only update siteViews if cloud has a higher number
                         if(data.liveViews > siteViews) siteViews = data.liveViews;
                         localStorage.setItem('artisan_stats_config', JSON.stringify(statsConfig));
                         updatePublicStatsDisplay();
                     }
                 }, snapErrorHandler);
-            } catch(e) {
-                console.log("Firestore listener initialization issue.");
-            }
+            } catch(e) {}
         });
 
         // --- ADMIN STATS CONFIG ---
@@ -1171,7 +1171,8 @@
             const user = auth.currentUser;
             if(user) {
                 setDoc(docPath('settings', 'statsConfig'), { config: statsConfig }, { merge: true })
-                .catch(e => console.warn("Cloud sync paused. Saved locally.", e));
+                .then(() => window.showToast("Stats config synced globally!", "fa-cloud-upload-alt"))
+                .catch(e => window.showToast("Firebase Rule Warning: Saved locally, but not to cloud.", "fa-exclamation-triangle"));
             }
         });
 
@@ -1534,7 +1535,9 @@
 
             // 2. Background Cloud Sync
             if(auth.currentUser) {
-                setDoc(docPath('products', String(idToSave)), productData).catch(e => console.warn("Cloud sync failed. Saved locally."));
+                setDoc(docPath('products', String(idToSave)), productData)
+                .then(() => window.showToast("Product synced to cloud!", "fa-cloud-upload-alt"))
+                .catch(e => window.showToast("Firebase Rule Warning: Saved locally, but not to cloud.", "fa-exclamation-triangle"));
             }
         });
 
@@ -1550,7 +1553,7 @@
 
                 // Background Cloud Sync
                 if(auth.currentUser) {
-                    deleteDoc(docPath('products', String(id))).catch(e => console.warn("Cloud delete failed."));
+                    deleteDoc(docPath('products', String(id))).catch(e => window.showToast("Firebase Warning: Deleted locally, but cloud delete blocked.", "fa-exclamation-triangle"));
                 }
             }
         }
@@ -1576,7 +1579,7 @@
                         window.showToast("Coupon deleted");
                         
                         // Cloud Delete
-                        if(auth.currentUser) deleteDoc(docPath('coupons', btn.dataset.dbid)).catch(e => console.warn("Cloud delete failed."));
+                        if(auth.currentUser) deleteDoc(docPath('coupons', btn.dataset.dbid)).catch(e => window.showToast("Firebase Warning: Cloud delete blocked.", "fa-exclamation-triangle"));
                     }
                 });
             });
@@ -1605,7 +1608,9 @@
 
             // Background Cloud Sync
             if(auth.currentUser) {
-                setDoc(docPath('coupons', code), couponData).catch(e => console.warn("Cloud sync failed."));
+                setDoc(docPath('coupons', code), couponData)
+                .then(() => window.showToast("Coupon synced globally!", "fa-cloud-upload-alt"))
+                .catch(e => window.showToast("Firebase Warning: Saved locally, but cloud sync blocked.", "fa-exclamation-triangle"));
             }
         });
 
@@ -1635,7 +1640,7 @@
                         }
                         
                         // Cloud Delete
-                        if(auth.currentUser) deleteDoc(docPath('announcements', btn.dataset.dbid)).catch(e => console.warn("Cloud delete failed."));
+                        if(auth.currentUser) deleteDoc(docPath('announcements', btn.dataset.dbid)).catch(e => window.showToast("Firebase Warning: Cloud delete blocked.", "fa-exclamation-triangle"));
                     }
                 });
             });
@@ -1661,7 +1666,7 @@
 
             // Background Cloud Sync
             if(auth.currentUser) {
-                setDoc(docPath('announcements', id), annData).catch(e => console.warn("Cloud sync failed."));
+                setDoc(docPath('announcements', id), annData).catch(e => window.showToast("Firebase Warning: Saved locally, but cloud sync blocked.", "fa-exclamation-triangle"));
             }
         });
 
@@ -1965,8 +1970,8 @@
             let stateCode = stateSelect.value; let stateLabel = stateSelect.options[stateSelect.selectedIndex].text;
             if(!stateCode) return window.showToast('Please select a state first', 'fa-exclamation-circle');
             let charge = 250; let eta = '5-7 business days'; let service = 'DTDC Prime';
-            if (stateCode === 'Andhra Pradesh' || stateCode === 'Telangana') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
-            else if (stateCode === 'Karnataka' || stateCode === 'Tamil Nadu') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
+            if (stateCode === 'AP' || stateCode === 'TS') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
+            else if (stateCode === 'KA' || stateCode === 'TN') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
             currentDelivery = { charge: charge, provider: 'DTDC', eta: eta, stateLabel: stateLabel, service: service };
             const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='block';
             const chargeUi = document.getElementById('deliveryChargeUI'); if(chargeUi) chargeUi.innerText = formatPrice(currentDelivery.charge); 
