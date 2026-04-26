@@ -1156,19 +1156,23 @@
         // --- ADMIN STATS CONFIG ---
         document.getElementById('statsConfigForm')?.addEventListener('submit', (e) => {
             e.preventDefault();
+            
+            // 1. Optimistic Local Save
             statsConfig.mode = document.getElementById('statsMode')?.value || 'live';
             statsConfig.fakeViews = parseInt(document.getElementById('fakeViews')?.value) || 0;
             statsConfig.fakeOrders = parseInt(document.getElementById('fakeOrders')?.value) || 0;
             statsConfig.fakeCustomers = parseInt(document.getElementById('fakeCustomers')?.value) || 0;
             
+            localStorage.setItem('artisan_stats_config', JSON.stringify(statsConfig));
+            window.updatePublicStatsDisplay();
+            window.showToast("Stats configuration saved locally!", "fa-check");
+
+            // 2. Background Cloud Sync
             const user = auth.currentUser;
-            if(!user) return;
-            
-            setDoc(docPath('settings', 'statsConfig'), { config: statsConfig }, { merge: true }).then(() => {
-                 window.showToast("Stats config synced globally!", "fa-cloud-upload-alt");
-            }).catch((error) => {
-                 window.showToast("Failed to save: " + error.message, "fa-times-circle");
-            });
+            if(user) {
+                setDoc(docPath('settings', 'statsConfig'), { config: statsConfig }, { merge: true })
+                .catch(e => console.warn("Cloud sync paused. Saved locally.", e));
+            }
         });
 
         window.updatePublicStatsDisplay = function() {
@@ -1219,6 +1223,12 @@
                 sessionStorage.setItem('local_view_counted', 'true');
                 localStorage.setItem('artisan_views', siteViews);
             }
+
+            // Fallback load settings
+            try {
+                const storedStats = JSON.parse(localStorage.getItem('artisan_stats_config'));
+                if(storedStats) statsConfig = storedStats;
+            } catch(e) {}
             
             setRandomQuote(currentMode);
             renderProducts();
@@ -1488,7 +1498,6 @@
 
         document.getElementById('adminForm')?.addEventListener('submit', (e) => {
             e.preventDefault();
-            if(!auth.currentUser) return;
             
             const name = document.getElementById('adminName')?.value.trim();
             const category = document.getElementById('adminCategory')?.value;
@@ -1509,18 +1518,40 @@
             const idToSave = editingProductId || Date.now();
             const productData = { name, category, gender, basePrice, stock, description, images: imgArray, variants };
 
-            setDoc(docPath('products', String(idToSave)), productData).then(()=>{
-                window.showToast("Product saved globally!", "fa-cloud-upload-alt");
-                document.getElementById('cancelEditBtn')?.click();
-            }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
+            // 1. Optimistic Local Save
+            if (editingProductId) {
+                const idx = products.findIndex(p => p.id === editingProductId);
+                if(idx !== -1) products[idx] = { id: editingProductId, ...productData };
+            } else {
+                products.push({ id: idToSave, ...productData });
+            }
+            
+            localStorage.setItem('artisan_products', JSON.stringify(products));
+            window.showToast("Product saved locally!", "fa-check");
+            renderAdminTable();
+            renderProducts();
+            document.getElementById('cancelEditBtn')?.click();
+
+            // 2. Background Cloud Sync
+            if(auth.currentUser) {
+                setDoc(docPath('products', String(idToSave)), productData).catch(e => console.warn("Cloud sync failed. Saved locally."));
+            }
         });
 
         window.deleteProduct = function(id) {
             if(confirm("Are you sure you want to permanently delete this product?")) {
-                if(!auth.currentUser) return;
-                deleteDoc(docPath('products', String(id))).then(()=>{
-                    window.showToast("Product deleted from cloud.", "fa-trash");
-                }).catch(err => window.showToast("Failed to delete: " + err.message, "fa-times"));
+                
+                // Optimistic Local Delete
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('artisan_products', JSON.stringify(products));
+                renderAdminTable();
+                renderProducts();
+                window.showToast("Product deleted.", "fa-trash");
+
+                // Background Cloud Sync
+                if(auth.currentUser) {
+                    deleteDoc(docPath('products', String(id))).catch(e => console.warn("Cloud delete failed."));
+                }
             }
         }
 
@@ -1532,13 +1563,20 @@
             adminCoupons.forEach((c) => {
                 const tr = document.createElement('tr');
                 const typeLabel = c.type === 'percent' ? c.value + '%' : '₹' + c.value;
-                tr.innerHTML = `<td><strong>${c.code}</strong></td><td style="text-transform:capitalize;">${c.type}</td><td>${typeLabel}</td><td>Min: ₹${c.minAmount} | Qty: ${c.minProducts}</td><td><button class="admin-actions-btn delete" data-dbid="${c.dbId}"><i class="fas fa-trash"></i></button></td>`;
+                tr.innerHTML = `<td><strong>${c.code}</strong></td><td style="text-transform:capitalize;">${c.type}</td><td>${typeLabel}</td><td>Min: ₹${c.minAmount} | Qty: ${c.minProducts}</td><td><button class="admin-actions-btn delete" data-dbid="${c.code}"><i class="fas fa-trash"></i></button></td>`;
                 couponsTableBody.appendChild(tr);
             });
             document.querySelectorAll('#adminCouponsView .delete').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    if(confirm("Delete coupon globally?")) {
-                        deleteDoc(docPath('coupons', btn.dataset.dbid)).catch(e => window.showToast("Failed to delete: " + e.message, "fa-times"));
+                    if(confirm("Delete coupon?")) {
+                        // Optimistic Delete
+                        adminCoupons = adminCoupons.filter(c => c.code !== btn.dataset.dbid);
+                        localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
+                        renderCouponsTable();
+                        window.showToast("Coupon deleted");
+                        
+                        // Cloud Delete
+                        if(auth.currentUser) deleteDoc(docPath('coupons', btn.dataset.dbid)).catch(e => console.warn("Cloud delete failed."));
                     }
                 });
             });
@@ -1546,7 +1584,6 @@
 
         document.getElementById('couponForm')?.addEventListener('submit', (e) => {
             e.preventDefault();
-            if(!auth.currentUser) return;
             
             const code = document.getElementById('couponCodeInput')?.value.trim().toUpperCase();
             const type = document.getElementById('couponType')?.value;
@@ -1557,10 +1594,19 @@
             const exists = adminCoupons.find(c => c.code === code);
             if (exists) return window.showToast("Code already exists!", "fa-exclamation-triangle");
 
-            setDoc(docPath('coupons', code), { code, type, value, minAmount, minProducts }).then(()=>{
-                window.showToast("Coupon deployed globally!", "fa-cloud-upload-alt");
-                document.getElementById('couponForm').reset();
-            }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
+            const couponData = { code, type, value, minAmount, minProducts };
+
+            // Optimistic Local Save
+            adminCoupons.push(couponData);
+            localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
+            window.showToast("Coupon added!", "fa-tag");
+            renderCouponsTable();
+            document.getElementById('couponForm').reset();
+
+            // Background Cloud Sync
+            if(auth.currentUser) {
+                setDoc(docPath('coupons', code), couponData).catch(e => console.warn("Cloud sync failed."));
+            }
         });
 
         // --- ADMIN ANNOUNCEMENTS LOGIC ---
@@ -1575,8 +1621,21 @@
             });
             document.querySelectorAll('#adminAnnouncementsView .delete').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    if(confirm("Delete announcement globally?")) {
-                        deleteDoc(docPath('announcements', btn.dataset.dbid)).catch(e => window.showToast("Failed to delete: " + e.message, "fa-times"));
+                    if(confirm("Delete announcement?")) {
+                        // Optimistic Delete
+                        announcements = announcements.filter(a => a.dbId !== btn.dataset.dbid);
+                        localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
+                        renderAnnouncementsTable();
+                        if(announcements.length === 0) {
+                            const botEl = document.getElementById('announcementBot');
+                            if(botEl) botEl.style.display = 'none';
+                        } else {
+                            currentAnnIndex = 0;
+                            updateBotBubble();
+                        }
+                        
+                        // Cloud Delete
+                        if(auth.currentUser) deleteDoc(docPath('announcements', btn.dataset.dbid)).catch(e => console.warn("Cloud delete failed."));
                     }
                 });
             });
@@ -1584,23 +1643,44 @@
 
         document.getElementById('announcementForm')?.addEventListener('submit', (e) => {
             e.preventDefault();
-            if(!auth.currentUser) return;
             const text = document.getElementById('announcementText')?.value.trim();
             const id = Date.now().toString();
-            setDoc(docPath('announcements', id), { text: text, ts: parseInt(id) }).then(()=>{
-                window.showToast("Announcement broadcasted!", "fa-bullhorn");
-                document.getElementById('announcementForm').reset();
-            }).catch(err => window.showToast("Failed to save: " + err.message, "fa-times"));
+            const annData = { text: text, ts: parseInt(id), dbId: id };
+
+            // Optimistic Local Save
+            announcements.push(annData);
+            localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
+            window.showToast("Announcement broadcasted!", "fa-bullhorn");
+            renderAnnouncementsTable();
+            document.getElementById('announcementForm').reset();
+            
+            const botEl = document.getElementById('announcementBot');
+            if(botEl) botEl.style.display = 'flex';
+            currentAnnIndex = announcements.length - 1;
+            updateBotBubble();
+
+            // Background Cloud Sync
+            if(auth.currentUser) {
+                setDoc(docPath('announcements', id), annData).catch(e => console.warn("Cloud sync failed."));
+            }
         });
 
         // --- ADMIN ORDERS VIEW ---
         function renderAdminOrdersTable() {
             const ob = document.getElementById('adminOrdersTableBody');
             if(!ob) return;
-            if(globalOrdersList.length === 0) { ob.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders placed yet.</td></tr>'; return; }
+            
+            // Merge global cloud orders with local history if any
+            let displayOrders = [...globalOrdersList];
+            const localHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
+            localHist.forEach(lo => {
+                if (!displayOrders.find(go => go.ts === lo.ts)) displayOrders.push(lo);
+            });
+
+            if(displayOrders.length === 0) { ob.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders placed yet.</td></tr>'; return; }
             
             let html = '';
-            globalOrdersList.slice().sort((a,b)=>b.ts - a.ts).forEach(o => {
+            displayOrders.slice().sort((a,b)=>b.ts - a.ts).forEach(o => {
                 html += `<tr><td>${o.date}</td><td>${o.phone}<br><small>${o.name}</small></td><td><small>${o.items}</small></td><td>${o.address}<br>Pin: ${o.pincode}</td><td><span class="badge">₹${o.total}</span></td></tr>`;
             });
             ob.innerHTML = html;
@@ -2011,18 +2091,17 @@
                 uid: userObj ? userObj.uid : 'anonymous'
             };
             
-            // Push to cloud db
-            if(setDoc && db) {
-                setDoc(docPath('orders', tsId), orderData).catch(e => {
-                    console.error("Order save failed:", e);
-                    let oHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
-                    oHist.push(orderData);
-                    localStorage.setItem('artisan_order_history', JSON.stringify(oHist));
-                });
-            } else {
-                let oHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
-                oHist.push(orderData);
-                localStorage.setItem('artisan_order_history', JSON.stringify(oHist));
+            // Optimistic Local Save
+            let oHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
+            oHist.push(orderData);
+            localStorage.setItem('artisan_order_history', JSON.stringify(oHist));
+            
+            globalOrdersList.push(orderData);
+            window.updatePublicStatsDisplay();
+
+            // Background Cloud Push
+            if(userObj) {
+                setDoc(docPath('orders', tsId), orderData).catch(e => console.warn("Cloud sync paused. Saved locally."));
             }
 
             openWhatsApp(msg);
