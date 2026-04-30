@@ -980,8 +980,21 @@
         import { getFirestore, collection, doc, setDoc, deleteDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         // Dynamic Firebase Backend provided securely by this platform
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'artisan-app-id';
+        let fbConfig;
+        try {
+            fbConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        } catch(e) {}
+        
+        const firebaseConfig = fbConfig || {
+            apiKey: "AIzaSyA7LPp0kMnYtiQeN3xxjIAPtqZwoo9KHdo",
+            authDomain: "artisan-e4123.firebaseapp.com",
+            projectId: "artisan-e4123",
+            storageBucket: "artisan-e4123.firebasestorage.app",
+            messagingSenderId: "893218724295",
+            appId: "1:893218724295:web:d006f8983c9aabd10ee1e2",
+            measurementId: "G-0WB9M64CVG"
+        };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'artisan-e4123';
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -1016,21 +1029,34 @@
 
         // --- 1. FIREBASE AUTH INITIALIZATION ---
         const initAuth = async () => {
+            const tryAnon = async () => {
+                try {
+                    await signInAnonymously(auth);
+                } catch (e) {
+                    // Silent fallback
+                }
+            };
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
+                    try {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } catch (tokenError) {
+                        await tryAnon();
+                    }
                 } else {
-                    await signInAnonymously(auth);
+                    await tryAnon();
                 }
-            } catch (error) {
-                console.warn("Auth initialization skipped.");
-            }
+            } catch (error) {}
         };
         initAuth();
 
         // --- 2. FIREBASE REAL-TIME SYNC ---
         const publicPath = (col) => collection(db, 'artifacts', appId, 'public', 'data', col);
         const docPath = (col, id) => doc(db, 'artifacts', appId, 'public', 'data', col, id);
+
+        const snapErrorHandler = (error) => {
+            console.warn("Firestore sync paused. Check internet connection or database rules.");
+        };
 
         onAuthStateChanged(auth, (user) => {
             const loginBtn = document.getElementById('loginBtnText');
@@ -1049,9 +1075,9 @@
 
             // Optimistic Load from Local Storage so the UI doesn't look empty while fetching
             try {
-                const lp = localStorage.getItem('artisan_products'); if(lp) products = JSON.parse(lp);
-                const lc = localStorage.getItem('artisan_coupons'); if(lc) adminCoupons = JSON.parse(lc);
-                const la = localStorage.getItem('artisan_announcements'); if(la) announcements = JSON.parse(la);
+                const lp = localStorage.getItem('artisan_products'); if(lp) products = JSON.parse(lp) || [];
+                const lc = localStorage.getItem('artisan_coupons'); if(lc) adminCoupons = JSON.parse(lc) || [];
+                const la = localStorage.getItem('artisan_announcements'); if(la) announcements = JSON.parse(la) || [];
                 const ls = localStorage.getItem('artisan_stats_config'); if(ls) statsConfig = JSON.parse(ls);
                 renderProducts(); renderCouponsTable(); renderAnnouncementsTable(); window.updatePublicStatsDisplay();
             } catch(e) {}
@@ -1195,7 +1221,7 @@
 
         // --- ANNOUNCEMENT BOT LOGIC ---
         function updateBotBubble() {
-            if(announcements.length === 0) return;
+            if(!announcements || announcements.length === 0) return;
             const annText = document.getElementById('annText');
             if(annText) annText.textContent = announcements[currentAnnIndex].text;
             
@@ -1209,7 +1235,7 @@
         }
 
         document.getElementById('botChar')?.addEventListener('click', () => {
-            if (announcements.length > 0) document.getElementById('speechBubble')?.classList.toggle('active');
+            if (announcements && announcements.length > 0) document.getElementById('speechBubble')?.classList.toggle('active');
         });
 
         document.getElementById('nextAnn')?.addEventListener('click', (e) => {
@@ -1365,6 +1391,7 @@
             const adminTableBody = document.getElementById('adminTableBody');
             if(!adminTableBody) return;
             adminTableBody.innerHTML = '';
+            if (!products) products = [];
             products.forEach(p => {
                 const tr = document.createElement('tr');
                 const imgUrl = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/50';
@@ -1433,6 +1460,7 @@
             const productData = { name, category, gender, basePrice, stock, description, images: imgArray, variants };
 
             // 1. Optimistic Local Save
+            if(!products) products = [];
             if (editingProductId) {
                 const idx = products.findIndex(p => p.id === editingProductId);
                 if(idx !== -1) products[idx] = { id: editingProductId, ...productData };
@@ -1454,7 +1482,7 @@
 
         window.deleteProduct = function(id) {
             if(confirm("Are you sure you want to permanently delete this product?")) {
-                
+                if(!products) products = [];
                 // Optimistic Local Delete
                 products = products.filter(p => p.id !== id);
                 localStorage.setItem('artisan_products', JSON.stringify(products));
@@ -1474,6 +1502,7 @@
             const couponsTableBody = document.getElementById('couponsTableBody');
             if(!couponsTableBody) return;
             couponsTableBody.innerHTML = '';
+            if(!adminCoupons) adminCoupons = [];
             adminCoupons.forEach((c) => {
                 const tr = document.createElement('tr');
                 const typeLabel = c.type === 'percent' ? c.value + '%' : '₹' + c.value;
@@ -1505,6 +1534,7 @@
             const minAmount = parseInt(document.getElementById('couponMinAmount')?.value) || 0;
             const minProducts = parseInt(document.getElementById('couponMinProducts')?.value) || 0;
 
+            if(!adminCoupons) adminCoupons = [];
             const exists = adminCoupons.find(c => c.code === code);
             if (exists) return window.showToast("Code already exists!", "fa-exclamation-triangle");
 
@@ -1528,6 +1558,7 @@
             const announcementsTableBody = document.getElementById('announcementsTableBody');
             if(!announcementsTableBody) return;
             announcementsTableBody.innerHTML = '';
+            if(!announcements) announcements = [];
             announcements.forEach((a) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td>${a.text}</td><td style="width: 60px;"><button class="admin-actions-btn delete" data-dbid="${a.dbId}"><i class="fas fa-trash"></i></button></td>`;
@@ -1562,6 +1593,7 @@
             const annData = { text: text, ts: parseInt(id), dbId: id };
 
             // Optimistic Local Save
+            if(!announcements) announcements = [];
             announcements.push(annData);
             localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
             window.showToast("Announcement broadcasted!", "fa-bullhorn");
@@ -1585,7 +1617,7 @@
             if(!ob) return;
             
             // Merge global cloud orders with local history if any
-            let displayOrders = [...globalOrdersList];
+            let displayOrders = [...(globalOrdersList || [])];
             const localHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
             localHist.forEach(lo => {
                 if (!displayOrders.find(go => go.ts === lo.ts)) displayOrders.push(lo);
@@ -1684,6 +1716,7 @@
         }
 
         window.openProductDetail = function(productId) {
+            if(!products) products = [];
             const product = products.find(p => p.id === productId); if (!product) return;
             const mainUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
             const mainImgEl = document.getElementById('detailMainImage');
@@ -1730,7 +1763,7 @@
         function renderProducts() {
             const sections = document.getElementById('productSections');
             if(!sections) return;
-            if(products.length === 0) { sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>Your store is currently empty.</h2><p>Please login to the Admin Dashboard to add products.</p></div>'; return; }
+            if(!products || products.length === 0) { sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>Your store is currently empty.</h2><p>Please login to the Admin Dashboard to add products.</p></div>'; return; }
 
             const searchInput = document.getElementById('searchInput'); const sortInput = document.getElementById('sortSelect'); 
             const s = searchInput ? searchInput.value.toLowerCase() : ''; const sort = sortInput ? sortInput.value : 'default';
@@ -1846,12 +1879,12 @@
             // Standard unauthenticated users only see their locally stored orders
             let myOrders = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
             
-            if (userContext && userContext.uid && globalOrdersList.length > 0) {
+            if (userContext && userContext.uid && globalOrdersList && globalOrdersList.length > 0) {
                 // Pull from the global list based on the auth UID
                 myOrders = globalOrdersList.filter(o => o.uid === userContext.uid);
             }
 
-            if (myOrders.length === 0) { list.innerHTML = '<p style="text-align: center; opacity: 0.7;">No past orders found.</p>'; return; }
+            if (!myOrders || myOrders.length === 0) { list.innerHTML = '<p style="text-align: center; opacity: 0.7;">No past orders found.</p>'; return; }
             
             let html = '';
             myOrders.slice().sort((a,b)=>b.ts - a.ts).forEach(order => {
@@ -1906,6 +1939,7 @@
             let subtotal = cart.reduce((s,i)=>{ let p=products.find(p=>p.id===i.id); return s+(p?p.basePrice*i.quantity:0); },0);
             let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
             
+            if(!adminCoupons) adminCoupons = [];
             const allCoupons = [
                 { code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 },
                 { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 },
@@ -1945,6 +1979,7 @@
         document.getElementById('applyCouponBtn')?.addEventListener('click',()=>{
             const cCodeInput = document.getElementById('couponCode'); if(!cCodeInput) return;
             let code = cCodeInput.value.trim().toUpperCase(); 
+            if(!adminCoupons) adminCoupons = [];
             const allCoupons = [{ code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 }, { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 }, ...adminCoupons];
             let coupon = allCoupons.find(c => c.code === code);
             const cMsg = document.getElementById('couponMessage');
@@ -2010,6 +2045,7 @@
             oHist.push(orderData);
             localStorage.setItem('artisan_order_history', JSON.stringify(oHist));
             
+            if(!globalOrdersList) globalOrdersList = [];
             globalOrdersList.push(orderData);
             window.updatePublicStatsDisplay();
 
@@ -2028,6 +2064,7 @@
             if(cart.length===0){ cont.innerHTML='<div class="empty-cart">Your cart is empty</div>'; const ct = document.getElementById('cartTotal'); if(ct) ct.innerHTML=''; return; } 
             let html='', total=0; 
             cart.forEach((item,idx)=>{ 
+                if(!products) products = [];
                 let p=products.find(p=>p.id===item.id); if(!p) return; total+=p.basePrice*item.quantity; 
                 let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
                 html+=`<div class="cart-item" data-index="${idx}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="cart-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)} each</p>${item.size?'<p>Size: '+item.size+'</p>':''}${item.color?'<p>Color: '+item.color+'</p>':''}</div><div class="cart-item-actions"><input type="number" min="1" value="${item.quantity}" class="cart-quantity" data-index="${idx}" style="width:50px; text-align:center; border-radius:10px; border:1px solid var(--card-border); background:var(--input-bg); color:var(--text-color);"><i class="fas fa-trash cart-item-remove" data-index="${idx}"></i></div></div>`; 
@@ -2042,6 +2079,7 @@
             if(wishlist.length===0){ cont.innerHTML='<div class="empty-wishlist">Your wishlist is empty 💔</div>'; return; } 
             let html=''; 
             wishlist.forEach(id=>{ 
+                if(!products) products = [];
                 let p=products.find(p=>p.id===id); if(p) {
                     let pImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/60?text=Img';
                     html+=`<div class="wishlist-item" data-id="${p.id}"><img src="${pImg}" onerror="this.onerror=null;this.src='https://via.placeholder.com/60?text=N/A';"><div class="wishlist-item-info"><h4>${p.name}</h4><p>${formatPrice(p.basePrice)}</p></div><i class="fas fa-trash remove-wishlist" data-id="${p.id}"></i></div>`; 
