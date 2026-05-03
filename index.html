@@ -459,7 +459,6 @@
                     <a href="#story" data-target="story">story</a>
                 </div>
                 <div class="header-actions">
-                    <!-- Authentication Login Pill -->
                     <button class="action-btn-glass login-pill" id="openAuthModalBtn" aria-label="Login">
                         <span id="loginBtnText"><i class="fas fa-user"></i> Login</span>
                     </button>
@@ -704,8 +703,13 @@
                                 <input type="number" id="adminPrice" required min="0">
                             </div>
                             <div class="admin-form-group">
-                                <label>Stock Quantity *</label>
-                                <input type="number" id="adminStock" required min="0">
+                                <label>Stock Status *</label>
+                                <select id="adminStockType" onchange="document.getElementById('adminStockVal').style.display = this.value === 'custom' ? 'block' : 'none';">
+                                    <option value="instock">In Stock</option>
+                                    <option value="outofstock">Out of Stock</option>
+                                    <option value="custom">Custom Quantity</option>
+                                </select>
+                                <input type="number" id="adminStockVal" style="display:none; margin-top:0.5rem;" placeholder="Enter quantity" min="0">
                             </div>
                         </div>
                         <div class="admin-form-group" style="margin-top: 1rem;">
@@ -1004,7 +1008,7 @@
                             category: norm.category ? String(norm.category).toLowerCase() : 'handmade',
                             gender: norm.gender ? String(norm.gender).toLowerCase() : 'all',
                             basePrice: parseInt(norm.price || norm.cost || norm.baseprice) || 0,
-                            stock: parseInt(norm.stock || norm.qty) || 0,
+                            stock: norm.stock !== undefined ? norm.stock : (norm.qty !== undefined ? norm.qty : 'In Stock'),
                             description: norm.description || norm.desc || '',
                             images: imgArray,
                             variants: variants
@@ -1221,7 +1225,6 @@
                     document.getElementById('registerForm').reset(); 
                     updateAuthUI(); 
                     showToast("Account created!", "fa-star");
-                    // Optionally update local customers count instantly
                     loginsCount++; updatePublicStatsDisplay();
                 } else {
                     if(errEl) errEl.textContent = result.message || "Error creating account.";
@@ -1329,7 +1332,7 @@
         // --- GOOGLE DRIVE IMAGE CONVERTER ---
         function getDirectImageUrl(url) {
             if (!url) return url;
-            let u = String(url).trim();
+            let u = String(url).trim().replace(/^["']|["']$/g, '');
             let id = null;
             if (u.includes('drive.google.com/file/d/')) id = u.match(/\/d\/([a-zA-Z0-9_-]+)/)?.[1];
             else if (u.includes('drive.google.com/open?id=')) id = u.split('id=')[1]?.split('&')[0];
@@ -1403,7 +1406,21 @@
             const dp = document.getElementById('detailPrice'); if(dp) dp.textContent = formatPrice(product.basePrice);
             const dt = document.getElementById('detailTotalPrice'); if(dt) dt.textContent = 'total: ' + formatPrice(product.basePrice);
             const dd = document.getElementById('detailDescription'); if(dd) dd.textContent = product.description || "";
-            const ds = document.getElementById('detailStock'); if(ds) ds.innerHTML = product.stock > 0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
+            
+            // Explicit Stock Handing
+            const ds = document.getElementById('detailStock'); 
+            if(ds) {
+                let stockText = ''; let inStock = false;
+                let rawStock = String(product.stock).toLowerCase().trim();
+                if (rawStock === 'in stock' || rawStock === 'instock') { stockText = 'In stock'; inStock = true; } 
+                else if (rawStock === 'out of stock' || rawStock === 'outofstock' || rawStock === '0') { stockText = 'Out of stock'; inStock = false; } 
+                else {
+                    let num = parseInt(product.stock);
+                    if (!isNaN(num) && num > 0) { stockText = num + ' in stock'; inStock = true; } 
+                    else { stockText = 'Out of stock'; inStock = false; }
+                }
+                ds.innerHTML = inStock ? `<span class="stock-badge in-stock">${stockText}</span>` : `<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">${stockText}</span>`;
+            }
             
             const thumbContainer = document.getElementById('detailThumbnails');
             if(thumbContainer) {
@@ -1488,10 +1505,22 @@
 
         function renderProductCard(p, idx) {
             const isWished = wishlist.includes(p.id);
-            const stockBadge = p.stock>0 ? '<span class="stock-badge in-stock">In stock</span>' : '<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">Out of stock</span>';
             const mainImg = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
             const hoverImgHtml = p.images && p.images.length > 1 ? `<img src="${p.images[1]}" class="hover-image" alt="Lifestyle shot" onerror="this.style.display='none';">` : '';
             const shortDesc = p.description ? `<p class="card-description">${p.description}</p>` : '';
+            
+            // Explicit Stock Handling for Card
+            let stockText = ''; let inStock = false;
+            let rawStock = String(p.stock).toLowerCase().trim();
+            if (rawStock === 'in stock' || rawStock === 'instock') { stockText = 'In stock'; inStock = true; } 
+            else if (rawStock === 'out of stock' || rawStock === 'outofstock' || rawStock === '0') { stockText = 'Out of stock'; inStock = false; } 
+            else {
+                let num = parseInt(p.stock);
+                if (!isNaN(num) && num > 0) { stockText = num + ' in stock'; inStock = true; } 
+                else { stockText = 'Out of stock'; inStock = false; }
+            }
+            const stockBadge = inStock ? `<span class="stock-badge in-stock">${stockText}</span>` : `<span class="stock-badge out-of-stock" style="background:#f8d7da; color:#721c24;">${stockText}</span>`;
+
             let variantsHtml = '';
             if(p.variants) {
                 variantsHtml = '<div class="product-variants">';
@@ -1638,6 +1667,8 @@
         document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ const m = this.closest('.modal'); if(m) m.style.display='none'; }));
         window.addEventListener('click',e=>{ if(e.target.classList.contains('modal')) e.target.style.display='none'; });
 
+        let customPincodeCharge = null;
+
         // --- PINCODE API AUTO-FILL LOGIC ---
         document.getElementById('deliveryPincode')?.addEventListener('blur', async (e) => {
             const pin = e.target.value.trim();
@@ -1703,6 +1734,7 @@
             let stateSelect = document.getElementById('deliveryState'); if(!stateSelect) return;
             let stateCode = stateSelect.value; let stateLabel = stateSelect.options[stateSelect.selectedIndex].text;
             if(!stateCode) return window.showToast('Please select a state first', 'fa-exclamation-circle');
+            
             let charge = 250; let eta = '5-7 business days'; let service = 'DTDC Prime';
             if (stateCode === 'Andhra Pradesh' || stateCode === 'Telangana') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
             else if (stateCode === 'Karnataka' || stateCode === 'Tamil Nadu') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
@@ -1925,25 +1957,24 @@
             products.forEach(p => {
                 const tr = document.createElement('tr');
                 const imgUrl = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/50';
+                
+                // Add robust checking for custom stock strings directly from sheet
+                let displayStock = p.stock;
+                if(String(p.stock).toLowerCase() === 'in stock' || String(p.stock).toLowerCase() === 'instock') displayStock = 'In Stock';
+                else if(String(p.stock).toLowerCase() === 'out of stock' || String(p.stock) === '0' || String(p.stock).toLowerCase() === 'outofstock') displayStock = 'Out of Stock';
+
                 tr.innerHTML = `
                     <td><img src="${imgUrl}" alt="${p.name}"></td>
                     <td>${p.name}</td>
                     <td style="text-transform: capitalize;">${p.category}</td>
                     <td>₹${p.basePrice}</td>
-                    <td>${p.stock}</td>
+                    <td>${displayStock}</td>
                     <td>
-                        <button class="admin-actions-btn edit" data-id="${p.id}" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="admin-actions-btn delete" data-id="${p.id}" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button class="admin-actions-btn edit" onclick="editProduct(${p.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="admin-actions-btn delete" onclick="deleteProduct(${p.id})" title="Delete"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 adminTableBody.appendChild(tr);
-            });
-
-            document.querySelectorAll('.admin-actions-btn.edit').forEach(btn => {
-                btn.addEventListener('click', () => editProduct(parseInt(btn.dataset.id)));
-            });
-            document.querySelectorAll('.admin-actions-btn.delete').forEach(btn => {
-                btn.addEventListener('click', () => deleteProduct(parseInt(btn.dataset.id)));
             });
         }
 
@@ -1959,9 +1990,26 @@
             const acat = document.getElementById('adminCategory'); if(acat) acat.value = p.category;
             const agen = document.getElementById('adminGender'); if(agen) agen.value = p.gender || 'all';
             const aprice = document.getElementById('adminPrice'); if(aprice) aprice.value = p.basePrice;
-            const astock = document.getElementById('adminStock'); if(astock) astock.value = p.stock;
             const adesc = document.getElementById('adminDesc'); if(adesc) adesc.value = p.description || '';
             const aimg = document.getElementById('adminImages'); if(aimg) aimg.value = p.images ? p.images.join('\n') : '';
+
+            // Handle Stock Dropdown
+            let stockTypeEl = document.getElementById('adminStockType');
+            let stockValEl = document.getElementById('adminStockVal');
+            
+            if (String(p.stock).toLowerCase() === 'in stock' || String(p.stock).toLowerCase() === 'instock') {
+                stockTypeEl.value = 'instock';
+                stockValEl.style.display = 'none';
+                stockValEl.value = '';
+            } else if (String(p.stock).toLowerCase() === 'out of stock' || String(p.stock) === '0' || String(p.stock).toLowerCase() === 'outofstock') {
+                stockTypeEl.value = 'outofstock';
+                stockValEl.style.display = 'none';
+                stockValEl.value = '';
+            } else {
+                stockTypeEl.value = 'custom';
+                stockValEl.style.display = 'block';
+                stockValEl.value = parseInt(p.stock) || 0;
+            }
 
             const wrap = document.querySelector('#adminProductsView .admin-table-wrapper');
             if(wrap) wrap.style.display = 'none';
@@ -1986,6 +2034,11 @@
             if(atitle) atitle.textContent = "Add New Product";
             const adminForm = document.getElementById('adminForm');
             if(adminForm) adminForm.reset();
+            
+            // Reset stock fields
+            document.getElementById('adminStockType').value = 'instock';
+            document.getElementById('adminStockVal').style.display = 'none';
+
             const wrap = document.querySelector('#adminProductsView .admin-table-wrapper');
             if(wrap) wrap.style.display = 'none';
             const addBtn = document.getElementById('addNewProductBtn');
@@ -2001,9 +2054,14 @@
             const category = document.getElementById('adminCategory')?.value;
             const gender = document.getElementById('adminGender')?.value || 'all';
             const basePrice = parseInt(document.getElementById('adminPrice')?.value) || 0;
-            const stock = parseInt(document.getElementById('adminStock')?.value) || 0;
             const description = document.getElementById('adminDesc')?.value.trim();
             
+            let stockType = document.getElementById('adminStockType').value;
+            let finalStock = '';
+            if (stockType === 'instock') finalStock = 'In Stock';
+            else if (stockType === 'outofstock') finalStock = 'Out of Stock';
+            else finalStock = parseInt(document.getElementById('adminStockVal').value) || 0;
+
             const rawImages = document.getElementById('adminImages')?.value;
             let imgArray = [];
             if(rawImages) {
@@ -2019,7 +2077,7 @@
             
             // Auto generate an enormous unique ID if adding new
             const idToSave = editingProductId || parseInt(Date.now().toString() + Math.floor(Math.random()*100).toString());
-            const productData = { id: idToSave, name, category, gender, basePrice, stock, description, images: imgArray, variants };
+            const productData = { id: idToSave, name, category, gender, basePrice, stock: finalStock, description, images: imgArray, variants };
 
             window.showToast("Syncing with Google Sheets...", "fa-spinner fa-spin");
 
@@ -2146,31 +2204,31 @@
         });
 
         // --- ADMIN ANNOUNCEMENTS LOGIC ---
-        let editingAnnId = null;
+        let editingAnnText = null;
 
         window.renderAnnouncementsTable = function() {
             const announcementsTableBody = document.getElementById('announcementsTableBody');
             if(!announcementsTableBody) return;
             announcementsTableBody.innerHTML = '';
             if(!announcements) announcements = [];
-            announcements.forEach((a) => {
+            announcements.forEach((a, idx) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${a.text}</td>
                     <td style="width: 100px;">
-                        <button class="admin-actions-btn edit" onclick="editAnnouncement('${a.dbId}')"><i class="fas fa-edit"></i></button>
-                        <button class="admin-actions-btn delete" onclick="deleteAnnouncement('${a.dbId}')"><i class="fas fa-trash"></i></button>
+                        <button class="admin-actions-btn edit" onclick="editAnnouncement(${idx})"><i class="fas fa-edit"></i></button>
+                        <button class="admin-actions-btn delete" onclick="deleteAnnouncement(${idx})"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
                 announcementsTableBody.appendChild(tr);
             });
         }
 
-        window.editAnnouncement = function(dbId) {
-            const a = announcements.find(ann => ann.dbId === dbId);
+        window.editAnnouncement = function(idx) {
+            const a = announcements[idx];
             if(!a) return;
             
-            editingAnnId = dbId;
+            editingAnnText = a.text;
             document.getElementById('adminAnnFormTitle').textContent = "Edit Announcement";
             document.getElementById('announcementText').value = a.text;
             
@@ -2186,7 +2244,7 @@
         });
 
         document.getElementById('addNewAnnBtn')?.addEventListener('click', () => {
-            editingAnnId = null;
+            editingAnnText = null;
             document.getElementById('adminAnnFormTitle').textContent = "Add Announcement";
             document.getElementById('announcementForm').reset();
             
@@ -2195,10 +2253,11 @@
             document.getElementById('adminAnnFormView').style.display = 'block';
         });
 
-        window.deleteAnnouncement = async function(dbId) {
+        window.deleteAnnouncement = async function(idx) {
             if(confirm("Delete this announcement permanently?")) {
+                const a = announcements[idx];
                 window.showToast("Deleting announcement...", "fa-spinner fa-spin");
-                await sendToGoogleSheet('deleteAnnouncement', { dbId: dbId }); 
+                await sendToGoogleSheet('deleteAnnouncement', { text: a.text, dbId: a.dbId }); 
                 await fetchGoogleSheetsData(); // Fully refresh
                 window.showToast("Announcement deleted");
             }
@@ -2210,8 +2269,8 @@
             
             window.showToast("Syncing with Google Sheets...", "fa-spinner fa-spin");
             
-            if(editingAnnId) {
-                await sendToGoogleSheet('editAnnouncement', { dbId: editingAnnId, text: text });
+            if(editingAnnText) {
+                await sendToGoogleSheet('editAnnouncement', { oldText: editingAnnText, text: text });
             } else {
                 const dbId = Date.now().toString();
                 const annData = { text: text, ts: Date.now(), dbId: dbId };
