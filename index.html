@@ -1058,11 +1058,13 @@
                     });
                 }
 
-                renderProducts(); updatePublicStatsDisplay();
+                window.renderProducts(); window.updatePublicStatsDisplay();
                 
                 // Re-render admin tables if admin modal is open
                 if (document.getElementById('adminModal').style.display === 'flex') {
-                    renderAdminTable(); renderCouponsTable(); renderAnnouncementsTable();
+                    window.renderAdminTable(); 
+                    window.renderCouponsTable(); 
+                    window.renderAnnouncementsTable();
                 }
 
             } catch (err) {
@@ -1079,13 +1081,13 @@
                 siteViews = parseInt(localStorage.getItem('artisan_views')) || 0;
                 loginsCount = parseInt(localStorage.getItem('artisan_logins')) || 0;
             } catch(e) {}
-            renderProducts(); updatePublicStatsDisplay();
+            window.renderProducts(); window.updatePublicStatsDisplay();
             
             const botEl = document.getElementById('announcementBot');
             if (announcements.length > 0 && botEl) { botEl.style.display = 'flex'; updateBotBubble(); startAnnTimer(); }
         }
 
-        function updatePublicStatsDisplay() {
+        window.updatePublicStatsDisplay = function() {
             let finalViews = siteViews;
             let localOrders = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
             let finalOrders = globalOrdersList.length || localOrders.length;
@@ -1237,10 +1239,10 @@
 
         // --- FORMATTING & STATE ---
         function formatPrice(p) { return '₹' + (p || 0); }
-        function updateCartCount() { const cc = document.getElementById('cartCount'); if(cc) cc.textContent = cart.reduce((s,i)=>s+i.quantity,0); }
-        function saveCart() { localStorage.setItem('cart',JSON.stringify(cart)); updateCartCount(); }
-        function updateWishlistCount() { const wc = document.getElementById('wishlistCount'); if(wc) wc.textContent = wishlist.length; }
-        function saveWishlist() { localStorage.setItem('wishlist',JSON.stringify(wishlist)); updateWishlistCount(); }
+        window.updateCartCount = function() { const cc = document.getElementById('cartCount'); if(cc) cc.textContent = cart.reduce((s,i)=>s+i.quantity,0); }
+        function saveCart() { localStorage.setItem('cart',JSON.stringify(cart)); window.updateCartCount(); }
+        window.updateWishlistCount = function() { const wc = document.getElementById('wishlistCount'); if(wc) wc.textContent = wishlist.length; }
+        function saveWishlist() { localStorage.setItem('wishlist',JSON.stringify(wishlist)); window.updateWishlistCount(); }
 
         // --- RANDOM QUOTES ENGINE ---
         const handmadeQuotes = ["Unique ceramics, textiles, and woodcrafts — each piece tells a story.", "Crafted by hands, inspired by the heart. Discover slow, intentional living.", "Every imperfection is a mark of authenticity. Embrace the true art of handmade goods."];
@@ -1276,10 +1278,12 @@
             }
             
             setRandomQuote(currentMode);
-            updateCartCount(); updateWishlistCount();
+            window.updateCartCount(); window.updateWishlistCount();
             updateAuthUI();
             fetchGoogleSheetsData();
-            setInterval(fetchGoogleSheetsData, 30000); // Live poll every 30 seconds
+            
+            // Live poll every 15 seconds to automatically sync global changes!
+            setInterval(fetchGoogleSheetsData, 15000); 
         });
 
         // --- ANNOUNCEMENT BOT LOGIC (ROTATING) ---
@@ -1504,7 +1508,7 @@
                 heart.addEventListener('click', function(e) {
                     e.stopPropagation(); const id = parseInt(this.dataset.id);
                     if (wishlist.includes(id)) { wishlist = wishlist.filter(i => i !== id); this.classList.remove('active'); this.innerHTML = '<i class="far fa-heart"></i>'; } 
-                    else { wishlist.push(id); this.classList.add('active'); this.innerHTML = '<i class="fas fa-heart"></i>'; showToast('Added to Wishlist ❤️', 'fa-heart'); }
+                    else { wishlist.push(id); this.classList.add('active'); this.innerHTML = '<i class="fas fa-heart"></i>'; window.showToast('Added to Wishlist ❤️', 'fa-heart'); }
                     saveWishlist(); this.classList.add('heart-pulse'); setTimeout(() => this.classList.remove('heart-pulse'), 400);
                 });
             });
@@ -1617,7 +1621,7 @@
 
         document.getElementById('viewOrderHistoryBtn')?.addEventListener('click', () => {
             if(!currentUser) {
-                showToast("Please log in to view global order history.", "fa-info-circle");
+                window.showToast("Please log in to view global order history.", "fa-info-circle");
                 document.getElementById('closeCart')?.click();
                 document.getElementById('openAuthModalBtn')?.click();
                 return;
@@ -1660,7 +1664,7 @@
                     } else { customPincodeCharge = null; }
                     
                     document.getElementById('estimateDelivery')?.click();
-                    showToast("Pincode loaded from database!", "fa-map-marker-alt");
+                    window.showToast("Pincode loaded from database!", "fa-map-marker-alt");
                     return;
                 }
 
@@ -1686,9 +1690,9 @@
                                 }
                             }
                         }
-                        showToast("Pincode located!", "fa-map-marker-alt");
+                        window.showToast("Pincode located!", "fa-map-marker-alt");
                     } else {
-                        showToast("Invalid Pincode", "fa-exclamation-circle");
+                        window.showToast("Invalid Pincode", "fa-exclamation-circle");
                     }
                 } catch(err) { console.warn("Pincode lookup failed", err); }
             }
@@ -1698,7 +1702,7 @@
         document.getElementById('estimateDelivery')?.addEventListener('click',()=>{
             let stateSelect = document.getElementById('deliveryState'); if(!stateSelect) return;
             let stateCode = stateSelect.value; let stateLabel = stateSelect.options[stateSelect.selectedIndex].text;
-            if(!stateCode) return showToast('Please select a state first', 'fa-exclamation-circle');
+            if(!stateCode) return window.showToast('Please select a state first', 'fa-exclamation-circle');
             let charge = 250; let eta = '5-7 business days'; let service = 'DTDC Prime';
             if (stateCode === 'Andhra Pradesh' || stateCode === 'Telangana') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
             else if (stateCode === 'Karnataka' || stateCode === 'Tamil Nadu') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
@@ -1758,9 +1762,9 @@
         }
 
         document.getElementById('proceedToDelivery')?.addEventListener('click',()=>{
-            if(cart.length===0) return showToast('Your cart is empty', 'fa-exclamation-circle');
+            if(cart.length===0) return window.showToast('Your cart is empty', 'fa-exclamation-circle');
             if(!currentUser) {
-                showToast("Please Log In or Sign Up to proceed to checkout.", "fa-user-lock");
+                window.showToast("Please Log In or Sign Up to proceed to checkout.", "fa-user-lock");
                 document.getElementById('closeCart')?.click();
                 document.getElementById('openAuthModalBtn')?.click();
                 return;
@@ -1808,7 +1812,7 @@
             let city = document.getElementById('deliveryCity')?.value.trim();
             let stateSelect = document.getElementById('deliveryState');
             
-            if(!name||!addr||!pincode||!phone||!city||!stateSelect||stateSelect.value==='') return showToast('Please fill all required fields including state.', 'fa-exclamation-circle');
+            if(!name||!addr||!pincode||!phone||!city||!stateSelect||stateSelect.value==='') return window.showToast('Please fill all required fields including state.', 'fa-exclamation-circle');
             
             let stateName = stateSelect.options[stateSelect.selectedIndex].text;
             let subtotal=0; let itemsSummary = ''; let msg=`Hello! I'd like to place an order:\n\n`;
@@ -1848,7 +1852,7 @@
             
             if(!globalOrdersList) globalOrdersList = [];
             globalOrdersList.push(orderData);
-            updatePublicStatsDisplay();
+            window.updatePublicStatsDisplay();
 
             // Send Order to Google Sheets
             fetch(GOOGLE_SHEET_API_URL, {
@@ -1891,7 +1895,7 @@
             document.querySelectorAll('.remove-wishlist').forEach(btn=>btn.addEventListener('click',function(e){ e.stopPropagation(); wishlist=wishlist.filter(i=>i!==parseInt(this.dataset.id)); saveWishlist(); renderWishlistModal(); window.renderProducts(); })); 
         }
 
-        document.getElementById('newsletterForm')?.addEventListener('submit',e=>{ e.preventDefault(); showToast('Successfully Subscribed!', 'fa-envelope-open-text'); const nEmail = document.getElementById('newsletterEmail'); if(nEmail) nEmail.value = ''; });
+        document.getElementById('newsletterForm')?.addEventListener('submit',e=>{ e.preventDefault(); window.showToast('Successfully Subscribed!', 'fa-envelope-open-text'); const nEmail = document.getElementById('newsletterEmail'); if(nEmail) nEmail.value = ''; });
 
         // --- SCROLL ANIMATIONS ---
         window.addEventListener('scroll', () => {
@@ -1990,7 +1994,7 @@
             if(afv) afv.style.display = 'flex';
         });
 
-        document.getElementById('adminForm')?.addEventListener('submit', (e) => {
+        document.getElementById('adminForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const name = document.getElementById('adminName')?.value.trim();
@@ -2017,32 +2021,26 @@
             const idToSave = editingProductId || parseInt(Date.now().toString() + Math.floor(Math.random()*100).toString());
             const productData = { id: idToSave, name, category, gender, basePrice, stock, description, images: imgArray, variants };
 
-            if(!products) products = [];
+            window.showToast("Syncing with Google Sheets...", "fa-spinner fa-spin");
+
             if (isEdit) {
-                const idx = products.findIndex(p => p.id === editingProductId);
-                if(idx !== -1) products[idx] = productData;
-                sendToGoogleSheet('editProduct', productData); // Push to Sheet
+                await sendToGoogleSheet('editProduct', productData);
             } else {
-                products.push(productData);
-                sendToGoogleSheet('addProduct', productData); // Push to Sheet
+                await sendToGoogleSheet('addProduct', productData);
             }
 
-            localStorage.setItem('artisan_products', JSON.stringify(products));
-            showToast("Product saved and synced to database!", "fa-check");
-            renderAdminTable();
-            window.renderProducts();
+            await fetchGoogleSheetsData(); // Fully refresh from Google Sheets
+            
+            window.showToast("Product saved and synced to database!", "fa-check");
             document.getElementById('cancelEditBtn')?.click();
         });
 
-        window.deleteProduct = function(id) {
+        window.deleteProduct = async function(id) {
             if(confirm("Are you sure you want to permanently delete this product?")) {
-                if(!products) products = [];
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem('artisan_products', JSON.stringify(products));
-                renderAdminTable();
-                window.renderProducts();
-                sendToGoogleSheet('deleteProduct', { id: id }); // Push to Sheet
-                showToast("Product deleted.", "fa-trash");
+                window.showToast("Deleting product...", "fa-spinner fa-spin");
+                await sendToGoogleSheet('deleteProduct', { id: id }); 
+                await fetchGoogleSheetsData(); // Fully refresh
+                window.showToast("Product deleted successfully.", "fa-trash");
             }
         }
 
@@ -2107,17 +2105,16 @@
             document.getElementById('adminCouponFormView').style.display = 'block';
         });
 
-        window.deleteCoupon = function(code) {
+        window.deleteCoupon = async function(code) {
             if(confirm("Delete this coupon permanently?")) {
-                adminCoupons = adminCoupons.filter(c => c.code !== code);
-                localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
-                renderCouponsTable();
-                sendToGoogleSheet('deleteCoupon', { code: code }); // Push to Sheet
-                showToast("Coupon deleted");
+                window.showToast("Deleting coupon...", "fa-spinner fa-spin");
+                await sendToGoogleSheet('deleteCoupon', { code: code });
+                await fetchGoogleSheetsData(); // Fully refresh
+                window.showToast("Coupon deleted successfully.");
             }
         };
 
-        document.getElementById('couponForm')?.addEventListener('submit', (e) => {
+        document.getElementById('couponForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const code = document.getElementById('couponCodeInput')?.value.trim().toUpperCase();
@@ -2130,23 +2127,21 @@
             
             if(!editingCouponCode) {
                 const exists = adminCoupons.find(c => c.code === code);
-                if (exists) return showToast("Code already exists!", "fa-exclamation-triangle");
+                if (exists) return window.showToast("Code already exists!", "fa-exclamation-triangle");
             }
 
             const couponData = { code, type, value, minAmount, minProducts };
 
+            window.showToast("Syncing with Google Sheets...", "fa-spinner fa-spin");
+
             if(editingCouponCode) {
-                const idx = adminCoupons.findIndex(c => c.code === editingCouponCode);
-                if(idx !== -1) adminCoupons[idx] = couponData;
-                sendToGoogleSheet('editCoupon', couponData);
+                await sendToGoogleSheet('editCoupon', couponData);
             } else {
-                adminCoupons.push(couponData);
-                sendToGoogleSheet('addCoupon', couponData);
+                await sendToGoogleSheet('addCoupon', couponData);
             }
 
-            localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
-            showToast("Coupon saved and synced!", "fa-tag");
-            renderCouponsTable();
+            await fetchGoogleSheetsData(); // Fully refresh
+            window.showToast("Coupon saved and synced!", "fa-tag");
             document.getElementById('cancelCouponEditBtn')?.click();
         });
 
@@ -2200,51 +2195,32 @@
             document.getElementById('adminAnnFormView').style.display = 'block';
         });
 
-        window.deleteAnnouncement = function(dbId) {
+        window.deleteAnnouncement = async function(dbId) {
             if(confirm("Delete this announcement permanently?")) {
-                announcements = announcements.filter(a => a.dbId !== dbId);
-                localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
-                renderAnnouncementsTable();
-                sendToGoogleSheet('deleteAnnouncement', { dbId: dbId }); // Push to sheet
-                
-                if(announcements.length === 0) {
-                    const botEl = document.getElementById('announcementBot');
-                    if(botEl) botEl.style.display = 'none';
-                } else {
-                    currentAnnIndex = 0; updateBotBubble();
-                }
+                window.showToast("Deleting announcement...", "fa-spinner fa-spin");
+                await sendToGoogleSheet('deleteAnnouncement', { dbId: dbId }); 
+                await fetchGoogleSheetsData(); // Fully refresh
+                window.showToast("Announcement deleted");
             }
         };
 
-        document.getElementById('announcementForm')?.addEventListener('submit', (e) => {
+        document.getElementById('announcementForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = document.getElementById('announcementText')?.value.trim();
             
-            if(!announcements) announcements = [];
+            window.showToast("Syncing with Google Sheets...", "fa-spinner fa-spin");
             
             if(editingAnnId) {
-                const idx = announcements.findIndex(a => a.dbId === editingAnnId);
-                if(idx !== -1) {
-                    announcements[idx].text = text;
-                    sendToGoogleSheet('editAnnouncement', { dbId: editingAnnId, text: text });
-                }
+                await sendToGoogleSheet('editAnnouncement', { dbId: editingAnnId, text: text });
             } else {
                 const dbId = Date.now().toString();
                 const annData = { text: text, ts: Date.now(), dbId: dbId };
-                announcements.push(annData);
-                sendToGoogleSheet('addAnnouncement', annData);
+                await sendToGoogleSheet('addAnnouncement', annData);
             }
 
-            localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
-            showToast("Announcement saved and synced!", "fa-bullhorn");
-            renderAnnouncementsTable();
+            await fetchGoogleSheetsData(); // Fully refresh
+            window.showToast("Announcement saved and synced!", "fa-bullhorn");
             document.getElementById('cancelAnnEditBtn')?.click();
-            
-            const botEl = document.getElementById('announcementBot');
-            if(botEl) botEl.style.display = 'flex';
-            currentAnnIndex = announcements.length - 1;
-            updateBotBubble();
-            startAnnTimer(); 
         });
         
         document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
