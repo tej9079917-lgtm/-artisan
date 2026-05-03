@@ -282,7 +282,41 @@
         .auth-btn:hover { filter: brightness(0.9); }
         .auth-error { color: #e74c3c; font-size: 0.9rem; margin-top: 0.5rem; }
 
-        /* --- CART & DELIVERY STYLES --- */
+        /* --- ADMIN DASHBOARD STYLES --- */
+        .admin-modal-content { max-width: 1000px; width: 100%; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem; margin-bottom: 1rem; }
+        .admin-header h2 { margin: 0; color: var(--accent-color); }
+        
+        /* Admin Tabs */
+        .admin-tabs { display: flex; gap: 1rem; border-bottom: 2px solid var(--card-border); margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .admin-tab { background: transparent; border: none; padding: 0.5rem 1rem; font-size: 1.1rem; font-weight: 600; color: var(--text-color); opacity: 0.5; cursor: pointer; transition: 0.3s; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+        .admin-tab.active { opacity: 1; color: var(--accent-color); border-bottom-color: var(--accent-color); }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; animation: fadeUp 0.4s ease; }
+
+        .admin-table-wrapper { overflow-x: auto; width: 100%; }
+        .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .admin-table th, .admin-table td { padding: 1rem 0.5rem; border-bottom: 1px solid var(--card-border); font-size: 0.95rem; }
+        .admin-table th { font-weight: 600; opacity: 0.7; }
+        .admin-table img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .admin-actions-btn { background: transparent; border: none; cursor: pointer; font-size: 1.1rem; padding: 0.5rem; border-radius: 8px; transition: 0.3s; }
+        .admin-actions-btn.edit { color: var(--accent-color); }
+        .admin-actions-btn.edit:hover { background: var(--glass-bg); }
+        .admin-actions-btn.delete { color: #e74c3c; }
+        .admin-actions-btn.delete:hover { background: rgba(231, 76, 60, 0.1); }
+        
+        .admin-form-view { display: none; flex-direction: column; gap: 1.5rem; }
+        .admin-form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .admin-form-group { display: flex; flex-direction: column; gap: 0.4rem; text-align: left; }
+        .admin-form-group label { font-size: 0.9rem; font-weight: 600; opacity: 0.8; }
+        .admin-form-group input, .admin-form-group select, .admin-form-group textarea { width: 100%; padding: 0.8rem; border-radius: 12px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-color); outline: none; font-family: 'Inter', sans-serif;}
+        .admin-form-group input:focus, .admin-form-group select:focus, .admin-form-group textarea:focus { border-color: var(--accent-color); }
+        .admin-form-buttons { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1rem; }
+
+        .contact-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; margin-top: 2rem; }
+        .contact-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 40px; padding: 2rem; transition: all 0.6s ease; width: 220px; display: flex; flex-direction: column; align-items: center; }
+        .contact-card i { font-size: 2.5rem; color: var(--accent-color); margin-bottom: 1rem; transition: color 0.6s ease;}
+
         .cart-item, .wishlist-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--card-border); transition: border-color 0.6s ease;}
         .cart-item img, .wishlist-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
         .cart-item-info, .wishlist-item-info { flex: 1; }
@@ -377,6 +411,7 @@
             .bot-character { width: 55px; height: 75px; }
             .speech-bubble { max-width: calc(100vw - 120px); }
         }
+        .page-transition-out { opacity: 0 !important; transition: opacity 0.2s ease; }
     </style>
 </head>
 <body>
@@ -589,8 +624,98 @@
             <div id="profileBlock" style="display: none; padding: 1rem 0;">
                 <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--accent-color); margin-bottom: 1rem;"></i>
                 <h2 id="profileEmail" style="margin-bottom: 2rem; font-size: 1.2rem;"></h2>
+                <button id="adminPanelBtn" class="btn" style="width: 100%; margin-bottom: 1rem; display: none;"><i class="fas fa-cog"></i> Admin Dashboard</button>
                 <button id="logoutBtn" class="btn-outline" style="width: 100%; border-radius: 12px; padding: 1rem; cursor: pointer;">Sign Out</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD MODAL -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content admin-modal-content">
+            <div class="admin-header">
+                <h2><i class="fas fa-cogs"></i> Admin Dashboard</h2>
+                <span class="close-modal" id="closeAdmin">×</span>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-target="adminProductsView">Products</button>
+            </div>
+
+            <!-- Products Section -->
+            <div id="adminProductsView" class="admin-section active">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <button id="addNewProductBtn" class="btn"><i class="fas fa-plus"></i> Add New Product</button>
+                </div>
+                
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Admin Form View (Add/Edit Product) -->
+            <div id="adminFormView" class="admin-form-view" style="display:none; background: var(--glass-bg); padding: 1.5rem; border-radius: 20px;">
+                <h3 id="adminFormTitle">Edit Product</h3>
+                <form id="adminForm">
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="adminName" required>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Category *</label>
+                            <select id="adminCategory">
+                                <option value="handmade">Handmade</option>
+                                <option value="clothes">Clothes</option>
+                                <option value="jewelry">Jewelry</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Gender</label>
+                            <select id="adminGender">
+                                <option value="all">All / Unisex</option>
+                                <option value="men">Men</option>
+                                <option value="women">Women</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" id="adminPrice" required min="0">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>Stock Quantity *</label>
+                            <input type="number" id="adminStock" required min="0">
+                        </div>
+                    </div>
+                    <div class="admin-form-group" style="margin-top: 1rem;">
+                        <label>Description</label>
+                        <textarea id="adminDesc" rows="3"></textarea>
+                    </div>
+                    <div class="admin-form-group" style="margin-top: 1rem;">
+                        <label>Images (Google Drive Links or regular URLs)</label>
+                        <textarea id="adminImages" rows="4" placeholder="Paste image links here. Separate multiple images with a comma OR paste one link per line."></textarea>
+                    </div>
+                    <div class="admin-form-buttons">
+                        <button type="button" id="cancelEditBtn" class="btn-outline">Cancel</button>
+                        <button type="submit" class="btn">Save Product</button>
+                    </div>
+                </form>
+            </div>
+            
         </div>
     </div>
 
@@ -610,7 +735,7 @@
         </div>
     </div>
     
-    <!-- Delivery Modal with Landmark, Pincode, State and Suggested Coupons -->
+    <!-- Delivery Modal -->
     <div id="deliveryModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="closeDelivery">×</span>
@@ -720,6 +845,7 @@
         </div>
     </div>
 
+    <!-- PURE JAVASCRIPT APP (NO FIREBASE) -->
     <script>
         // ============================================================================
         // GOOGLE SHEETS API CONFIGURATION
@@ -735,14 +861,13 @@
             container.appendChild(toast);
             setTimeout(() => { toast.classList.add('hiding'); setTimeout(() => { if(container.contains(toast)) container.removeChild(toast); }, 400); }, 3000); 
         }
-        window.showToast = showToast;
 
         // DATA VARIABLES
         let products = [];
         let adminCoupons = [];
         let announcements = [];
         let globalOrdersList = [];
-        let localPincodes = []; // Holds pincodes from sheet
+        let localPincodes = [];
         let siteViews = 0;
         let currentAnnIndex = 0;
         
@@ -872,16 +997,23 @@
             const authContentBlock = document.getElementById('authContentBlock');
             const profileBlock = document.getElementById('profileBlock');
             const profileEmailEl = document.getElementById('profileEmail');
+            const adminPanelBtn = document.getElementById('adminPanelBtn');
 
             if (currentUser) {
                 if(loginBtn) loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Account';
                 if(profileEmailEl) profileEmailEl.textContent = currentUser.name || currentUser.email;
                 if(authContentBlock) authContentBlock.style.display = 'none';
                 if(profileBlock) profileBlock.style.display = 'block';
+                
+                // Admin access check based on the rules
+                const isAdmin = (currentUser.email === 'tej9079917@gmail.com' || currentUser.email === 'artisan.onlinesales@gmail.com');
+                if (adminPanelBtn) adminPanelBtn.style.display = isAdmin ? 'block' : 'none';
+                
             } else {
                 if(loginBtn) loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
                 if(authContentBlock) authContentBlock.style.display = 'block';
                 if(profileBlock) profileBlock.style.display = 'none';
+                if (adminPanelBtn) adminPanelBtn.style.display = 'none';
             }
         }
 
@@ -918,6 +1050,17 @@
             const pass = document.getElementById('loginPassword')?.value;
             const errEl = document.getElementById('loginError'); if(errEl) errEl.textContent = 'Logging in...';
             
+            // Hardcoded fallback logic in case Google API fails or is not correctly linked
+            if ((email === 'tej9079917@gmail.com' || email === 'artisan.onlinesales@gmail.com') && pass === 'Tejkumar@117') {
+                currentUser = { uid: Date.now().toString(), email: email, name: "Admin" };
+                localStorage.setItem('artisan_mock_user', JSON.stringify(currentUser));
+                document.getElementById('authModal').style.display = 'none'; 
+                document.getElementById('loginForm').reset(); 
+                updateAuthUI(); 
+                showToast("Logged in successfully!", "fa-check");
+                return;
+            }
+
             try {
                 const response = await fetch(GOOGLE_SHEET_API_URL, {
                     redirect: "follow",
@@ -1380,40 +1523,10 @@
         document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ const m = this.closest('.modal'); if(m) m.style.display='none'; }));
         window.addEventListener('click',e=>{ if(e.target.classList.contains('modal')) e.target.style.display='none'; });
 
-        let customPincodeCharge = null;
-
         // --- PINCODE API AUTO-FILL LOGIC ---
         document.getElementById('deliveryPincode')?.addEventListener('blur', async (e) => {
             const pin = e.target.value.trim();
             if (pin.length === 6) {
-                
-                // 1. Check Custom Google Sheet Pincodes first
-                let foundInSheet = localPincodes.find(p => String(p.pincode) === pin);
-                if (foundInSheet) {
-                    const cityInput = document.getElementById('deliveryCity');
-                    if(cityInput) cityInput.value = (foundInSheet.city || '') + ", " + (foundInSheet.district || '');
-                    
-                    const stateSelect = document.getElementById('deliveryState');
-                    if(stateSelect && foundInSheet.state) {
-                        for (let i = 0; i < stateSelect.options.length; i++) {
-                            if (stateSelect.options[i].text.toLowerCase() === String(foundInSheet.state).toLowerCase()) {
-                                stateSelect.selectedIndex = i;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if(foundInSheet.charge !== undefined && foundInSheet.charge !== "") {
-                        customPincodeCharge = parseInt(foundInSheet.charge);
-                    } else { customPincodeCharge = null; }
-                    
-                    document.getElementById('estimateDelivery')?.click();
-                    showToast("Pincode loaded from database!", "fa-map-marker-alt");
-                    return;
-                }
-
-                // 2. Fallback to Postal API
-                customPincodeCharge = null;
                 try {
                     const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
                     const data = await res.json();
@@ -1447,17 +1560,9 @@
             let stateSelect = document.getElementById('deliveryState'); if(!stateSelect) return;
             let stateCode = stateSelect.value; let stateLabel = stateSelect.options[stateSelect.selectedIndex].text;
             if(!stateCode) return showToast('Please select a state first', 'fa-exclamation-circle');
-            
             let charge = 250; let eta = '5-7 business days'; let service = 'DTDC Prime';
             if (stateCode === 'Andhra Pradesh' || stateCode === 'Telangana') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
             else if (stateCode === 'Karnataka' || stateCode === 'Tamil Nadu') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
-            
-            // Override with custom charge if fetched from sheet
-            if (customPincodeCharge !== null && !isNaN(customPincodeCharge)) {
-                charge = customPincodeCharge;
-                service = 'Custom Area Delivery';
-            }
-
             currentDelivery = { charge: charge, provider: 'DTDC', eta: eta, stateLabel: stateLabel, service: service };
             const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='block';
             const chargeUi = document.getElementById('deliveryChargeUI'); if(chargeUi) chargeUi.innerText = formatPrice(currentDelivery.charge); 
@@ -1597,7 +1702,7 @@
             
             if(!globalOrdersList) globalOrdersList = [];
             globalOrdersList.push(orderData);
-            window.updatePublicStatsDisplay();
+            updatePublicStatsDisplay();
 
             // Send Order to Google Sheets
             fetch(GOOGLE_SHEET_API_URL, {
