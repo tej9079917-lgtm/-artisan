@@ -411,7 +411,6 @@
             .bot-character { width: 55px; height: 75px; }
             .speech-bubble { max-width: calc(100vw - 120px); }
         }
-        .page-transition-out { opacity: 0 !important; transition: opacity 0.2s ease; }
     </style>
 </head>
 <body>
@@ -460,7 +459,6 @@
                     <a href="#story" data-target="story">story</a>
                 </div>
                 <div class="header-actions">
-                    <!-- Authentication Login Pill -->
                     <button class="action-btn-glass login-pill" id="openAuthModalBtn" aria-label="Login">
                         <span id="loginBtnText"><i class="fas fa-user"></i> Login</span>
                     </button>
@@ -525,6 +523,13 @@
                 <div>
                     <h4>Orders Delivered</h4>
                     <p class="stat-value" id="publicOrdersStat">0</p>
+                </div>
+            </div>
+            <div class="store-stat-card">
+                <i class="fas fa-users"></i>
+                <div>
+                    <h4>Happy Customers</h4>
+                    <p class="stat-value" id="publicCustomersStat">0</p>
                 </div>
             </div>
         </div>
@@ -614,7 +619,7 @@
                 <form id="registerForm" class="auth-form">
                     <input type="text" id="regName" placeholder="Full Name" required>
                     <input type="email" id="regEmail" placeholder="Email Address" required>
-                    <input type="password" id="regPassword" placeholder="Create Password (min 6 chars)" required>
+                    <input type="password" id="regPassword" placeholder="Create Password" required>
                     <div class="auth-error" id="regError"></div>
                     <button type="submit" class="auth-btn">Create Account</button>
                 </form>
@@ -640,6 +645,8 @@
             
             <div class="admin-tabs">
                 <button class="admin-tab active" data-target="adminProductsView">Products</button>
+                <button class="admin-tab" data-target="adminCouponsView">Coupons</button>
+                <button class="admin-tab" data-target="adminAnnouncementsView">Announcements</button>
             </div>
 
             <!-- Products Section -->
@@ -648,7 +655,7 @@
                     <button id="addNewProductBtn" class="btn"><i class="fas fa-plus"></i> Add New Product</button>
                 </div>
                 
-                <div class="admin-table-wrapper">
+                <div class="admin-table-wrapper" id="productsTableWrapper">
                     <table class="admin-table">
                         <thead>
                             <tr>
@@ -665,57 +672,134 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Admin Form View (Add/Edit Product) -->
+                <div id="adminFormView" class="admin-form-view" style="display:none; background: var(--glass-bg); padding: 1.5rem; border-radius: 20px;">
+                    <h3 id="adminFormTitle" style="margin-bottom: 1rem;">Edit Product</h3>
+                    <form id="adminForm">
+                        <div class="admin-form-grid">
+                            <div class="admin-form-group">
+                                <label>Product Name *</label>
+                                <input type="text" id="adminName" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Category *</label>
+                                <select id="adminCategory">
+                                    <option value="handmade">Handmade</option>
+                                    <option value="clothes">Clothes</option>
+                                    <option value="jewelry">Jewelry</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Gender</label>
+                                <select id="adminGender">
+                                    <option value="all">All / Unisex</option>
+                                    <option value="men">Men</option>
+                                    <option value="women">Women</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Price (₹) *</label>
+                                <input type="number" id="adminPrice" required min="0">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Stock Quantity *</label>
+                                <input type="number" id="adminStock" required min="0">
+                            </div>
+                        </div>
+                        <div class="admin-form-group" style="margin-top: 1rem;">
+                            <label>Description</label>
+                            <textarea id="adminDesc" rows="3"></textarea>
+                        </div>
+                        <div class="admin-form-group" style="margin-top: 1rem;">
+                            <label>Images (Google Drive Links or regular URLs)</label>
+                            <textarea id="adminImages" rows="4" placeholder="Paste image links here. Separate multiple images with a comma OR paste one link per line."></textarea>
+                        </div>
+                        <div class="admin-form-buttons">
+                            <button type="button" id="cancelEditBtn" class="btn-outline">Cancel</button>
+                            <button type="submit" class="btn"><i class="fas fa-save"></i> Save Product</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            <!-- Admin Form View (Add/Edit Product) -->
-            <div id="adminFormView" class="admin-form-view" style="display:none; background: var(--glass-bg); padding: 1.5rem; border-radius: 20px;">
-                <h3 id="adminFormTitle">Edit Product</h3>
-                <form id="adminForm">
-                    <div class="admin-form-grid">
-                        <div class="admin-form-group">
-                            <label>Product Name *</label>
-                            <input type="text" id="adminName" required>
+            <!-- Coupons Section -->
+            <div id="adminCouponsView" class="admin-section">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <button id="addNewCouponBtn" class="btn"><i class="fas fa-plus"></i> Add New Coupon</button>
+                </div>
+
+                <div id="adminCouponFormView" style="display:none; background: var(--glass-bg); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
+                    <h3 id="adminCouponFormTitle" style="margin-bottom: 1rem;">Create New Coupon</h3>
+                    <form id="couponForm">
+                        <div class="admin-form-grid">
+                            <div class="admin-form-group">
+                                <label>Coupon Code *</label>
+                                <input type="text" id="couponCodeInput" placeholder="e.g. SUMMER20" required style="text-transform: uppercase;">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Discount Type *</label>
+                                <select id="couponType">
+                                    <option value="percent">Percentage (%)</option>
+                                    <option value="fixed">Fixed Amount (₹)</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Discount Value *</label>
+                                <input type="number" id="couponValue" placeholder="e.g. 20" required min="1">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Minimum Cart Value (₹)</label>
+                                <input type="number" id="couponMinAmount" placeholder="e.g. 1000" min="0" value="0">
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Minimum Product Quantity</label>
+                                <input type="number" id="couponMinProducts" placeholder="e.g. 2" min="0" value="0">
+                            </div>
                         </div>
-                        <div class="admin-form-group">
-                            <label>Category *</label>
-                            <select id="adminCategory">
-                                <option value="handmade">Handmade</option>
-                                <option value="clothes">Clothes</option>
-                                <option value="jewelry">Jewelry</option>
-                            </select>
+                        <div class="admin-form-buttons">
+                            <button type="button" id="cancelCouponEditBtn" class="btn-outline">Cancel</button>
+                            <button type="submit" class="btn"><i class="fas fa-save"></i> Save Coupon</button>
                         </div>
-                        <div class="admin-form-group">
-                            <label>Gender</label>
-                            <select id="adminGender">
-                                <option value="all">All / Unisex</option>
-                                <option value="men">Men</option>
-                                <option value="women">Women</option>
-                            </select>
-                        </div>
-                        <div class="admin-form-group">
-                            <label>Price (₹) *</label>
-                            <input type="number" id="adminPrice" required min="0">
-                        </div>
-                        <div class="admin-form-group">
-                            <label>Stock Quantity *</label>
-                            <input type="number" id="adminStock" required min="0">
-                        </div>
-                    </div>
-                    <div class="admin-form-group" style="margin-top: 1rem;">
-                        <label>Description</label>
-                        <textarea id="adminDesc" rows="3"></textarea>
-                    </div>
-                    <div class="admin-form-group" style="margin-top: 1rem;">
-                        <label>Images (Google Drive Links or regular URLs)</label>
-                        <textarea id="adminImages" rows="4" placeholder="Paste image links here. Separate multiple images with a comma OR paste one link per line."></textarea>
-                    </div>
-                    <div class="admin-form-buttons">
-                        <button type="button" id="cancelEditBtn" class="btn-outline">Cancel</button>
-                        <button type="submit" class="btn">Save Product</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
+
+                <div class="admin-table-wrapper" id="couponsTableWrapper">
+                    <table class="admin-table">
+                        <thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Conditions</th><th>Actions</th></tr></thead>
+                        <tbody id="couponsTableBody"></tbody>
+                    </table>
+                </div>
             </div>
-            
+
+            <!-- Announcements Section -->
+            <div id="adminAnnouncementsView" class="admin-section">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                    <button id="addNewAnnBtn" class="btn"><i class="fas fa-plus"></i> Add Announcement</button>
+                </div>
+
+                <div id="adminAnnFormView" style="display:none; background: var(--glass-bg); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
+                    <h3 id="adminAnnFormTitle" style="margin-bottom: 1rem;">Add Announcement</h3>
+                    <form id="announcementForm">
+                        <div class="admin-form-group">
+                            <label>Announcement Text *</label>
+                            <input type="text" id="announcementText" placeholder="e.g. 🎁 Festive Sale: Flat 20% off on all jewelry!" required maxlength="100">
+                        </div>
+                        <div class="admin-form-buttons">
+                            <button type="button" id="cancelAnnEditBtn" class="btn-outline">Cancel</button>
+                            <button type="submit" class="btn"><i class="fas fa-bullhorn"></i> Save</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="admin-table-wrapper" id="announcementsTableWrapper">
+                    <table class="admin-table">
+                        <thead><tr><th>Message</th><th>Actions</th></tr></thead>
+                        <tbody id="announcementsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -869,6 +953,7 @@
         let globalOrdersList = [];
         let localPincodes = [];
         let siteViews = 0;
+        let loginsCount = 0;
         let currentAnnIndex = 0;
         
         let currentMode = 'handmade';
@@ -878,9 +963,22 @@
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '', stateLabel: '' };
         let currentDiscount = 0;
-        let currentUser = JSON.parse(localStorage.getItem('artisan_mock_user')) || null;
+        let currentUser = JSON.parse(localStorage.getItem('artisan_user')) || null;
 
         // --- GOOGLE SHEETS SYNC FUNCTIONS ---
+        async function sendToGoogleSheet(action, payload) {
+            if (!GOOGLE_SHEET_API_URL || !GOOGLE_SHEET_API_URL.includes('script.google.com')) return;
+            try {
+                const response = await fetch(GOOGLE_SHEET_API_URL, {
+                    redirect: "follow",
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: action, data: payload })
+                });
+                return await response.json();
+            } catch(e) { console.warn("Google Sheet Push Failed:", e); return null;}
+        }
+
         async function fetchGoogleSheetsData() {
             if (!GOOGLE_SHEET_API_URL || !GOOGLE_SHEET_API_URL.includes('script.google.com')) {
                 fallbackLoad(); return;
@@ -933,7 +1031,7 @@
                 if (data.announcements && data.announcements.length > 0) {
                     announcements = data.announcements.map((a, i) => {
                         const norm = {}; for(let k in a) norm[k.trim().toLowerCase()] = a[k];
-                        return { text: norm.message || norm.announcement || norm.text, ts: Date.now() + i, dbId: Date.now().toString() + i };
+                        return { text: norm.message || norm.announcement || norm.text, dbId: norm.dbid || Date.now().toString() + i };
                     }).filter(a => a.text);
                     localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
                     
@@ -946,6 +1044,7 @@
                 }
 
                 if (data.views) { siteViews = data.views.length; localStorage.setItem('artisan_views', siteViews); }
+                if (data.logins) { loginsCount = data.logins.length; localStorage.setItem('artisan_logins', loginsCount); }
                 
                 if (data.orders) { 
                     globalOrdersList = data.orders.map(o => {
@@ -960,6 +1059,7 @@
                 }
 
                 renderProducts(); updatePublicStatsDisplay();
+                
             } catch (err) {
                 console.warn("Failed to fetch from Google Sheets. Using local cache.", err);
                 fallbackLoad();
@@ -972,6 +1072,7 @@
                 adminCoupons = JSON.parse(localStorage.getItem('artisan_coupons')) || [];
                 announcements = JSON.parse(localStorage.getItem('artisan_announcements')) || [];
                 siteViews = parseInt(localStorage.getItem('artisan_views')) || 0;
+                loginsCount = parseInt(localStorage.getItem('artisan_logins')) || 0;
             } catch(e) {}
             renderProducts(); updatePublicStatsDisplay();
             
@@ -981,14 +1082,17 @@
 
         function updatePublicStatsDisplay() {
             let finalViews = siteViews;
-            let localOrders = JSON.parse(localStorage.getItem('artisan_order_history') || '[]');
+            let localOrders = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
             let finalOrders = globalOrdersList.length || localOrders.length;
+            let finalCustomers = loginsCount; 
 
             const viewEl = document.getElementById('publicViewsStat');
             const orderEl = document.getElementById('publicOrdersStat');
+            const custEl = document.getElementById('publicCustomersStat');
             
             if(viewEl) viewEl.textContent = finalViews >= 1000 ? (finalViews / 1000).toFixed(1) + 'K' : finalViews.toLocaleString();
             if(orderEl) orderEl.textContent = finalOrders.toLocaleString();
+            if(custEl) custEl.textContent = finalCustomers.toLocaleString();
         }
 
         // --- AUTH LOGIC (Google Sheets Powered) ---
@@ -1005,7 +1109,7 @@
                 if(authContentBlock) authContentBlock.style.display = 'none';
                 if(profileBlock) profileBlock.style.display = 'block';
                 
-                // Admin access check based on the rules
+                // Admin Access Check
                 const isAdmin = (currentUser.email === 'tej9079917@gmail.com' || currentUser.email === 'artisan.onlinesales@gmail.com');
                 if (adminPanelBtn) adminPanelBtn.style.display = isAdmin ? 'block' : 'none';
                 
@@ -1048,16 +1152,16 @@
             e.preventDefault();
             const email = document.getElementById('loginEmail')?.value.trim();
             const pass = document.getElementById('loginPassword')?.value;
-            const errEl = document.getElementById('loginError'); if(errEl) errEl.textContent = 'Logging in...';
+            const errEl = document.getElementById('loginError'); if(errEl) errEl.textContent = 'Verifying...';
             
-            // Hardcoded fallback logic in case Google API fails or is not correctly linked
+            // Hardcoded Admin Access Gateway
             if ((email === 'tej9079917@gmail.com' || email === 'artisan.onlinesales@gmail.com') && pass === 'Tejkumar@117') {
                 currentUser = { uid: Date.now().toString(), email: email, name: "Admin" };
-                localStorage.setItem('artisan_mock_user', JSON.stringify(currentUser));
+                localStorage.setItem('artisan_user', JSON.stringify(currentUser));
                 document.getElementById('authModal').style.display = 'none'; 
                 document.getElementById('loginForm').reset(); 
                 updateAuthUI(); 
-                showToast("Logged in successfully!", "fa-check");
+                showToast("Logged in as Admin successfully!", "fa-check");
                 return;
             }
 
@@ -1072,7 +1176,7 @@
                 
                 if (result.status === 'success') {
                     currentUser = result.user;
-                    localStorage.setItem('artisan_mock_user', JSON.stringify(currentUser));
+                    localStorage.setItem('artisan_user', JSON.stringify(currentUser));
                     document.getElementById('authModal').style.display = 'none'; 
                     document.getElementById('loginForm').reset(); 
                     updateAuthUI(); 
@@ -1092,7 +1196,7 @@
             const pass = document.getElementById('regPassword')?.value;
             const errEl = document.getElementById('regError'); if(errEl) errEl.textContent = 'Creating account...';
 
-            const uid = Date.now().toString();
+            const uid = Date.now().toString() + Math.floor(Math.random() * 1000).toString();
 
             try {
                 const response = await fetch(GOOGLE_SHEET_API_URL, {
@@ -1105,11 +1209,13 @@
                 
                 if (result.status === 'success') {
                     currentUser = result.user;
-                    localStorage.setItem('artisan_mock_user', JSON.stringify(currentUser));
+                    localStorage.setItem('artisan_user', JSON.stringify(currentUser));
                     document.getElementById('authModal').style.display = 'none'; 
                     document.getElementById('registerForm').reset(); 
                     updateAuthUI(); 
                     showToast("Account created!", "fa-star");
+                    // Optionally update local customers count instantly
+                    loginsCount++; updatePublicStatsDisplay();
                 } else {
                     if(errEl) errEl.textContent = result.message || "Error creating account.";
                 }
@@ -1119,7 +1225,7 @@
         });
 
         document.getElementById('logoutBtn')?.addEventListener('click', () => {
-            currentUser = null; localStorage.removeItem('artisan_mock_user');
+            currentUser = null; localStorage.removeItem('artisan_user');
             document.getElementById('authModal').style.display = 'none'; 
             updateAuthUI(); showToast("Signed out", "fa-sign-out-alt");
         });
@@ -1527,6 +1633,34 @@
         document.getElementById('deliveryPincode')?.addEventListener('blur', async (e) => {
             const pin = e.target.value.trim();
             if (pin.length === 6) {
+                
+                // 1. Check Custom Google Sheet Pincodes first
+                let foundInSheet = localPincodes.find(p => String(p.pincode) === pin);
+                if (foundInSheet) {
+                    const cityInput = document.getElementById('deliveryCity');
+                    if(cityInput) cityInput.value = (foundInSheet.city || '') + ", " + (foundInSheet.district || '');
+                    
+                    const stateSelect = document.getElementById('deliveryState');
+                    if(stateSelect && foundInSheet.state) {
+                        for (let i = 0; i < stateSelect.options.length; i++) {
+                            if (stateSelect.options[i].text.toLowerCase() === String(foundInSheet.state).toLowerCase()) {
+                                stateSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if(foundInSheet.charge !== undefined && foundInSheet.charge !== "") {
+                        customPincodeCharge = parseInt(foundInSheet.charge);
+                    } else { customPincodeCharge = null; }
+                    
+                    document.getElementById('estimateDelivery')?.click();
+                    showToast("Pincode loaded from database!", "fa-map-marker-alt");
+                    return;
+                }
+
+                // 2. Fallback to Postal API
+                customPincodeCharge = null;
                 try {
                     const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
                     const data = await res.json();
@@ -1563,6 +1697,13 @@
             let charge = 250; let eta = '5-7 business days'; let service = 'DTDC Prime';
             if (stateCode === 'Andhra Pradesh' || stateCode === 'Telangana') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
             else if (stateCode === 'Karnataka' || stateCode === 'Tamil Nadu') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
+            
+            // Override with custom charge if fetched from sheet
+            if (customPincodeCharge !== null && !isNaN(customPincodeCharge)) {
+                charge = customPincodeCharge;
+                service = 'Custom Area Delivery';
+            }
+
             currentDelivery = { charge: charge, provider: 'DTDC', eta: eta, stateLabel: stateLabel, service: service };
             const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='block';
             const chargeUi = document.getElementById('deliveryChargeUI'); if(chargeUi) chargeUi.innerText = formatPrice(currentDelivery.charge); 
@@ -1705,10 +1846,7 @@
             updatePublicStatsDisplay();
 
             // Send Order to Google Sheets
-            fetch(GOOGLE_SHEET_API_URL, {
-                redirect: "follow", method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'addOrder', data: orderData })
-            }).catch(e=>{});
+            sendToGoogleSheet('addOrder', orderData);
 
             openWhatsApp(msg);
             const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='none'; 
@@ -1766,6 +1904,352 @@
             });
         });
 
+        // Initialize admin tables
+        window.renderAdminTable = function() {
+            const adminTableBody = document.getElementById('adminTableBody');
+            if(!adminTableBody) return;
+            adminTableBody.innerHTML = '';
+            if (!products) products = [];
+            products.forEach(p => {
+                const tr = document.createElement('tr');
+                const imgUrl = p.images && p.images.length > 0 ? p.images[0] : 'https://via.placeholder.com/50';
+                tr.innerHTML = `
+                    <td><img src="${imgUrl}" alt="${p.name}"></td>
+                    <td>${p.name}</td>
+                    <td style="text-transform: capitalize;">${p.category}</td>
+                    <td>₹${p.basePrice}</td>
+                    <td>${p.stock}</td>
+                    <td>
+                        <button class="admin-actions-btn edit" data-id="${p.id}" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="admin-actions-btn delete" data-id="${p.id}" title="Delete"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                adminTableBody.appendChild(tr);
+            });
+
+            document.querySelectorAll('.admin-actions-btn.edit').forEach(btn => {
+                btn.addEventListener('click', () => editProduct(parseInt(btn.dataset.id)));
+            });
+            document.querySelectorAll('.admin-actions-btn.delete').forEach(btn => {
+                btn.addEventListener('click', () => deleteProduct(parseInt(btn.dataset.id)));
+            });
+        }
+
+        window.editProduct = function(id) {
+            const p = products.find(prod => prod.id === id);
+            if(!p) return;
+            
+            editingProductId = id;
+            const adminTitle = document.getElementById('adminFormTitle');
+            if(adminTitle) adminTitle.textContent = "Edit Product";
+            
+            const aname = document.getElementById('adminName'); if(aname) aname.value = p.name;
+            const acat = document.getElementById('adminCategory'); if(acat) acat.value = p.category;
+            const agen = document.getElementById('adminGender'); if(agen) agen.value = p.gender || 'all';
+            const aprice = document.getElementById('adminPrice'); if(aprice) aprice.value = p.basePrice;
+            const astock = document.getElementById('adminStock'); if(astock) astock.value = p.stock;
+            const adesc = document.getElementById('adminDesc'); if(adesc) adesc.value = p.description || '';
+            const aimg = document.getElementById('adminImages'); if(aimg) aimg.value = p.images ? p.images.join('\n') : '';
+
+            const wrap = document.querySelector('#adminProductsView .admin-table-wrapper');
+            if(wrap) wrap.style.display = 'none';
+            const addBtn = document.getElementById('addNewProductBtn');
+            if(addBtn) addBtn.style.display = 'none';
+            const afv = document.getElementById('adminFormView');
+            if(afv) afv.style.display = 'flex';
+        }
+
+        document.getElementById('cancelEditBtn')?.addEventListener('click', () => {
+            const afv = document.getElementById('adminFormView');
+            if(afv) afv.style.display = 'none';
+            const wrap = document.querySelector('#adminProductsView .admin-table-wrapper');
+            if(wrap) wrap.style.display = 'block';
+            const addBtn = document.getElementById('addNewProductBtn');
+            if(addBtn) addBtn.style.display = 'inline-block';
+        });
+
+        document.getElementById('addNewProductBtn')?.addEventListener('click', () => {
+            editingProductId = null;
+            const atitle = document.getElementById('adminFormTitle');
+            if(atitle) atitle.textContent = "Add New Product";
+            const adminForm = document.getElementById('adminForm');
+            if(adminForm) adminForm.reset();
+            const wrap = document.querySelector('#adminProductsView .admin-table-wrapper');
+            if(wrap) wrap.style.display = 'none';
+            const addBtn = document.getElementById('addNewProductBtn');
+            if(addBtn) addBtn.style.display = 'none';
+            const afv = document.getElementById('adminFormView');
+            if(afv) afv.style.display = 'flex';
+        });
+
+        document.getElementById('adminForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('adminName')?.value.trim();
+            const category = document.getElementById('adminCategory')?.value;
+            const gender = document.getElementById('adminGender')?.value || 'all';
+            const basePrice = parseInt(document.getElementById('adminPrice')?.value) || 0;
+            const stock = parseInt(document.getElementById('adminStock')?.value) || 0;
+            const description = document.getElementById('adminDesc')?.value.trim();
+            
+            const rawImages = document.getElementById('adminImages')?.value;
+            let imgArray = [];
+            if(rawImages) {
+                imgArray = rawImages.split(/[\n,]+/).map(u => getDirectImageUrl(u.trim())).filter(u => u !== '');
+            }
+            if(imgArray.length === 0) imgArray = ['https://via.placeholder.com/400x500?text=No+Image'];
+
+            let variants = null;
+            if (category === 'clothes') variants = { sizes: ["S", "M", "L"], colors: ["Standard"] };
+            else if (category === 'jewelry') variants = { sizes: ["One Size"] };
+
+            let isEdit = !!editingProductId;
+            
+            // Auto generate an enormous unique ID if adding new
+            const idToSave = editingProductId || parseInt(Date.now().toString() + Math.floor(Math.random()*100).toString());
+            const productData = { id: idToSave, name, category, gender, basePrice, stock, description, images: imgArray, variants };
+
+            if(!products) products = [];
+            if (isEdit) {
+                const idx = products.findIndex(p => p.id === editingProductId);
+                if(idx !== -1) products[idx] = productData;
+                sendToGoogleSheet('editProduct', productData); // Push to Sheet
+            } else {
+                products.push(productData);
+                sendToGoogleSheet('addProduct', productData); // Push to Sheet
+            }
+
+            localStorage.setItem('artisan_products', JSON.stringify(products));
+            showToast("Product saved and synced to database!", "fa-check");
+            renderAdminTable();
+            window.renderProducts();
+            document.getElementById('cancelEditBtn')?.click();
+        });
+
+        window.deleteProduct = function(id) {
+            if(confirm("Are you sure you want to permanently delete this product?")) {
+                if(!products) products = [];
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('artisan_products', JSON.stringify(products));
+                renderAdminTable();
+                window.renderProducts();
+                sendToGoogleSheet('deleteProduct', { id: id }); // Push to Sheet
+                showToast("Product deleted.", "fa-trash");
+            }
+        }
+
+        // --- ADMIN COUPONS LOGIC ---
+        let editingCouponCode = null;
+        
+        window.renderCouponsTable = function() {
+            const couponsTableBody = document.getElementById('couponsTableBody');
+            if(!couponsTableBody) return;
+            couponsTableBody.innerHTML = '';
+            if(!adminCoupons) adminCoupons = [];
+            adminCoupons.forEach((c) => {
+                const tr = document.createElement('tr');
+                const typeLabel = c.type === 'percent' ? c.value + '%' : '₹' + c.value;
+                tr.innerHTML = `
+                    <td><strong>${c.code}</strong></td>
+                    <td style="text-transform:capitalize;">${c.type}</td>
+                    <td>${typeLabel}</td>
+                    <td>Min: ₹${c.minAmount} | Qty: ${c.minProducts}</td>
+                    <td>
+                        <button class="admin-actions-btn edit" onclick="editCoupon('${c.code}')"><i class="fas fa-edit"></i></button>
+                        <button class="admin-actions-btn delete" onclick="deleteCoupon('${c.code}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                couponsTableBody.appendChild(tr);
+            });
+        }
+
+        window.editCoupon = function(code) {
+            const c = adminCoupons.find(coup => coup.code === code);
+            if(!c) return;
+            
+            editingCouponCode = code;
+            document.getElementById('adminCouponFormTitle').textContent = "Edit Coupon";
+            
+            document.getElementById('couponCodeInput').value = c.code;
+            document.getElementById('couponCodeInput').disabled = true; // Code shouldn't change
+            document.getElementById('couponType').value = c.type;
+            document.getElementById('couponValue').value = c.value;
+            document.getElementById('couponMinAmount').value = c.minAmount;
+            document.getElementById('couponMinProducts').value = c.minProducts;
+
+            document.getElementById('couponsTableWrapper').style.display = 'none';
+            document.getElementById('addNewCouponBtn').style.display = 'none';
+            document.getElementById('adminCouponFormView').style.display = 'block';
+        }
+
+        document.getElementById('cancelCouponEditBtn')?.addEventListener('click', () => {
+            document.getElementById('adminCouponFormView').style.display = 'none';
+            document.getElementById('couponsTableWrapper').style.display = 'block';
+            document.getElementById('addNewCouponBtn').style.display = 'inline-block';
+        });
+
+        document.getElementById('addNewCouponBtn')?.addEventListener('click', () => {
+            editingCouponCode = null;
+            document.getElementById('adminCouponFormTitle').textContent = "Create New Coupon";
+            document.getElementById('couponForm').reset();
+            document.getElementById('couponCodeInput').disabled = false;
+            
+            document.getElementById('couponsTableWrapper').style.display = 'none';
+            document.getElementById('addNewCouponBtn').style.display = 'none';
+            document.getElementById('adminCouponFormView').style.display = 'block';
+        });
+
+        window.deleteCoupon = function(code) {
+            if(confirm("Delete this coupon permanently?")) {
+                adminCoupons = adminCoupons.filter(c => c.code !== code);
+                localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
+                renderCouponsTable();
+                sendToGoogleSheet('deleteCoupon', { code: code }); // Push to Sheet
+                showToast("Coupon deleted");
+            }
+        };
+
+        document.getElementById('couponForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const code = document.getElementById('couponCodeInput')?.value.trim().toUpperCase();
+            const type = document.getElementById('couponType')?.value;
+            const value = parseInt(document.getElementById('couponValue')?.value) || 0;
+            const minAmount = parseInt(document.getElementById('couponMinAmount')?.value) || 0;
+            const minProducts = parseInt(document.getElementById('couponMinProducts')?.value) || 0;
+
+            if(!adminCoupons) adminCoupons = [];
+            
+            if(!editingCouponCode) {
+                const exists = adminCoupons.find(c => c.code === code);
+                if (exists) return showToast("Code already exists!", "fa-exclamation-triangle");
+            }
+
+            const couponData = { code, type, value, minAmount, minProducts };
+
+            if(editingCouponCode) {
+                const idx = adminCoupons.findIndex(c => c.code === editingCouponCode);
+                if(idx !== -1) adminCoupons[idx] = couponData;
+                sendToGoogleSheet('editCoupon', couponData);
+            } else {
+                adminCoupons.push(couponData);
+                sendToGoogleSheet('addCoupon', couponData);
+            }
+
+            localStorage.setItem('artisan_coupons', JSON.stringify(adminCoupons));
+            showToast("Coupon saved and synced!", "fa-tag");
+            renderCouponsTable();
+            document.getElementById('cancelCouponEditBtn')?.click();
+        });
+
+        // --- ADMIN ANNOUNCEMENTS LOGIC ---
+        let editingAnnId = null;
+
+        window.renderAnnouncementsTable = function() {
+            const announcementsTableBody = document.getElementById('announcementsTableBody');
+            if(!announcementsTableBody) return;
+            announcementsTableBody.innerHTML = '';
+            if(!announcements) announcements = [];
+            announcements.forEach((a) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${a.text}</td>
+                    <td style="width: 100px;">
+                        <button class="admin-actions-btn edit" onclick="editAnnouncement('${a.dbId}')"><i class="fas fa-edit"></i></button>
+                        <button class="admin-actions-btn delete" onclick="deleteAnnouncement('${a.dbId}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                announcementsTableBody.appendChild(tr);
+            });
+        }
+
+        window.editAnnouncement = function(dbId) {
+            const a = announcements.find(ann => ann.dbId === dbId);
+            if(!a) return;
+            
+            editingAnnId = dbId;
+            document.getElementById('adminAnnFormTitle').textContent = "Edit Announcement";
+            document.getElementById('announcementText').value = a.text;
+            
+            document.getElementById('announcementsTableWrapper').style.display = 'none';
+            document.getElementById('addNewAnnBtn').style.display = 'none';
+            document.getElementById('adminAnnFormView').style.display = 'block';
+        }
+
+        document.getElementById('cancelAnnEditBtn')?.addEventListener('click', () => {
+            document.getElementById('adminAnnFormView').style.display = 'none';
+            document.getElementById('announcementsTableWrapper').style.display = 'block';
+            document.getElementById('addNewAnnBtn').style.display = 'inline-block';
+        });
+
+        document.getElementById('addNewAnnBtn')?.addEventListener('click', () => {
+            editingAnnId = null;
+            document.getElementById('adminAnnFormTitle').textContent = "Add Announcement";
+            document.getElementById('announcementForm').reset();
+            
+            document.getElementById('announcementsTableWrapper').style.display = 'none';
+            document.getElementById('addNewAnnBtn').style.display = 'none';
+            document.getElementById('adminAnnFormView').style.display = 'block';
+        });
+
+        window.deleteAnnouncement = function(dbId) {
+            if(confirm("Delete this announcement permanently?")) {
+                announcements = announcements.filter(a => a.dbId !== dbId);
+                localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
+                renderAnnouncementsTable();
+                sendToGoogleSheet('deleteAnnouncement', { dbId: dbId }); // Push to sheet
+                
+                if(announcements.length === 0) {
+                    const botEl = document.getElementById('announcementBot');
+                    if(botEl) botEl.style.display = 'none';
+                } else {
+                    currentAnnIndex = 0; updateBotBubble();
+                }
+            }
+        };
+
+        document.getElementById('announcementForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = document.getElementById('announcementText')?.value.trim();
+            
+            if(!announcements) announcements = [];
+            
+            if(editingAnnId) {
+                const idx = announcements.findIndex(a => a.dbId === editingAnnId);
+                if(idx !== -1) {
+                    announcements[idx].text = text;
+                    sendToGoogleSheet('editAnnouncement', { dbId: editingAnnId, text: text });
+                }
+            } else {
+                const dbId = Date.now().toString();
+                const annData = { text: text, ts: Date.now(), dbId: dbId };
+                announcements.push(annData);
+                sendToGoogleSheet('addAnnouncement', annData);
+            }
+
+            localStorage.setItem('artisan_announcements', JSON.stringify(announcements));
+            showToast("Announcement saved and synced!", "fa-bullhorn");
+            renderAnnouncementsTable();
+            document.getElementById('cancelAnnEditBtn')?.click();
+            
+            const botEl = document.getElementById('announcementBot');
+            if(botEl) botEl.style.display = 'flex';
+            currentAnnIndex = announcements.length - 1;
+            updateBotBubble();
+            startAnnTimer(); 
+        });
+        
+        document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
+            const authModal = document.getElementById('authModal');
+            if(authModal) authModal.style.display = 'none';
+            const adminModal = document.getElementById('adminModal');
+            if(adminModal) adminModal.style.display = 'flex';
+            
+            window.renderAdminTable();
+            window.renderCouponsTable();
+            window.renderAnnouncementsTable();
+        });
+        
     </script>
 </body>
 </html>
