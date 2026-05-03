@@ -377,7 +377,6 @@
             .bot-character { width: 55px; height: 75px; }
             .speech-bubble { max-width: calc(100vw - 120px); }
         }
-        .page-transition-out { opacity: 0 !important; transition: opacity 0.2s ease; }
     </style>
 </head>
 <body>
@@ -430,7 +429,6 @@
                     <button class="action-btn-glass login-pill" id="openAuthModalBtn" aria-label="Login">
                         <span id="loginBtnText"><i class="fas fa-user"></i> Login</span>
                     </button>
-                    
                     <button class="action-btn-glass cart-btn" id="cartBtn" aria-label="Open Cart"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></button>
                     <button class="action-btn-glass wishlist-btn" id="wishlistBtn" aria-label="Open Wishlist"><i class="fas fa-heart"></i><span class="wishlist-count" id="wishlistCount">0</span></button>
                     <button class="action-btn-glass theme-btn" id="themeToggle" aria-label="Toggle Dark Mode"><i class="fas fa-moon" id="themeIcon"></i></button>
@@ -737,6 +735,7 @@
             container.appendChild(toast);
             setTimeout(() => { toast.classList.add('hiding'); setTimeout(() => { if(container.contains(toast)) container.removeChild(toast); }, 400); }, 3000); 
         }
+        window.showToast = showToast;
 
         // DATA VARIABLES
         let products = [];
@@ -857,7 +856,8 @@
 
         function updatePublicStatsDisplay() {
             let finalViews = siteViews;
-            let finalOrders = globalOrdersList.length;
+            let localOrders = JSON.parse(localStorage.getItem('artisan_order_history') || '[]');
+            let finalOrders = globalOrdersList.length || localOrders.length;
 
             const viewEl = document.getElementById('publicViewsStat');
             const orderEl = document.getElementById('publicOrdersStat');
@@ -1108,7 +1108,7 @@
         document.getElementById('floatingWaBtn')?.addEventListener('click', (e) => { e.preventDefault(); openWhatsApp("Hi Artisan! I have a question about your products."); });
 
         // --- CART ACTIONS ---
-        function addToCart(id, qty, size, color, eventTarget) {
+        window.addToCart = function(id, qty, size, color, eventTarget) {
             let existing = cart.find(i=>i.id===id && i.size===size && i.color===color);
             if(existing) existing.quantity += qty; else cart.push({ id, quantity:qty, size, color });
             saveCart();
@@ -1134,7 +1134,7 @@
             showToast('Item added to cart!');
         }
 
-        function openProductDetail(productId) {
+        window.openProductDetail = function(productId) {
             if(!products) products = [];
             const product = products.find(p => p.id === productId); if (!product) return;
             const mainUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/400x500?text=No+Image';
@@ -1174,12 +1174,12 @@
             if(qtyInput) { qtyInput.value = 1; qtyInput.oninput = () => { if(dt) dt.textContent = 'total: ' + formatPrice(product.basePrice * (parseInt(qtyInput.value) || 1)); }; }
             
             const addBtn = document.getElementById('detailAddToCart');
-            if(addBtn) { addBtn.onclick = () => { addToCart(product.id, parseInt(document.getElementById('detailQuantity')?.value) || 1, document.getElementById('detailSize') ? document.getElementById('detailSize').value : null, document.getElementById('detailColor') ? document.getElementById('detailColor').value : null, addBtn); const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'none'; }; }
+            if(addBtn) { addBtn.onclick = () => { window.addToCart(product.id, parseInt(document.getElementById('detailQuantity')?.value) || 1, document.getElementById('detailSize') ? document.getElementById('detailSize').value : null, document.getElementById('detailColor') ? document.getElementById('detailColor').value : null, addBtn); const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'none'; }; }
             const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'flex';
         }
 
         // --- STORE RENDERING ---
-        function renderProducts() {
+        window.renderProducts = function() {
             const sections = document.getElementById('productSections');
             if(!sections) return;
             if(!products || products.length === 0) { sections.innerHTML = '<div style="text-align:center; padding: 4rem; opacity: 0.6;"><i class="fas fa-store-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i><h2>Your store is currently empty.</h2><p>Please load your products from Google Sheets.</p></div>'; return; }
@@ -1259,11 +1259,11 @@
                 btn.addEventListener('click', function(e){
                     e.stopPropagation(); let card=this.closest('.product-card'), id=parseInt(card.dataset.id), qty=parseInt(card.querySelector('.quantity-input').value)||1;
                     let sizeSelect=card.querySelector('.size-select'), colorSelect=card.querySelector('.color-select');
-                    addToCart(id,qty, sizeSelect?sizeSelect.value:null, colorSelect?colorSelect.value:null, this);
+                    window.addToCart(id,qty, sizeSelect?sizeSelect.value:null, colorSelect?colorSelect.value:null, this);
                 });
             });
             document.querySelectorAll('.product-card').forEach(card => {
-                card.addEventListener('click', function(e){ if(e.target.closest('.wishlist-heart') || e.target.closest('.quantity-input') || e.target.closest('.add-to-cart') || e.target.closest('select')) return; openProductDetail(parseInt(this.dataset.id)); });
+                card.addEventListener('click', function(e){ if(e.target.closest('.wishlist-heart') || e.target.closest('.quantity-input') || e.target.closest('.add-to-cart') || e.target.closest('select')) return; window.openProductDetail(parseInt(this.dataset.id)); });
                 card.addEventListener('mousemove', function(e) { let rect = this.getBoundingClientRect(); let x = (e.clientX - rect.left) / rect.width - 0.5; let y = (e.clientY - rect.top) / rect.height - 0.5; this.style.transform = `perspective(1000px) rotateX(${y * -8}deg) rotateY(${x * 8}deg) scale3d(1.02, 1.02, 1.02)`; });
                 card.addEventListener('mouseleave', function() { this.style.transform = ''; });
             });
@@ -1306,7 +1306,7 @@
                     const hTitle = document.getElementById('heroTitle'); if(hTitle) hTitle.innerHTML = `handmade with <span id="heroAccent" style="color:var(--accent-color); transition:color 0.5s;">heart & soul</span>`;
                     const hBtn = document.getElementById('heroBtn1'); if(hBtn) hBtn.innerHTML = `shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
                 }
-                renderProducts();
+                window.renderProducts();
                 if(sections) sections.style.opacity = '1'; 
             }, 300); 
         }
@@ -1327,16 +1327,16 @@
         const sortInput = document.getElementById('sortSelect');
         sortTrigger?.addEventListener('click', (e) => { e.stopPropagation(); if(customSort) customSort.classList.toggle('active'); });
         sortOptions.forEach(opt => {
-            opt.addEventListener('click', (e) => { e.stopPropagation(); sortOptions.forEach(o => o.classList.remove('active')); opt.classList.add('active'); if(sortLabel) sortLabel.textContent = "Sort: " + opt.dataset.label; if(sortInput) sortInput.value = opt.dataset.value; if(customSort) customSort.classList.remove('active'); renderProducts(); });
+            opt.addEventListener('click', (e) => { e.stopPropagation(); sortOptions.forEach(o => o.classList.remove('active')); opt.classList.add('active'); if(sortLabel) sortLabel.textContent = "Sort: " + opt.dataset.label; if(sortInput) sortInput.value = opt.dataset.value; if(customSort) customSort.classList.remove('active'); window.renderProducts(); });
         });
         document.addEventListener('click', () => { if(customSort && customSort.classList.contains('active')) customSort.classList.remove('active'); });
         document.querySelectorAll('.cat-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); fashionCat = e.target.dataset.cat; const genF = document.getElementById('genderFilters'); if(fashionCat === 'clothes') { if(genF) genF.classList.add('active'); } else { if(genF) genF.classList.remove('active'); } const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0'; setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200); });
+            btn.addEventListener('click', (e) => { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); fashionCat = e.target.dataset.cat; const genF = document.getElementById('genderFilters'); if(fashionCat === 'clothes') { if(genF) genF.classList.add('active'); } else { if(genF) genF.classList.remove('active'); } const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0'; setTimeout(() => { window.renderProducts(); if(sections) sections.style.opacity = '1'; }, 200); });
         });
         document.querySelectorAll('.gen-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => { document.querySelectorAll('.gen-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); fashionGen = e.target.dataset.gen; const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0'; setTimeout(() => { renderProducts(); if(sections) sections.style.opacity = '1'; }, 200); });
+            btn.addEventListener('click', (e) => { document.querySelectorAll('.gen-btn').forEach(b => b.classList.remove('active')); e.target.classList.add('active'); fashionGen = e.target.dataset.gen; const sections = document.getElementById('productSections'); if(sections) sections.style.opacity = '0'; setTimeout(() => { window.renderProducts(); if(sections) sections.style.opacity = '1'; }, 200); });
         });
-        document.getElementById('searchInput')?.addEventListener('input', renderProducts);
+        document.getElementById('searchInput')?.addEventListener('input', window.renderProducts);
 
         // --- CART & CHECKOUT LOGIC ---
         document.getElementById('cartBtn')?.addEventListener('click',()=>{ renderCartModal(); const cm = document.getElementById('cartModal'); if(cm) cm.style.display='flex'; });
@@ -1346,7 +1346,7 @@
             if(!list) return;
             
             let myOrders = [];
-            if (currentUser && currentUser.uid && globalOrdersList.length > 0) {
+            if (currentUser && currentUser.uid && globalOrdersList && globalOrdersList.length > 0) {
                 myOrders = globalOrdersList.filter(o => String(o.uid) === String(currentUser.uid));
             } else {
                 myOrders = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
@@ -1597,7 +1597,7 @@
             
             if(!globalOrdersList) globalOrdersList = [];
             globalOrdersList.push(orderData);
-            updatePublicStatsDisplay();
+            window.updatePublicStatsDisplay();
 
             // Send Order to Google Sheets
             fetch(GOOGLE_SHEET_API_URL, {
@@ -1637,7 +1637,7 @@
                 }
             }); 
             cont.innerHTML=html; 
-            document.querySelectorAll('.remove-wishlist').forEach(btn=>btn.addEventListener('click',function(e){ e.stopPropagation(); wishlist=wishlist.filter(i=>i!==parseInt(this.dataset.id)); saveWishlist(); renderWishlistModal(); renderProducts(); })); 
+            document.querySelectorAll('.remove-wishlist').forEach(btn=>btn.addEventListener('click',function(e){ e.stopPropagation(); wishlist=wishlist.filter(i=>i!==parseInt(this.dataset.id)); saveWishlist(); renderWishlistModal(); window.renderProducts(); })); 
         }
 
         document.getElementById('newsletterForm')?.addEventListener('submit',e=>{ e.preventDefault(); showToast('Successfully Subscribed!', 'fa-envelope-open-text'); const nEmail = document.getElementById('newsletterEmail'); if(nEmail) nEmail.value = ''; });
