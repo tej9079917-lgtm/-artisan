@@ -459,6 +459,7 @@
                     <a href="#story" data-target="story">story</a>
                 </div>
                 <div class="header-actions">
+                    <!-- Authentication Login Pill -->
                     <button class="action-btn-glass login-pill" id="openAuthModalBtn" aria-label="Login">
                         <span id="loginBtnText"><i class="fas fa-user"></i> Login</span>
                     </button>
@@ -929,7 +930,6 @@
         </div>
     </div>
 
-    <!-- PURE JAVASCRIPT APP (NO FIREBASE) -->
     <script>
         // ============================================================================
         // GOOGLE SHEETS API CONFIGURATION
@@ -1060,6 +1060,11 @@
 
                 renderProducts(); updatePublicStatsDisplay();
                 
+                // Re-render admin tables if admin modal is open
+                if (document.getElementById('adminModal').style.display === 'flex') {
+                    renderAdminTable(); renderCouponsTable(); renderAnnouncementsTable();
+                }
+
             } catch (err) {
                 console.warn("Failed to fetch from Google Sheets. Using local cache.", err);
                 fallbackLoad();
@@ -1846,7 +1851,10 @@
             updatePublicStatsDisplay();
 
             // Send Order to Google Sheets
-            sendToGoogleSheet('addOrder', orderData);
+            fetch(GOOGLE_SHEET_API_URL, {
+                redirect: "follow", method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'addOrder', data: orderData })
+            }).catch(e=>{});
 
             openWhatsApp(msg);
             const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='none'; 
@@ -2249,7 +2257,20 @@
             window.renderCouponsTable();
             window.renderAnnouncementsTable();
         });
+
+        // --- ADMIN TABS CONTROLS ---
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                const tEl = document.getElementById(tab.dataset.target);
+                if(tEl) tEl.classList.add('active');
+            });
+        });
         
+        document.getElementById('closeAdmin')?.addEventListener('click', () => { const am = document.getElementById('adminModal'); if(am) am.style.display = 'none'; });
+
     </script>
 </body>
 </html>
