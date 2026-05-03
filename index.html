@@ -48,7 +48,7 @@
         @keyframes pulseText { 0% { opacity: 0.7; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1); } }
 
         @media (pointer: fine) {
-            body, a, button, input, select, textarea, i, img, .product-card, .logo-wrapper, .toggle-btn, .f-btn, .sort-trigger, .sort-option { cursor: none; }
+            body, a, button, input, select, textarea, i, img, .product-card, .logo-wrapper, .toggle-btn, .f-btn, .sort-trigger, .sort-option, .auth-tab { cursor: none; }
             .cursor-icon { position: fixed; top: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--accent-color); font-size: 1.4rem; pointer-events: none; z-index: 10000; transform: translate(-15%, -85%) rotate(-15deg); transform-origin: 15% 85%; transition: transform 0.2s var(--bezier-butter), color 0.5s ease, filter 0.2s ease, font-size 0.5s ease; filter: drop-shadow(0 2px 4px var(--glass-border)); }
             .cursor-icon.hovering { transform: translate(-15%, -85%) scale(1.2) rotate(10deg); color: var(--text-color); filter: drop-shadow(0 4px 8px var(--shadow-color)); }
             body.theme-fashion .cursor-icon { transform: translate(-50%, -50%) rotate(0deg); transform-origin: center center; font-size: 1.2rem; }
@@ -103,6 +103,9 @@
         .header-actions { display: flex; align-items: center; gap: 1rem; }
         .action-btn-glass { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--accent-color); font-size: 1.2rem; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 4px 10px var(--shadow-color), inset 0 2px 5px var(--glass-glow); transition: all 0.6s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; cursor: pointer; }
         
+        .login-pill { width: auto; padding: 0 1.2rem; font-size: 0.95rem; font-weight: 600; font-family: 'Inter', sans-serif;}
+        .login-pill i { font-size: 1rem; margin-right: 0.4rem; }
+        
         .action-btn-glass:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 15px var(--shadow-color), inset 0 2px 5px var(--glass-glow); filter: brightness(1.1); }
         .cart-count, .wishlist-count { position: absolute; top: -6px; right: -6px; background: var(--accent-color); color: white; font-size: 0.7rem; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px var(--shadow-color); border: 2px solid var(--bg-color); transition: border-color 0.6s ease, background 0.6s ease; }
         .action-btn-glass.wiggle { animation: wiggle 0.4s ease; }
@@ -111,12 +114,12 @@
         .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; transition: opacity 0.2s ease; }
         
         /* Public Dashboard Stats Styling */
-        .store-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 3rem 0; animation: fadeUp 0.8s ease-out; }
-        .store-stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 30px; display: flex; align-items: center; gap: 1.5rem; backdrop-filter: blur(8px); box-shadow: 0 10px 30px var(--shadow-color); transition: transform 0.3s var(--bezier-butter), box-shadow 0.3s; }
+        .store-stats-grid { display: flex; justify-content: center; gap: 2rem; margin: 3rem 0; animation: fadeUp 0.8s ease-out; flex-wrap: wrap; }
+        .store-stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1.5rem 2rem; border-radius: 30px; display: flex; align-items: center; gap: 1.5rem; backdrop-filter: blur(8px); box-shadow: 0 10px 30px var(--shadow-color); transition: transform 0.3s var(--bezier-butter), box-shadow 0.3s; min-width: 250px; flex: 1; max-width: 400px; }
         .store-stat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px var(--accent-color); }
         .store-stat-card i { font-size: 2rem; color: var(--accent-color); background: var(--card-bg); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .store-stat-card h4 { font-size: 0.85rem; opacity: 0.8; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
-        .store-stat-card .stat-value { font-size: 1.8rem; font-weight: 700; margin: 0; line-height: 1.2; color: var(--text-color); }
+        .store-stat-card .stat-value { font-size: 2.2rem; font-weight: 700; margin: 0; line-height: 1.2; color: var(--text-color); }
 
         .mode-toggle-container { display: flex; justify-content: center; margin: 1rem 0 2rem; }
         .mode-toggle { display: flex; position: relative; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 50px; padding: 5px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); backdrop-filter: blur(8px); transition: background 0.6s ease, border-color 0.6s ease; }
@@ -266,6 +269,19 @@
         .close-modal:hover { color: var(--accent-color); transform: scale(1.2); }
         .badge { background: var(--badge-bg); padding: 0.2rem 1rem; border-radius: 60px; display: inline-block; transition: background 0.6s ease;}
         
+        /* --- AUTH MODAL STYLES --- */
+        .auth-container { max-width: 400px; margin: 0 auto; text-align: center; }
+        .auth-tabs { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--card-border); padding-bottom: 1rem;}
+        .auth-tab { background: transparent; border: none; font-size: 1.1rem; font-weight: 600; color: var(--text-color); opacity: 0.5; transition: all 0.3s; }
+        .auth-tab.active { opacity: 1; color: var(--accent-color); }
+        .auth-form { display: none; flex-direction: column; gap: 1rem; }
+        .auth-form.active { display: flex; animation: fadeUp 0.4s ease; }
+        .auth-form input { width: 100%; padding: 1rem; border-radius: 12px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-color); outline: none;}
+        .auth-form input:focus { border-color: var(--accent-color); }
+        .auth-btn { background: var(--accent-color); color: white; border: none; padding: 1rem; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .auth-btn:hover { filter: brightness(0.9); }
+        .auth-error { color: #e74c3c; font-size: 0.9rem; margin-top: 0.5rem; }
+
         /* --- CART & DELIVERY STYLES --- */
         .cart-item, .wishlist-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--card-border); transition: border-color 0.6s ease;}
         .cart-item img, .wishlist-item img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
@@ -410,6 +426,11 @@
                     <a href="#story" data-target="story">story</a>
                 </div>
                 <div class="header-actions">
+                    <!-- Authentication Login Pill -->
+                    <button class="action-btn-glass login-pill" id="openAuthModalBtn" aria-label="Login">
+                        <span id="loginBtnText"><i class="fas fa-user"></i> Login</span>
+                    </button>
+                    
                     <button class="action-btn-glass cart-btn" id="cartBtn" aria-label="Open Cart"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></button>
                     <button class="action-btn-glass wishlist-btn" id="wishlistBtn" aria-label="Open Wishlist"><i class="fas fa-heart"></i><span class="wishlist-count" id="wishlistCount">0</span></button>
                     <button class="action-btn-glass theme-btn" id="themeToggle" aria-label="Toggle Dark Mode"><i class="fas fa-moon" id="themeIcon"></i></button>
@@ -473,13 +494,6 @@
                     <p class="stat-value" id="publicOrdersStat">0</p>
                 </div>
             </div>
-            <div class="store-stat-card">
-                <i class="fas fa-users"></i>
-                <div>
-                    <h4>Happy Customers</h4>
-                    <p class="stat-value" id="publicCustomersStat">0</p>
-                </div>
-            </div>
         </div>
 
         <!-- SEARCH & SORT UI -->
@@ -541,6 +555,46 @@
     </footer>
 
     <!-- MODALS -->
+
+    <!-- AUTHENTICATION MODAL -->
+    <div id="authModal" class="modal">
+        <div class="modal-content auth-container">
+            <span class="close-modal" id="closeAuth">×</span>
+            
+            <div id="authContentBlock">
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem;">Welcome</h2>
+
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tabLogin">Login</button>
+                    <button class="auth-tab" id="tabRegister">Sign Up</button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active">
+                    <input type="email" id="loginEmail" placeholder="Email Address" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <div class="auth-error" id="loginError"></div>
+                    <button type="submit" class="auth-btn">Log In</button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="registerForm" class="auth-form">
+                    <input type="text" id="regName" placeholder="Full Name" required>
+                    <input type="email" id="regEmail" placeholder="Email Address" required>
+                    <input type="password" id="regPassword" placeholder="Create Password (min 6 chars)" required>
+                    <div class="auth-error" id="regError"></div>
+                    <button type="submit" class="auth-btn">Create Account</button>
+                </form>
+            </div>
+
+            <!-- Profile Block (Shown when logged in) -->
+            <div id="profileBlock" style="display: none; padding: 1rem 0;">
+                <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--accent-color); margin-bottom: 1rem;"></i>
+                <h2 id="profileEmail" style="margin-bottom: 2rem; font-size: 1.2rem;"></h2>
+                <button id="logoutBtn" class="btn-outline" style="width: 100%; border-radius: 12px; padding: 1rem; cursor: pointer;">Sign Out</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Cart Modal with Order History Button -->
     <div id="cartModal" class="modal">
@@ -668,7 +722,6 @@
         </div>
     </div>
 
-    <!-- PURE JAVASCRIPT APP (NO FIREBASE) -->
     <script>
         // ============================================================================
         // GOOGLE SHEETS API CONFIGURATION
@@ -689,34 +742,23 @@
         let products = [];
         let adminCoupons = [];
         let announcements = [];
-        let siteViewsCount = 0;
-        let siteOrdersCount = 0;
+        let globalOrdersList = [];
+        let localPincodes = []; // Holds pincodes from sheet
+        let siteViews = 0;
         let currentAnnIndex = 0;
         
         let currentMode = 'handmade';
         let manualDarkMode = localStorage.getItem('darkMode') === 'true';
-        let fashionCat = 'all'; 
-        let fashionGen = 'all';
+        let fashionCat = 'all'; let fashionGen = 'all';
         let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let currentDelivery = { charge: 0, provider: 'DTDC', eta: '', distance: 0, service: '', stateLabel: '' };
         let currentDiscount = 0;
+        let currentUser = JSON.parse(localStorage.getItem('artisan_mock_user')) || null;
 
         // --- GOOGLE SHEETS SYNC FUNCTIONS ---
-        async function sendToGoogleSheet(action, payload) {
-            if (!GOOGLE_SHEET_API_URL) return;
-            try {
-                await fetch(GOOGLE_SHEET_API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: action, data: payload })
-                });
-            } catch(e) { console.warn("Google Sheet Push Failed:", e); }
-        }
-
         async function fetchGoogleSheetsData() {
-            if (!GOOGLE_SHEET_API_URL) {
+            if (!GOOGLE_SHEET_API_URL || !GOOGLE_SHEET_API_URL.includes('script.google.com')) {
                 fallbackLoad(); return;
             }
             try {
@@ -728,7 +770,7 @@
                         const norm = {};
                         for (let k in p) norm[k.trim().toLowerCase()] = p[k];
                         
-                        let imgStr = norm.images || norm.image || norm.img || '';
+                        let imgStr = norm.images || norm.image || norm.img || norm['image url'] || '';
                         let imgArray = imgStr ? String(imgStr).split(',').map(s=>getDirectImageUrl(s.trim())).filter(Boolean) : ['https://via.placeholder.com/400x500?text=No+Image'];
                         
                         let variants = null;
@@ -736,10 +778,10 @@
 
                         return {
                             id: parseInt(norm.id) || Date.now(),
-                            name: norm.name || 'Unnamed Product',
+                            name: norm.name || norm.title || norm.product || 'Unnamed Product',
                             category: norm.category ? String(norm.category).toLowerCase() : 'handmade',
                             gender: norm.gender ? String(norm.gender).toLowerCase() : 'all',
-                            basePrice: parseInt(norm.price || norm.baseprice) || 0,
+                            basePrice: parseInt(norm.price || norm.cost || norm.baseprice) || 0,
                             stock: parseInt(norm.stock || norm.qty) || 0,
                             description: norm.description || norm.desc || '',
                             images: imgArray,
@@ -748,6 +790,13 @@
                     });
                     localStorage.setItem('artisan_products', JSON.stringify(products));
                 } else { products = []; }
+                
+                if (data.pincodes && data.pincodes.length > 0) {
+                    localPincodes = data.pincodes.map(p => {
+                        const norm = {}; for(let k in p) norm[k.trim().toLowerCase()] = p[k];
+                        return { pincode: norm.pincode, city: norm.city, district: norm.district, state: norm.state, charge: norm.charge };
+                    });
+                } else { localPincodes = []; }
                 
                 if (data.coupons && data.coupons.length > 0) {
                     adminCoupons = data.coupons.map(c => {
@@ -772,14 +821,21 @@
                     if(botEl) botEl.style.display = 'none';
                 }
 
-                // Update Live Stats directly from Sheet counts
-                siteViewsCount = data.viewsCount || 0;
-                siteOrdersCount = data.ordersCount || 0;
-                localStorage.setItem('artisan_views', siteViewsCount);
-                localStorage.setItem('artisan_orders', siteOrdersCount);
+                if (data.views) { siteViews = data.views.length; localStorage.setItem('artisan_views', siteViews); }
+                
+                if (data.orders) { 
+                    globalOrdersList = data.orders.map(o => {
+                        const norm = {}; for(let k in o) norm[k.trim().toLowerCase()] = o[k];
+                        return {
+                            uid: norm.uid, total: norm.total, address: norm.address, 
+                            pincode: norm.pincode, items: norm.items, name: norm.name, 
+                            phone: norm.phone, date: norm.date || new Date().toLocaleDateString(),
+                            ts: parseInt(norm.orderid) || Date.now()
+                        };
+                    });
+                }
 
-                renderProducts(); 
-                updatePublicStatsDisplay();
+                renderProducts(); updatePublicStatsDisplay();
             } catch (err) {
                 console.warn("Failed to fetch from Google Sheets. Using local cache.", err);
                 fallbackLoad();
@@ -791,48 +847,146 @@
                 products = JSON.parse(localStorage.getItem('artisan_products')) || [];
                 adminCoupons = JSON.parse(localStorage.getItem('artisan_coupons')) || [];
                 announcements = JSON.parse(localStorage.getItem('artisan_announcements')) || [];
-                siteViewsCount = parseInt(localStorage.getItem('artisan_views')) || 0;
-                siteOrdersCount = parseInt(localStorage.getItem('artisan_orders')) || 0;
+                siteViews = parseInt(localStorage.getItem('artisan_views')) || 0;
             } catch(e) {}
-            renderProducts(); 
-            updatePublicStatsDisplay();
+            renderProducts(); updatePublicStatsDisplay();
             
             const botEl = document.getElementById('announcementBot');
             if (announcements.length > 0 && botEl) { botEl.style.display = 'flex'; updateBotBubble(); startAnnTimer(); }
         }
 
         function updatePublicStatsDisplay() {
+            let finalViews = siteViews;
+            let finalOrders = globalOrdersList.length;
+
             const viewEl = document.getElementById('publicViewsStat');
             const orderEl = document.getElementById('publicOrdersStat');
-            const custEl = document.getElementById('publicCustomersStat');
             
-            if(viewEl) viewEl.textContent = siteViewsCount >= 1000 ? (siteViewsCount / 1000).toFixed(1) + 'K' : siteViewsCount.toLocaleString();
-            if(orderEl) orderEl.textContent = siteOrdersCount.toLocaleString();
-            if(custEl) custEl.textContent = siteOrdersCount.toLocaleString(); // 1 order = 1 happy customer
+            if(viewEl) viewEl.textContent = finalViews >= 1000 ? (finalViews / 1000).toFixed(1) + 'K' : finalViews.toLocaleString();
+            if(orderEl) orderEl.textContent = finalOrders.toLocaleString();
         }
+
+        // --- AUTH LOGIC (Google Sheets Powered) ---
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('loginBtnText');
+            const authContentBlock = document.getElementById('authContentBlock');
+            const profileBlock = document.getElementById('profileBlock');
+            const profileEmailEl = document.getElementById('profileEmail');
+
+            if (currentUser) {
+                if(loginBtn) loginBtn.innerHTML = '<i class="fas fa-user-check"></i> Account';
+                if(profileEmailEl) profileEmailEl.textContent = currentUser.name || currentUser.email;
+                if(authContentBlock) authContentBlock.style.display = 'none';
+                if(profileBlock) profileBlock.style.display = 'block';
+            } else {
+                if(loginBtn) loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                if(authContentBlock) authContentBlock.style.display = 'block';
+                if(profileBlock) profileBlock.style.display = 'none';
+            }
+        }
+
+        document.getElementById('openAuthModalBtn')?.addEventListener('click', () => {
+            if(!currentUser) {
+                const tabLogin = document.getElementById('tabLogin');
+                const tabRegister = document.getElementById('tabRegister');
+                const loginForm = document.getElementById('loginForm');
+                const registerForm = document.getElementById('registerForm');
+                if(tabLogin) tabLogin.classList.add('active'); if(tabRegister) tabRegister.classList.remove('active');
+                if(loginForm) loginForm.classList.add('active'); if(registerForm) registerForm.classList.remove('active');
+                if(document.getElementById('loginError')) document.getElementById('loginError').textContent = '';
+                if(document.getElementById('regError')) document.getElementById('regError').textContent = '';
+            }
+            updateAuthUI();
+            const authModal = document.getElementById('authModal');
+            if(authModal) authModal.style.display = 'flex';
+        });
+
+        document.getElementById('closeAuth')?.addEventListener('click', () => { const am = document.getElementById('authModal'); if(am) am.style.display = 'none'; });
+        
+        document.getElementById('tabLogin')?.addEventListener('click', () => {
+            document.getElementById('tabLogin').classList.add('active'); document.getElementById('tabRegister')?.classList.remove('active');
+            document.getElementById('loginForm')?.classList.add('active'); document.getElementById('registerForm')?.classList.remove('active');
+        });
+        document.getElementById('tabRegister')?.addEventListener('click', () => {
+            document.getElementById('tabRegister').classList.add('active'); document.getElementById('tabLogin')?.classList.remove('active');
+            document.getElementById('registerForm')?.classList.add('active'); document.getElementById('loginForm')?.classList.remove('active');
+        });
+
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail')?.value.trim();
+            const pass = document.getElementById('loginPassword')?.value;
+            const errEl = document.getElementById('loginError'); if(errEl) errEl.textContent = 'Logging in...';
+            
+            try {
+                const response = await fetch(GOOGLE_SHEET_API_URL, {
+                    redirect: "follow",
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'login', data: { email: email, password: pass } })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    currentUser = result.user;
+                    localStorage.setItem('artisan_mock_user', JSON.stringify(currentUser));
+                    document.getElementById('authModal').style.display = 'none'; 
+                    document.getElementById('loginForm').reset(); 
+                    updateAuthUI(); 
+                    showToast("Logged in successfully!", "fa-check");
+                } else {
+                    if(errEl) errEl.textContent = result.message || "Invalid credentials.";
+                }
+            } catch(err) {
+                if(errEl) errEl.textContent = "Error connecting to server.";
+            }
+        });
+
+        document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('regName')?.value.trim();
+            const email = document.getElementById('regEmail')?.value.trim();
+            const pass = document.getElementById('regPassword')?.value;
+            const errEl = document.getElementById('regError'); if(errEl) errEl.textContent = 'Creating account...';
+
+            const uid = Date.now().toString();
+
+            try {
+                const response = await fetch(GOOGLE_SHEET_API_URL, {
+                    redirect: "follow",
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'signup', data: { uid: uid, email: email, password: pass, name: name } })
+                });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    currentUser = result.user;
+                    localStorage.setItem('artisan_mock_user', JSON.stringify(currentUser));
+                    document.getElementById('authModal').style.display = 'none'; 
+                    document.getElementById('registerForm').reset(); 
+                    updateAuthUI(); 
+                    showToast("Account created!", "fa-star");
+                } else {
+                    if(errEl) errEl.textContent = result.message || "Error creating account.";
+                }
+            } catch(err) {
+                if(errEl) errEl.textContent = "Error connecting to server.";
+            }
+        });
+
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
+            currentUser = null; localStorage.removeItem('artisan_mock_user');
+            document.getElementById('authModal').style.display = 'none'; 
+            updateAuthUI(); showToast("Signed out", "fa-sign-out-alt");
+        });
 
         // --- FORMATTING & STATE ---
         function formatPrice(p) { return '₹' + (p || 0); }
-        
-        function updateCartCount() { 
-            const cc = document.getElementById('cartCount'); 
-            if(cc) cc.textContent = cart.reduce((s,i)=>s+i.quantity,0); 
-        }
-        
-        function saveCart() { 
-            localStorage.setItem('cart',JSON.stringify(cart)); 
-            updateCartCount(); 
-        }
-        
-        function updateWishlistCount() { 
-            const wc = document.getElementById('wishlistCount'); 
-            if(wc) wc.textContent = wishlist.length; 
-        }
-        
-        function saveWishlist() { 
-            localStorage.setItem('wishlist',JSON.stringify(wishlist)); 
-            updateWishlistCount(); 
-        }
+        function updateCartCount() { const cc = document.getElementById('cartCount'); if(cc) cc.textContent = cart.reduce((s,i)=>s+i.quantity,0); }
+        function saveCart() { localStorage.setItem('cart',JSON.stringify(cart)); updateCartCount(); }
+        function updateWishlistCount() { const wc = document.getElementById('wishlistCount'); if(wc) wc.textContent = wishlist.length; }
+        function saveWishlist() { localStorage.setItem('wishlist',JSON.stringify(wishlist)); updateWishlistCount(); }
 
         // --- RANDOM QUOTES ENGINE ---
         const handmadeQuotes = ["Unique ceramics, textiles, and woodcrafts — each piece tells a story.", "Crafted by hands, inspired by the heart. Discover slow, intentional living.", "Every imperfection is a mark of authenticity. Embrace the true art of handmade goods."];
@@ -845,7 +999,7 @@
             if(descEl) { descEl.style.opacity = '0'; setTimeout(() => { descEl.textContent = randomQuote; descEl.style.opacity = '0.8'; }, 400); }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
                 if (splash) splash.classList.add('hidden');
@@ -854,15 +1008,24 @@
             
             // Track Unique Views
             if(!sessionStorage.getItem('sheet_view_counted')) {
+                siteViews = parseInt(localStorage.getItem('artisan_views') || 0) + 1;
+                localStorage.setItem('artisan_views', siteViews);
                 sessionStorage.setItem('sheet_view_counted', 'true');
-                // Push view to Google Sheets
-                sendToGoogleSheet('addView', { platform: navigator.platform, userAgent: navigator.userAgent });
+                
+                // Push view to Google Sheets via pure POST to avoid preflight issues
+                fetch(GOOGLE_SHEET_API_URL, {
+                    redirect: "follow", method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'addView', data: { platform: navigator.platform, userAgent: navigator.userAgent } })
+                }).catch(e=>{});
+            } else {
+                siteViews = parseInt(localStorage.getItem('artisan_views') || 0);
             }
             
             setRandomQuote(currentMode);
-            updateCartCount(); 
-            updateWishlistCount();
-            fetchGoogleSheetsData(); 
+            updateCartCount(); updateWishlistCount();
+            updateAuthUI();
+            fetchGoogleSheetsData();
+            setInterval(fetchGoogleSheetsData, 30000); // Live poll every 30 seconds
         });
 
         // --- ANNOUNCEMENT BOT LOGIC (ROTATING) ---
@@ -913,7 +1076,8 @@
             if (u.includes('drive.google.com/file/d/')) id = u.match(/\/d\/([a-zA-Z0-9_-]+)/)?.[1];
             else if (u.includes('drive.google.com/open?id=')) id = u.split('id=')[1]?.split('&')[0];
             else if (u.includes('drive.google.com/uc?')) id = u.match(/id=([a-zA-Z0-9_-]+)/)?.[1];
-            if (id) return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
+            
+            if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
             return u;
         }
 
@@ -1095,7 +1259,7 @@
                 btn.addEventListener('click', function(e){
                     e.stopPropagation(); let card=this.closest('.product-card'), id=parseInt(card.dataset.id), qty=parseInt(card.querySelector('.quantity-input').value)||1;
                     let sizeSelect=card.querySelector('.size-select'), colorSelect=card.querySelector('.color-select');
-                    addToCart(id,qty, sizeSelect?sizeSelect.value:null, colorSelect?colorSelect.value:null, this); updateCartCount();
+                    addToCart(id,qty, sizeSelect?sizeSelect.value:null, colorSelect?colorSelect.value:null, this);
                 });
             });
             document.querySelectorAll('.product-card').forEach(card => {
@@ -1181,17 +1345,29 @@
             const list = document.getElementById('orderHistoryList');
             if(!list) return;
             
-            let myOrders = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
-            if (myOrders.length === 0) { list.innerHTML = '<p style="text-align: center; opacity: 0.7;">No past orders found.</p>'; return; }
+            let myOrders = [];
+            if (currentUser && currentUser.uid && globalOrdersList.length > 0) {
+                myOrders = globalOrdersList.filter(o => String(o.uid) === String(currentUser.uid));
+            } else {
+                myOrders = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
+            }
+            
+            if (myOrders.length === 0) { list.innerHTML = '<p style="text-align: center; opacity: 0.7;">No past orders found for this account.</p>'; return; }
             
             let html = '';
-            myOrders.slice().sort((a,b)=>b.ts - a.ts).forEach(order => {
+            myOrders.slice().sort((a,b)=>(b.ts||0) - (a.ts||0)).forEach(order => {
                 html += `<div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1rem; border-radius: 15px; margin-bottom: 1rem;"><div style="display:flex; justify-content: space-between; margin-bottom: 0.5rem;"><strong style="color: var(--accent-color);">${order.date}</strong><span class="badge">₹${order.total}</span></div><div style="font-size: 0.85rem; opacity: 0.8;"><p><strong>Items:</strong> ${order.items}</p><p><strong>Delivery:</strong> ${order.address} (${order.pincode})</p></div></div>`;
             });
             list.innerHTML = html;
         }
 
         document.getElementById('viewOrderHistoryBtn')?.addEventListener('click', () => {
+            if(!currentUser) {
+                showToast("Please log in to view global order history.", "fa-info-circle");
+                document.getElementById('closeCart')?.click();
+                document.getElementById('openAuthModalBtn')?.click();
+                return;
+            }
             const cm = document.getElementById('cartModal'); if(cm) cm.style.display = 'none';
             const oh = document.getElementById('orderHistoryModal'); if(oh) oh.style.display = 'flex';
             renderOrderHistory();
@@ -1204,10 +1380,40 @@
         document.querySelectorAll('.close-modal').forEach(el=>el.addEventListener('click',function(){ const m = this.closest('.modal'); if(m) m.style.display='none'; }));
         window.addEventListener('click',e=>{ if(e.target.classList.contains('modal')) e.target.style.display='none'; });
 
+        let customPincodeCharge = null;
+
         // --- PINCODE API AUTO-FILL LOGIC ---
         document.getElementById('deliveryPincode')?.addEventListener('blur', async (e) => {
             const pin = e.target.value.trim();
             if (pin.length === 6) {
+                
+                // 1. Check Custom Google Sheet Pincodes first
+                let foundInSheet = localPincodes.find(p => String(p.pincode) === pin);
+                if (foundInSheet) {
+                    const cityInput = document.getElementById('deliveryCity');
+                    if(cityInput) cityInput.value = (foundInSheet.city || '') + ", " + (foundInSheet.district || '');
+                    
+                    const stateSelect = document.getElementById('deliveryState');
+                    if(stateSelect && foundInSheet.state) {
+                        for (let i = 0; i < stateSelect.options.length; i++) {
+                            if (stateSelect.options[i].text.toLowerCase() === String(foundInSheet.state).toLowerCase()) {
+                                stateSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if(foundInSheet.charge !== undefined && foundInSheet.charge !== "") {
+                        customPincodeCharge = parseInt(foundInSheet.charge);
+                    } else { customPincodeCharge = null; }
+                    
+                    document.getElementById('estimateDelivery')?.click();
+                    showToast("Pincode loaded from database!", "fa-map-marker-alt");
+                    return;
+                }
+
+                // 2. Fallback to Postal API
+                customPincodeCharge = null;
                 try {
                     const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
                     const data = await res.json();
@@ -1241,9 +1447,17 @@
             let stateSelect = document.getElementById('deliveryState'); if(!stateSelect) return;
             let stateCode = stateSelect.value; let stateLabel = stateSelect.options[stateSelect.selectedIndex].text;
             if(!stateCode) return showToast('Please select a state first', 'fa-exclamation-circle');
+            
             let charge = 250; let eta = '5-7 business days'; let service = 'DTDC Prime';
             if (stateCode === 'Andhra Pradesh' || stateCode === 'Telangana') { charge = 100; eta = '1-2 business days'; service = 'DTDC Regional Plus'; } 
             else if (stateCode === 'Karnataka' || stateCode === 'Tamil Nadu') { charge = 150; eta = '2-4 business days'; service = 'DTDC Zonal Plus'; }
+            
+            // Override with custom charge if fetched from sheet
+            if (customPincodeCharge !== null && !isNaN(customPincodeCharge)) {
+                charge = customPincodeCharge;
+                service = 'Custom Area Delivery';
+            }
+
             currentDelivery = { charge: charge, provider: 'DTDC', eta: eta, stateLabel: stateLabel, service: service };
             const estArea = document.getElementById('deliveryEstimateArea'); if(estArea) estArea.style.display='block';
             const chargeUi = document.getElementById('deliveryChargeUI'); if(chargeUi) chargeUi.innerText = formatPrice(currentDelivery.charge); 
@@ -1294,8 +1508,18 @@
 
         document.getElementById('proceedToDelivery')?.addEventListener('click',()=>{
             if(cart.length===0) return showToast('Your cart is empty', 'fa-exclamation-circle');
+            if(!currentUser) {
+                showToast("Please Log In or Sign Up to proceed to checkout.", "fa-user-lock");
+                document.getElementById('closeCart')?.click();
+                document.getElementById('openAuthModalBtn')?.click();
+                return;
+            }
             const cm = document.getElementById('cartModal'); if(cm) cm.style.display='none'; 
             const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='flex';
+            
+            // Auto-fill form from currentUser data
+            const dName = document.getElementById('deliveryName'); if(dName && currentUser.name) dName.value=currentUser.name; 
+            
             const dCity = document.getElementById('deliveryCity'); if(dCity) dCity.value=''; 
             const dState = document.getElementById('deliveryState'); if(dState) dState.value=''; 
             const cCode = document.getElementById('couponCode'); if(cCode) cCode.value=''; 
@@ -1363,15 +1587,23 @@
                 address: `${city}, ${stateName}`,
                 pincode: pincode,
                 phone: phone,
+                uid: currentUser ? currentUser.uid : 'anonymous'
             };
             
-            // Save Order Locally
+            // Save Order Locally fallback
             let oHist = JSON.parse(localStorage.getItem('artisan_order_history')) || [];
             oHist.push(orderData);
             localStorage.setItem('artisan_order_history', JSON.stringify(oHist));
             
+            if(!globalOrdersList) globalOrdersList = [];
+            globalOrdersList.push(orderData);
+            updatePublicStatsDisplay();
+
             // Send Order to Google Sheets
-            sendToGoogleSheet('addOrder', orderData);
+            fetch(GOOGLE_SHEET_API_URL, {
+                redirect: "follow", method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'addOrder', data: orderData })
+            }).catch(e=>{});
 
             openWhatsApp(msg);
             const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='none'; 
@@ -1407,6 +1639,8 @@
             cont.innerHTML=html; 
             document.querySelectorAll('.remove-wishlist').forEach(btn=>btn.addEventListener('click',function(e){ e.stopPropagation(); wishlist=wishlist.filter(i=>i!==parseInt(this.dataset.id)); saveWishlist(); renderWishlistModal(); renderProducts(); })); 
         }
+
+        document.getElementById('newsletterForm')?.addEventListener('submit',e=>{ e.preventDefault(); showToast('Successfully Subscribed!', 'fa-envelope-open-text'); const nEmail = document.getElementById('newsletterEmail'); if(nEmail) nEmail.value = ''; });
 
         // --- SCROLL ANIMATIONS ---
         window.addEventListener('scroll', () => {
