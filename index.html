@@ -1347,8 +1347,8 @@
             updateAuthUI();
             fetchGoogleSheetsData();
             
-            // Live poll every 15 seconds to automatically sync global changes!
-            setInterval(fetchGoogleSheetsData, 15000); 
+            // Live poll every 5 minutes to automatically sync global changes!
+            setInterval(fetchGoogleSheetsData, 300000); 
         });
 
         // --- ANNOUNCEMENT BOT LOGIC (ROTATING) ---
