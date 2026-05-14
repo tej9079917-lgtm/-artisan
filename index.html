@@ -1893,11 +1893,7 @@
             let itemCount = cart.reduce((s,i)=>s+i.quantity,0);
             
             if(!adminCoupons) adminCoupons = [];
-            const allCoupons = [
-                { code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 },
-                { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 },
-                ...adminCoupons 
-            ];
+            const allCoupons = [...adminCoupons];
             
             const eligible = allCoupons.filter(c => subtotal >= c.minAmount && itemCount >= c.minProducts);
             const container = document.getElementById('suggestedCouponsArea');
@@ -1941,7 +1937,7 @@
             const cCodeInput = document.getElementById('couponCode'); if(!cCodeInput) return;
             let code = cCodeInput.value.trim().toUpperCase(); 
             if(!adminCoupons) adminCoupons = [];
-            const allCoupons = [{ code: 'DTDC10', type: 'percent', value: 10, minAmount: 0, minProducts: 0 }, { code: 'WELCOME', type: 'fixed', value: 100, minAmount: 0, minProducts: 0 }, ...adminCoupons];
+            const allCoupons = [...adminCoupons];
             let coupon = allCoupons.find(c => c.code === code);
             const cMsg = document.getElementById('couponMessage');
             if(!coupon){ if(cMsg) cMsg.innerText='Invalid code'; return; }
