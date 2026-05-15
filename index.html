@@ -12,6 +12,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Add Three.js for 3D Robot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
         /* --- THEME VARIABLES --- */
@@ -411,15 +414,33 @@
         @keyframes floatPulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); } 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); } }
 
         .announcement-bot { position: fixed; bottom: 110px; right: 30px; left: auto; z-index: 990; display: flex; align-items: flex-end; flex-direction: row-reverse; gap: 15px; animation: bounceIn 0.5s var(--bezier-butter); }
-        .bot-character { width: 70px; height: 90px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s; animation: floatBot 3s ease-in-out infinite; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); }
-        .bot-character:hover { transform: scale(1.1); }
-
-        .speech-bubble { background: var(--modal-bg); border: 2px solid var(--accent-color); border-radius: 20px 20px 0 20px; padding: 15px 20px; max-width: 250px; box-shadow: 0 10px 25px var(--shadow-color); position: relative; display: flex; align-items: center; gap: 10px; opacity: 0; transform: scale(0); transform-origin: bottom right; transition: all 0.4s var(--bezier-butter); pointer-events: none; }
-        .speech-bubble.active { opacity: 1; transform: scale(1); pointer-events: auto; }
-        .bubble-nav { background: var(--glass-bg); border: none; color: var(--accent-color); cursor: pointer; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0;}
-        .bubble-nav:hover { background: var(--accent-color); color: white; }
-        .ann-text-container { flex: 1; font-size: 0.9rem; font-weight: 600; line-height: 1.4; color: var(--text-color); text-align: center; }
-
+        .bot-character { width: 100px; height: 120px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.25)); }
+        .bot-character canvas { outline: none; }
+        .bot-character:hover { transform: scale(1.1) translateY(-5px); filter: drop-shadow(0 20px 35px var(--glass-border)); }
+        
+        .speech-bubble {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px 24px 4px 24px;
+            padding: 20px 25px;
+            max-width: 280px;
+            box-shadow: 0 20px 40px var(--shadow-color), 0 0 20px var(--glass-bg);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            transform-origin: bottom right;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+        .speech-bubble.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: auto; }
+        .bubble-nav { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--accent-color); cursor: pointer; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); flex-shrink: 0;}
+        .bubble-nav:hover { background: var(--accent-color); color: var(--bg-color); transform: scale(1.15); box-shadow: 0 5px 15px var(--glass-border); }
+        .ann-text-container { flex: 1; font-size: 0.95rem; font-weight: 600; line-height: 1.5; color: var(--text-color); text-align: center; font-family: 'Inter', sans-serif; letter-spacing: 0.2px; }
+        
         @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes bounceIn { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
@@ -458,8 +479,14 @@
             
             .floating-wa-btn { bottom: 25px; right: 20px; left: auto; width: 55px; height: 55px; font-size: 1.8rem; z-index: 999; }
             .announcement-bot { bottom: 95px; right: 20px; left: auto; z-index: 998; }
-            .bot-character { width: 55px; height: 75px; }
+            .bot-character { width: 65px; height: 85px; }
             .speech-bubble { max-width: calc(100vw - 120px); }
+
+            /* FIX MOBILE LAG: Disable expensive background repaints */
+            #story {
+                background-attachment: scroll !important;
+                background-position: center top !important;
+            }
         }
     </style>
 </head>
@@ -962,20 +989,7 @@
     <!-- CUTE 3D ANNOUNCEMENT BOT -->
     <div id="announcementBot" class="announcement-bot" style="display: none;">
         <div class="bot-character" id="botChar" title="Click to view announcements">
-            <svg viewBox="0 0 100 120" width="100%" height="100%">
-                <defs>
-                    <linearGradient id="roboGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#b0c4de"/></linearGradient>
-                    <linearGradient id="darkGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="var(--accent-color)"/><stop offset="100%" stop-color="#2c3e50"/></linearGradient>
-                    <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00ffff" stop-opacity="1"/><stop offset="100%" stop-color="#00ffff" stop-opacity="0"/></radialGradient>
-                </defs>
-                <rect x="48" y="5" width="4" height="15" fill="url(#darkGrad)"/><circle cx="50" cy="5" r="5" fill="url(#glow)"/><circle cx="50" cy="5" r="3" fill="#ffffff"/>
-                <rect x="15" y="45" width="10" height="30" rx="5" fill="url(#darkGrad)" transform="rotate(15 20 45)"/><circle cx="15" cy="70" r="6" fill="url(#roboGrad)"/>
-                <rect x="75" y="45" width="10" height="30" rx="5" fill="url(#darkGrad)" transform="rotate(-15 80 45)"/><circle cx="85" cy="70" r="6" fill="url(#roboGrad)"/>
-                <rect x="35" y="85" width="8" height="25" rx="4" fill="url(#darkGrad)"/><rect x="57" y="85" width="8" height="25" rx="4" fill="url(#darkGrad)"/>
-                <path d="M 30 110 Q 39 105 45 110 L 45 115 L 30 115 Z" fill="url(#roboGrad)"/><path d="M 55 110 Q 61 105 70 110 L 70 115 L 55 115 Z" fill="url(#roboGrad)"/>
-                <rect x="25" y="20" width="50" height="40" rx="12" fill="url(#roboGrad)"/><rect x="30" y="25" width="40" height="25" rx="6" fill="#1e2a2f"/><circle cx="40" cy="35" r="4" fill="#00ffff"/><circle cx="60" cy="35" r="4" fill="#00ffff"/><path d="M 45 45 Q 50 48 55 45" stroke="#00ffff" stroke-width="2" fill="none" stroke-linecap="round"/>
-                <rect x="28" y="55" width="44" height="35" rx="10" fill="url(#roboGrad)"/><rect x="35" y="62" width="30" height="15" rx="4" fill="url(#darkGrad)"/><circle cx="42" cy="70" r="3" fill="#e74c3c"/><circle cx="50" cy="70" r="3" fill="#f1c40f"/><circle cx="58" cy="70" r="3" fill="#2ecc71"/>
-            </svg>
+            <!-- 3D Robot injects here -->
         </div>
         <div class="speech-bubble" id="speechBubble">
             <button id="prevAnn" class="bubble-nav"><i class="fas fa-chevron-left"></i></button>
@@ -1012,6 +1026,12 @@
         let siteViews = 0;
         let loginsCount = 0;
         let currentAnnIndex = 0;
+
+        // 3D Robot state
+        let robotHead, robotLeftArm, robotRightArm, robotGroup;
+        let robotMats = {}; // To store materials for theme updates
+        let isRobotWaving = false;
+        let robotMsgTimeout = null; // Manage custom speech bubbles
 
         let currentMode = 'handmade';
         let manualDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -1105,8 +1125,9 @@
                     if (botEl && announcements.length > 0) { botEl.style.display = 'flex'; updateBotBubble(); startAnnTimer(); }
                 } else {
                     announcements = [];
+                    // Keep bot visible if smart notifications exist, but handle normally
                     const botEl = document.getElementById('announcementBot');
-                    if(botEl) botEl.style.display = 'none';
+                    if(botEl) botEl.style.display = 'flex';
                 }
 
                 if (data.views) { siteViews = data.views.length; localStorage.setItem('artisan_views', siteViews); }
@@ -1150,7 +1171,7 @@
             window.renderProducts(); window.updatePublicStatsDisplay();
             
             const botEl = document.getElementById('announcementBot');
-            if (announcements.length > 0 && botEl) { botEl.style.display = 'flex'; updateBotBubble(); startAnnTimer(); }
+            if (botEl) { botEl.style.display = 'flex'; updateBotBubble(); startAnnTimer(); }
         }
 
         window.updatePublicStatsDisplay = function() {
@@ -1345,18 +1366,64 @@
             setRandomQuote(currentMode);
             window.updateCartCount(); window.updateWishlistCount();
             updateAuthUI();
+            
+            // Initialize the interactive 3D robot
+            init3DRobot();
+            setTimeout(updateRobotColors, 100); // Sync initial colors
+            
             fetchGoogleSheetsData();
             
             // Live poll every 5 minutes to automatically sync global changes!
             setInterval(fetchGoogleSheetsData, 300000); 
+
+            // --- SMART CART REMINDERS & NOTIFICATIONS ---
+            setInterval(() => {
+                // Periodically check if there are items in the cart
+                if (cart && cart.length > 0) {
+                    showRobotMessage("Psst... don't forget the beautiful items waiting in your cart! 🛒✨", 6000);
+                } else {
+                    // Randomly suggest shopping 30% of the time if cart is empty
+                    if (Math.random() > 0.7) {
+                        showRobotMessage("Looking for something special? Check out our newest arrivals! 🌟", 6000);
+                    }
+                }
+            }, 120000); // Checks every 2 minutes
         });
+
+        // --- SMART ROBOT COMMUNICATION SYSTEM ---
+        function showRobotMessage(text, duration = 5000) {
+            const annText = document.getElementById('annText');
+            if(annText) annText.textContent = text;
+            
+            // Hide navigation arrows for custom system messages
+            const prevAnn = document.getElementById('prevAnn');
+            const nextAnn = document.getElementById('nextAnn');
+            if(prevAnn) prevAnn.style.display = 'none';
+            if(nextAnn) nextAnn.style.display = 'none';
+            
+            const speechBubble = document.getElementById('speechBubble');
+            if(speechBubble) speechBubble.classList.add('active');
+            
+            isRobotWaving = true;
+            
+            // Clear previous timeouts if multiple messages fire
+            if(robotMsgTimeout) clearTimeout(robotMsgTimeout);
+            
+            robotMsgTimeout = setTimeout(() => {
+                isRobotWaving = false;
+                if(speechBubble) speechBubble.classList.remove('active');
+                
+                // Restart regular announcement loop after showing custom message
+                startAnnTimer();
+            }, duration);
+        }
 
         // --- ANNOUNCEMENT BOT LOGIC (ROTATING) ---
         let annTimer;
         function startAnnTimer() {
             clearInterval(annTimer);
             annTimer = setInterval(() => {
-                if (announcements && announcements.length > 1) {
+                if (announcements && announcements.length > 0) {
                     currentAnnIndex = (currentAnnIndex + 1) % announcements.length;
                     updateBotBubble();
                 }
@@ -1375,10 +1442,30 @@
             
             const speechBubble = document.getElementById('speechBubble');
             if(speechBubble) speechBubble.classList.add('active');
+            
+            // Make the 3D robot wave happily!
+            isRobotWaving = true;
+            
+            // Auto close normal announcements after 6 seconds so it doesn't block the screen permanently
+            if(robotMsgTimeout) clearTimeout(robotMsgTimeout);
+            robotMsgTimeout = setTimeout(() => {
+                isRobotWaving = false;
+                if(speechBubble) speechBubble.classList.remove('active');
+            }, 6000);
         }
 
         document.getElementById('botChar')?.addEventListener('click', () => {
-            if (announcements && announcements.length > 0) document.getElementById('speechBubble')?.classList.toggle('active');
+            if (announcements && announcements.length > 0) {
+                const bubble = document.getElementById('speechBubble');
+                if (bubble) {
+                    if (bubble.classList.contains('active')) {
+                        bubble.classList.remove('active');
+                        isRobotWaving = false;
+                    } else {
+                        updateBotBubble();
+                    }
+                }
+            }
         });
 
         document.getElementById('nextAnn')?.addEventListener('click', (e) => {
@@ -1655,6 +1742,8 @@
         }
 
         function attachProductEvents() {
+            const isDesktop = window.matchMedia("(pointer: fine)").matches;
+
             document.querySelectorAll('.wishlist-heart').forEach(heart => {
                 heart.addEventListener('click', function(e) {
                     e.stopPropagation(); const id = parseInt(this.dataset.id);
@@ -1673,8 +1762,12 @@
             });
             document.querySelectorAll('.product-card').forEach(card => {
                 card.addEventListener('click', function(e){ if(e.target.closest('.wishlist-heart') || e.target.closest('.quantity-input') || e.target.closest('.add-to-cart') || e.target.closest('select')) return; window.openProductDetail(parseInt(this.dataset.id)); });
-                card.addEventListener('mousemove', function(e) { let rect = this.getBoundingClientRect(); let x = (e.clientX - rect.left) / rect.width - 0.5; let y = (e.clientY - rect.top) / rect.height - 0.5; this.style.transform = `perspective(1000px) rotateX(${y * -8}deg) rotateY(${x * 8}deg) scale3d(1.02, 1.02, 1.02)`; });
-                card.addEventListener('mouseleave', function() { this.style.transform = ''; });
+                
+                // FIX MOBILE LAG: Only attach expensive 3D tilt effects on desktop devices
+                if (isDesktop) {
+                    card.addEventListener('mousemove', function(e) { let rect = this.getBoundingClientRect(); let x = (e.clientX - rect.left) / rect.width - 0.5; let y = (e.clientY - rect.top) / rect.height - 0.5; this.style.transform = `perspective(1000px) rotateX(${y * -8}deg) rotateY(${x * 8}deg) scale3d(1.02, 1.02, 1.02)`; });
+                    card.addEventListener('mouseleave', function() { this.style.transform = ''; });
+                }
             });
         }
 
@@ -1716,6 +1809,7 @@
                     const hBtn = document.getElementById('heroBtn1'); if(hBtn) hBtn.innerHTML = `shop handmade <i class="fas fa-arrow-right" style="margin-left: 6px;"></i>`;
                 }
                 window.renderProducts();
+                updateRobotColors();
                 if(sections) sections.style.opacity = '1'; 
             }, 300); 
         }
@@ -1726,6 +1820,7 @@
             manualDarkMode = document.body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', manualDarkMode);
             if(themeIcon) themeIcon.className = manualDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+            updateRobotColors();
         });
 
         // FILTER BINDINGS
@@ -2013,6 +2108,11 @@
             openWhatsApp(msg);
             const dm = document.getElementById('deliveryModal'); if(dm) dm.style.display='none'; 
             cart=[]; saveCart(); renderCartModal();
+
+            // --- SMART ROBOT NOTIFICATION: POST-PURCHASE ---
+            setTimeout(() => {
+                showRobotMessage("Thank you so much for your order! 💛 We are preparing it with care.", 8000);
+            }, 1500);
         });
 
         function renderCartModal(){ 
@@ -2048,14 +2148,23 @@
         document.getElementById('newsletterForm')?.addEventListener('submit',e=>{ e.preventDefault(); window.showToast('Successfully Subscribed!', 'fa-envelope-open-text'); const nEmail = document.getElementById('newsletterEmail'); if(nEmail) nEmail.value = ''; });
 
         // --- SCROLL ANIMATIONS ---
+        let isTicking = false;
         window.addEventListener('scroll', () => {
-            let scrollY = window.scrollY;
-            const mHeader = document.getElementById('mainHeader'); if(mHeader) mHeader.classList.toggle('scrolled', scrollY > 50);
-            requestAnimationFrame(() => {
-                const b1 = document.getElementById('blob1'); if(b1) b1.style.transform = `translateY(${scrollY*0.05}px)`;
-                const b2 = document.getElementById('blob2'); if(b2) b2.style.transform = `translateY(${-scrollY*0.05}px)`;
-                const storyBox = document.querySelector('.story-box'); if (storyBox) storyBox.style.transform = `translateY(${scrollY * 0.03}px)`;
-            });
+            if (!isTicking) {
+                window.requestAnimationFrame(() => {
+                    let scrollY = window.scrollY;
+                    const mHeader = document.getElementById('mainHeader'); if(mHeader) mHeader.classList.toggle('scrolled', scrollY > 50);
+                    
+                    // FIX MOBILE LAG: Disable expensive JS parallax math on mobile viewports
+                    if (window.innerWidth > 768) {
+                        const b1 = document.getElementById('blob1'); if(b1) b1.style.transform = `translate3d(0, ${scrollY*0.05}px, 0)`;
+                        const b2 = document.getElementById('blob2'); if(b2) b2.style.transform = `translate3d(0, ${-scrollY*0.05}px, 0)`;
+                        const storyBox = document.querySelector('.story-box'); if (storyBox) storyBox.style.transform = `translate3d(0, ${scrollY * 0.03}px, 0)`;
+                    }
+                    isTicking = false;
+                });
+                isTicking = true;
+            }
         });
 
         document.querySelectorAll('.nav-links a').forEach(link=>{
@@ -2430,6 +2539,252 @@
         });
 
         document.getElementById('closeAdmin')?.addEventListener('click', () => { const am = document.getElementById('adminModal'); if(am) am.style.display = 'none'; });
+
+        // ============================================================================
+        // 3D PROCEDURAL ROBOT USING THREE.JS
+        // ============================================================================
+        function init3DRobot() {
+            const container = document.getElementById('botChar');
+            if (!container || typeof THREE === 'undefined') return;
+
+            const width = 100;
+            const height = 120;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+            camera.position.z = 12.5;
+            camera.position.y = 0.5;
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(width, height);
+            container.innerHTML = ''; // Clear fallback SVG
+            container.appendChild(renderer.domElement);
+
+            // Lighting to capture the glossy plastic look
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 10, 7);
+            scene.add(dirLight);
+            
+            const fillLight = new THREE.DirectionalLight(0xffffff, 0.3); // Neutralized for themes
+            fillLight.position.set(-5, 0, 5);
+            scene.add(fillLight);
+
+            robotGroup = new THREE.Group();
+
+            // --- MATERIALS ---
+            robotMats.body = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.25, metalness: 0.1 });
+            robotMats.accent = new THREE.MeshStandardMaterial({ color: 0xc38e7b, roughness: 0.3, metalness: 0.1 });
+            robotMats.screen = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+            robotMats.eye = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
+
+            const whiteMat = robotMats.body;
+            const blueMat = robotMats.accent;
+            const screenMat = robotMats.screen;
+            const eyeMat = robotMats.eye;
+
+            // --- HEAD ---
+            robotHead = new THREE.Group();
+            const headGeo = new THREE.BoxGeometry(3.6, 2.4, 2.4); // Wide TV head
+            const headMesh = new THREE.Mesh(headGeo, whiteMat);
+            
+            const screenGeo = new THREE.BoxGeometry(3.0, 1.8, 0.2);
+            const screenMesh = new THREE.Mesh(screenGeo, screenMat);
+            screenMesh.position.z = 1.25; // Stick out the front slightly
+            
+            robotHead.add(headMesh, screenMesh);
+
+            // --- EYES (Happy ^ ^ Squint) ---
+            const eyeGeo = new THREE.TorusGeometry(0.3, 0.08, 16, 32, Math.PI);
+            const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+            leftEye.position.set(-0.6, 0, 1.4);
+            const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+            rightEye.position.set(0.6, 0, 1.4);
+            
+            const eyeGroup = new THREE.Group();
+            eyeGroup.add(leftEye, rightEye);
+            robotHead.add(eyeGroup);
+
+            // --- UI CORNER BRACKETS ---
+            const hBracket = new THREE.BoxGeometry(0.25, 0.04, 0.02);
+            const vBracket = new THREE.BoxGeometry(0.04, 0.25, 0.02);
+            function makeCorner(x, y) {
+                const corner = new THREE.Group();
+                const h = new THREE.Mesh(hBracket, eyeMat);
+                h.position.set(x > 0 ? -0.1 : 0.1, 0, 0);
+                const v = new THREE.Mesh(vBracket, eyeMat);
+                v.position.set(0, y > 0 ? -0.1 : 0.1, 0);
+                corner.add(h, v);
+                corner.position.set(x, y, 1.36);
+                return corner;
+            }
+            robotHead.add(makeCorner(-1.3, 0.7)); // Top Left
+            robotHead.add(makeCorner(1.3, 0.7));  // Top Right
+            robotHead.add(makeCorner(-1.3, -0.7)); // Bottom Left
+            robotHead.add(makeCorner(1.3, -0.7));  // Bottom Right
+
+            // --- EARMUFFS ---
+            const earGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.5, 32);
+            earGeo.rotateZ(Math.PI/2);
+            const leftEar = new THREE.Mesh(earGeo, blueMat); 
+            leftEar.position.set(-1.9, 0, 0);
+            const rightEar = new THREE.Mesh(earGeo, blueMat); 
+            rightEar.position.set(1.9, 0, 0);
+            robotHead.add(leftEar, rightEar);
+
+            // --- ANTENNAE ---
+            const antGeo = new THREE.SphereGeometry(1, 32, 32);
+            const leftAnt = new THREE.Mesh(antGeo, blueMat);
+            leftAnt.scale.set(0.15, 0.6, 0.15);
+            leftAnt.position.set(-1.4, 1.7, 0);
+            leftAnt.rotation.z = -0.3;
+            
+            const rightAnt = new THREE.Mesh(antGeo, blueMat);
+            rightAnt.scale.set(0.15, 0.6, 0.15);
+            rightAnt.position.set(1.4, 1.7, 0);
+            rightAnt.rotation.z = 0.3;
+            robotHead.add(leftAnt, rightAnt);
+
+            robotHead.position.y = 1.2;
+            robotGroup.add(robotHead);
+
+            // --- CHIBI BODY ---
+            const bodyGroup = new THREE.Group();
+            
+            // Top Blue Shirt
+            const topBodyGeo = new THREE.SphereGeometry(1.3, 32, 16, 0, Math.PI*2, 0, Math.PI/2);
+            const topBody = new THREE.Mesh(topBodyGeo, blueMat);
+            
+            // Bottom White Belly
+            const botBodyGeo = new THREE.SphereGeometry(1.2, 32, 16, 0, Math.PI*2, Math.PI/2, Math.PI/2);
+            const botBody = new THREE.Mesh(botBodyGeo, whiteMat);
+            botBody.scale.y = 1.3; // Stretch bottom downwards slightly
+            
+            // Glowing Emblem
+            const emblemGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 32);
+            emblemGeo.rotateX(Math.PI/2);
+            const emblem = new THREE.Mesh(emblemGeo, eyeMat);
+            emblem.position.set(0, 0.3, 1.25);
+
+            // Shirt Center Flap
+            const flapGeo = new THREE.BoxGeometry(0.6, 0.9, 0.2);
+            const flap = new THREE.Mesh(flapGeo, blueMat);
+            flap.position.set(0, -0.2, 1.15);
+            flap.rotation.x = -0.2; // Angle it against the sphere
+
+            bodyGroup.add(topBody, botBody, emblem, flap);
+            bodyGroup.position.y = -1.6;
+            robotGroup.add(bodyGroup);
+
+            // --- FLOATING HANDS ---
+            const handGroupL = new THREE.Group();
+            const handTopGeo = new THREE.SphereGeometry(0.45, 32, 16, 0, Math.PI*2, 0, Math.PI/2);
+            const handBotGeo = new THREE.SphereGeometry(0.45, 32, 16, 0, Math.PI*2, Math.PI/2, Math.PI/2);
+            const hTopL = new THREE.Mesh(handTopGeo, blueMat);
+            const hBotL = new THREE.Mesh(handBotGeo, whiteMat);
+            handGroupL.add(hTopL, hBotL);
+            
+            robotLeftArm = handGroupL;
+            robotRightArm = handGroupL.clone();
+            
+            robotGroup.add(robotLeftArm, robotRightArm);
+
+            scene.add(robotGroup);
+
+            // --- ANIMATION LOGIC ---
+            const clock = new THREE.Clock();
+            let targetHeadRotY = 0;
+            let targetHeadRotX = 0;
+            let nextLookTime = 0;
+            let blinkTime = 0;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                const t = clock.getElapsedTime();
+
+                // 1. Mechanical "Servo" Head Looking
+                if (t > nextLookTime && !isRobotWaving) {
+                    targetHeadRotY = (Math.random() - 0.5) * 1.2; // Snap to random side
+                    targetHeadRotX = (Math.random() - 0.5) * 0.5; // Snap slightly up/down
+                    nextLookTime = t + 1.5 + Math.random() * 2; // Wait 1.5 to 3.5 seconds
+                }
+
+                // 2. Cute Eye Blinking
+                if (t > blinkTime) {
+                    eyeGroup.scale.y = 0.1; // Snap eyes closed
+                    blinkTime = t + 2 + Math.random() * 4; // Next blink in 2-6s
+                } else {
+                    eyeGroup.scale.y += (1 - eyeGroup.scale.y) * 0.3; // Spring back open
+                }
+
+                // Apply states
+                if (!isRobotWaving) {
+                    // Ease head mechanically towards targets
+                    robotHead.rotation.y += (targetHeadRotY - robotHead.rotation.y) * 0.15;
+                    robotHead.rotation.x += (targetHeadRotX - robotHead.rotation.x) * 0.15;
+                    robotHead.rotation.z += (0 - robotHead.rotation.z) * 0.1;
+                    
+                    // Hands idle float
+                    robotLeftArm.position.set(-2.2, -1.2 + Math.sin(t * 3) * 0.1, 0.5);
+                    robotLeftArm.rotation.z = -0.3;
+                    
+                    robotRightArm.position.set(2.2, -1.2 + Math.sin(t * 3 + Math.PI) * 0.1, 0.5);
+                    robotRightArm.rotation.z = 0.3;
+                } else {
+                    // Enthusiastic Waving!
+                    robotHead.rotation.y += (0 - robotHead.rotation.y) * 0.2; // Look at user
+                    robotHead.rotation.x += (0.1 - robotHead.rotation.x) * 0.2; // Tilt up
+                    robotHead.rotation.z = Math.sin(t * 15) * 0.05; // Excited tremble
+                    
+                    // Wave left hand wildly
+                    robotLeftArm.position.set(-2.6, 1.8 + Math.sin(t * 20) * 0.4, 1);
+                    robotLeftArm.rotation.z = Math.sin(t * 20) * 0.5;
+                    
+                    // Right hand tucked
+                    robotRightArm.position.set(1.8, -1, 1);
+                    robotRightArm.rotation.z = 0.5;
+                }
+
+                // Smooth Hovering
+                robotGroup.position.y = Math.sin(t * 2) * 0.15;
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Interactions
+            container.addEventListener('mouseenter', () => isRobotWaving = true);
+            container.addEventListener('mouseleave', () => isRobotWaving = false);
+        }
+
+        function updateRobotColors() {
+            if (!robotMats.body) return;
+            
+            const isFashion = document.body.classList.contains('theme-fashion');
+            const isDark = document.body.classList.contains('dark-mode');
+            
+            // Read exact colors from current CSS theme
+            const style = getComputedStyle(document.body);
+            const cardBg = style.getPropertyValue('--card-bg').trim();
+            const accent = style.getPropertyValue('--accent-color').trim();
+            
+            // Apply to Robot chassis
+            robotMats.body.color.setStyle(cardBg);
+            robotMats.accent.color.setStyle(accent);
+            
+            // Change glowing eye color and screen face based on vibe
+            if (isFashion) {
+                robotMats.eye.color.setHex(0x00f0ff); // Cool Cyber Cyan for Fashion
+                // Aesthetic Slate Blue in dark mode, deep navy in light mode
+                robotMats.screen.color.setHex(isDark ? 0x2c3e50 : 0x151e26); 
+            } else {
+                robotMats.eye.color.setHex(0xffaa00); // Warm Gold for Handmade
+                // Aesthetic Warm Mocha in dark mode, dark espresso in light mode
+                robotMats.screen.color.setHex(isDark ? 0x4a352a : 0x241812); 
+            }
+        }
 
     </script>
 </body>
