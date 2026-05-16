@@ -402,12 +402,22 @@
         .delivery-estimate { background: var(--badge-bg); border-radius: 30px; padding: 0.8rem; margin: 0.5rem 0; font-size: 0.9rem; transition: background 0.6s ease;}
         .order-summary { background: var(--input-bg); border-radius: 20px; padding: 1rem; margin: 1rem 0; border: 1px solid var(--card-border); transition: all 0.6s ease;}
         .product-detail-modal .modal-content { max-width: 1000px; display: flex; gap: 2rem; flex-wrap: wrap; }
-        .product-detail-images { flex: 1; min-width: 250px; }
+        .product-detail-images { flex: 1; min-width: 250px; position: relative; }
         .product-detail-images .main-image-detail { width: 100%; border-radius: 20px; aspect-ratio: 1/1; object-fit: cover; margin-bottom: 1rem; background: #111; display: block; }
         .product-detail-thumbnails { display: flex; gap: 0.5rem; justify-content: center; }
         .product-detail-thumbnails img, .product-detail-thumbnails video { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; opacity: 0.7; cursor: pointer; background: #000; }
         .product-detail-thumbnails img.active, .product-detail-thumbnails video.active { opacity: 1; border: 2px solid var(--accent-color); }
         .product-detail-info { flex: 1; min-width: 250px; max-width: 100%; }
+        
+        .carousel-btn {
+            position: absolute; top: calc(50% - 2rem); transform: translateY(-50%);
+            background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--accent-color);
+            width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10; backdrop-filter: blur(4px); transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .carousel-btn:hover { background: var(--accent-color); color: white; transform: translateY(-50%) scale(1.1); }
+        #detailPrevBtn { left: 10px; }
+        #detailNextBtn { right: 10px; }
 
         #lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 20, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; touch-action: none; overscroll-behavior: contain; }
         #lightbox.show { opacity: 1; visibility: visible; }
@@ -1007,7 +1017,9 @@
         <div class="modal-content">
             <span class="close-modal" id="closeProductDetail">×</span>
             <div class="product-detail-images">
+                <button id="detailPrevBtn" class="carousel-btn"><i class="fas fa-chevron-left"></i></button>
                 <div id="detailMainMediaContainer"></div>
+                <button id="detailNextBtn" class="carousel-btn"><i class="fas fa-chevron-right"></i></button>
                 <div id="detailThumbnails" class="product-detail-thumbnails"></div>
             </div>
             <div class="product-detail-info">
@@ -1611,14 +1623,49 @@
             if(!products) products = [];
             const product = products.find(p => p.id === productId); if (!product) return;
             
-            const mainUrl = product.images && product.images.length > 0 ? product.images[0] : DEFAULT_IMG;
+            let currentDetailImages = product.images && product.images.length > 0 ? product.images : [DEFAULT_IMG];
+            let currentDetailIndex = 0;
             const mediaCont = document.getElementById('detailMainMediaContainer');
-            if(mediaCont) {
-                if(isVideo(mainUrl)) {
-                    mediaCont.innerHTML = `<video src="${mainUrl}" class="main-image-detail" controls autoplay muted playsinline></video>`;
-                } else {
-                    mediaCont.innerHTML = `<img src="${mainUrl}" class="main-image-detail" alt="${product.name}" onerror="this.onerror=null; this.src=DEFAULT_IMG;">`;
+            
+            function updateMainMedia() {
+                const mediaUrl = currentDetailImages[currentDetailIndex];
+                if(mediaCont) {
+                    if(isVideo(mediaUrl)) {
+                        mediaCont.innerHTML = `<video src="${mediaUrl}" class="main-image-detail" controls autoplay muted playsinline></video>`;
+                    } else {
+                        mediaCont.innerHTML = `<img src="${mediaUrl}" class="main-image-detail" alt="${product.name}" onerror="this.onerror=null; this.src=DEFAULT_IMG;">`;
+                    }
                 }
+                
+                // Update active thumbnail state
+                document.querySelectorAll('.product-detail-thumb').forEach((t, idx) => {
+                    if(idx === currentDetailIndex) t.classList.add('active');
+                    else t.classList.remove('active');
+                });
+                
+                // Toggle button visibility if there's only 1 image
+                const prevBtn = document.getElementById('detailPrevBtn');
+                const nextBtn = document.getElementById('detailNextBtn');
+                if(prevBtn) prevBtn.style.display = currentDetailImages.length > 1 ? 'flex' : 'none';
+                if(nextBtn) nextBtn.style.display = currentDetailImages.length > 1 ? 'flex' : 'none';
+            }
+            
+            // Setup Prev/Next Carousel buttons
+            const prevBtn = document.getElementById('detailPrevBtn');
+            const nextBtn = document.getElementById('detailNextBtn');
+            if(prevBtn) {
+                prevBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    currentDetailIndex = (currentDetailIndex - 1 + currentDetailImages.length) % currentDetailImages.length;
+                    updateMainMedia();
+                };
+            }
+            if(nextBtn) {
+                nextBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    currentDetailIndex = (currentDetailIndex + 1) % currentDetailImages.length;
+                    updateMainMedia();
+                };
             }
             
             const dn = document.getElementById('detailName'); if(dn) dn.textContent = product.name;
@@ -1644,36 +1691,26 @@
             const thumbContainer = document.getElementById('detailThumbnails');
             if(thumbContainer) {
                 thumbContainer.innerHTML = '';
-                if (product.images) {
-                    product.images.forEach((mediaUrl, idx) => {
-                        const isVid = isVideo(mediaUrl);
-                        const thumb = document.createElement(isVid ? 'video' : 'img');
-                        thumb.src = mediaUrl;
-                        if(isVid) {
-                            thumb.muted = true;
-                            thumb.autoplay = true; // Makes thumbnails play
-                            thumb.loop = true;
-                            thumb.playsInline = true;
-                        } else {
-                            thumb.onerror = function() { this.onerror=null; this.src=DEFAULT_IMG; };
-                        }
-                        thumb.classList.add('product-detail-thumb'); 
-                        if (idx === 0) thumb.classList.add('active');
-                        
-                        thumb.addEventListener('click', () => { 
-                            if (mediaCont) {
-                                if(isVideo(mediaUrl)) {
-                                    mediaCont.innerHTML = `<video src="${mediaUrl}" class="main-image-detail" controls autoplay playsinline></video>`;
-                                } else {
-                                    mediaCont.innerHTML = `<img src="${mediaUrl}" class="main-image-detail" alt="${product.name}" onerror="this.onerror=null; this.src=DEFAULT_IMG;">`;
-                                }
-                            } 
-                            document.querySelectorAll('.product-detail-thumb').forEach(t => t.classList.remove('active')); 
-                            thumb.classList.add('active'); 
-                        });
-                        thumbContainer.appendChild(thumb);
+                currentDetailImages.forEach((mediaUrl, idx) => {
+                    const isVid = isVideo(mediaUrl);
+                    const thumb = document.createElement(isVid ? 'video' : 'img');
+                    thumb.src = mediaUrl;
+                    if(isVid) {
+                        thumb.muted = true;
+                        thumb.autoplay = true; 
+                        thumb.loop = true;
+                        thumb.playsInline = true;
+                    } else {
+                        thumb.onerror = function() { this.onerror=null; this.src=DEFAULT_IMG; };
+                    }
+                    thumb.classList.add('product-detail-thumb'); 
+                    
+                    thumb.addEventListener('click', () => { 
+                        currentDetailIndex = idx;
+                        updateMainMedia();
                     });
-                }
+                    thumbContainer.appendChild(thumb);
+                });
             }
 
             const variantsDiv = document.getElementById('detailVariants');
@@ -1691,6 +1728,8 @@
             
             const addBtn = document.getElementById('detailAddToCart');
             if(addBtn) { addBtn.onclick = () => { window.addToCart(product.id, parseInt(document.getElementById('detailQuantity')?.value) || 1, document.getElementById('detailSize') ? document.getElementById('detailSize').value : null, document.getElementById('detailColor') ? document.getElementById('detailColor').value : null, addBtn); const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'none'; }; }
+            
+            updateMainMedia(); // Trigger first render
             const pdModal = document.getElementById('productDetailModal'); if(pdModal) pdModal.style.display = 'flex';
         }
 
@@ -2472,16 +2511,17 @@
 
             let isEdit = !!editingProductId;
             
-            // Build the object with strict ordering to prevent Google Sheets column shifts
+            // Build the object with strict keys and ordering to prevent Google Sheets column shifts.
+            // Using basePrice instead of price to fix the "reset to 0" issue.
             const idToSave = editingProductId || parseInt(Date.now().toString() + Math.floor(Math.random()*100).toString());
             const productData = { 
                 id: idToSave, 
                 name: name, 
                 category: category, 
-                price: basePrice, 
+                basePrice: basePrice, 
                 stock: finalStock, 
                 description: description, 
-                images: imgArray.join(','), // Send as comma-separated string, not an array
+                images: imgArray.join(','), 
                 gender: gender, 
                 variants: variants ? JSON.stringify(variants) : "" 
             };
